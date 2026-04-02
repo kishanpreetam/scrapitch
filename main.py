@@ -17,6 +17,9 @@ app = FastAPI(
 
 class GenerateRequest(BaseModel):
     url: str
+    framework: str = "All 3 Variants"
+    tone: str = "Professional"
+    industry: str = "B2B Agency"
 
 
 class EmailVariant(BaseModel):
@@ -53,6 +56,11 @@ async def generate(request: GenerateRequest):
             status_code=422,
             detail=f"Could not scrape website: {scraped['error']}",
         )
+
+    # Attach UI context to scraped data for the generator
+    scraped["preferred_framework"] = request.framework
+    scraped["preferred_tone"] = request.tone
+    scraped["sender_industry"] = request.industry
 
     # Step 2: Generate emails
     try:

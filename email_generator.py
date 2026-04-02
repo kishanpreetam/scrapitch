@@ -21,6 +21,9 @@ def generate_emails(scraped_data: dict) -> list[dict]:
     tone = scraped_data.get("tone", "professional")
     raw_snippet = scraped_data.get("raw_text_snippet", "")
     url = scraped_data.get("url", "")
+    preferred_framework = scraped_data.get("preferred_framework", "All 3 Variants")
+    preferred_tone = scraped_data.get("preferred_tone", "Professional")
+    sender_industry = scraped_data.get("sender_industry", "B2B Agency")
 
     prompt = f"""You are an expert B2B cold email copywriter specializing in outreach for agency owners.
 
@@ -33,11 +36,17 @@ You have scraped the following data about a prospect's website:
 - Tone/style of their website: {tone}
 - Raw text snippet from their site: {raw_snippet[:800]}
 
+SENDER CONTEXT (the person sending this email):
+- Industry: {sender_industry}
+- Preferred email tone: {preferred_tone}
+- Requested framework: {preferred_framework}
+
 Write exactly 3 cold email variants targeting this prospect. Each email must:
 - NEVER start with "Hope this finds you well" or any generic opener
 - Reference SPECIFIC content from their actual website (not generic phrases)
 - Have EXACTLY ONE call to action (CTA)
-- Be written from the perspective of a B2B agency owner offering their services
+- Be written from the perspective of a {sender_industry} owner offering their services
+- Match the preferred tone: {preferred_tone}
 
 VARIANT A — "The Direct" (PAS framework):
 - Problem → Agitation → Solution structure
