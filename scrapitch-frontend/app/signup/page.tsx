@@ -1,0 +1,261 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+
+function EyeIcon({ open }: { open: boolean }) {
+  return open ? (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ) : (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+      <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  );
+}
+
+export default function SignupPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const checks = useMemo(() => ({
+    length:    password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    number:    /[0-9]/.test(password),
+    special:   /[!@#$%^&*]/.test(password),
+  }), [password]);
+
+  const allChecksPassed = Object.values(checks).every(Boolean);
+  const passwordsMatch  = confirm.length > 0 && password === confirm;
+  const confirmMismatch = confirm.length > 0 && password !== confirm;
+  const formReady       = allChecksPassed && passwordsMatch && name.trim().length > 0 && email.trim().length > 0;
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formReady) return;
+    setLoading(true);
+    setError(null);
+
+    const { error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: name } },
+    });
+
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(false);
+      return;
+    }
+
+    router.push("/verify-email");
+  };
+
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/generator` },
+    });
+  };
+
+  const inputBase = "w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 transition-all pr-11";
+
+  return (
+    <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 py-16">
+      {/* Radial glows */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[700px] rounded-full bg-purple-600/15 blur-[120px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[400px] rounded-full bg-pink-500/10 blur-[100px]" />
+      </div>
+
+      <div className="relative w-full max-w-md">
+        <div className="rounded-2xl border border-white/10 bg-zinc-900/70 backdrop-blur-sm p-10 sm:p-12">
+
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <Link href="/" className="inline-flex items-center gap-1.5 mb-6">
+              <span className="text-xl">⚡</span>
+              <span className="text-2xl font-black tracking-tight">
+                <span className="text-white">Scrap</span>
+                <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">itch</span>
+              </span>
+            </Link>
+            <h1 className="text-2xl font-black text-zinc-50">Create your account</h1>
+            <p className="text-sm text-zinc-500 mt-1">3 free generations — no credit card required</p>
+          </div>
+
+          {/* Google OAuth */}
+          <button
+            type="button"
+            onClick={handleGoogle}
+            className="w-full flex items-center justify-center gap-3 rounded-xl bg-white px-4 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-100 transition-colors mb-6"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M17.64 9.205c0-.638-.057-1.252-.164-1.841H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615Z" fill="#4285F4"/>
+              <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18Z" fill="#34A853"/>
+              <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332Z" fill="#FBBC05"/>
+              <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58Z" fill="#EA4335"/>
+            </svg>
+            Continue with Google
+          </button>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-white/10" />
+            <span className="text-xs text-zinc-600 font-medium">or</span>
+            <div className="flex-1 h-px bg-white/10" />
+          </div>
+
+          {/* Error */}
+          {error && (
+            <div className="mb-4 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Full Name */}
+            <div>
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Full Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Jane Smith"
+                required
+                className={`${inputBase} border-white/20 focus:border-purple-500 focus:ring-purple-500/20`}
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className={`${inputBase} border-white/20 focus:border-purple-500 focus:ring-purple-500/20`}
+              />
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className={`${inputBase} border-white/20 focus:border-purple-500 focus:ring-purple-500/20`}
+                />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  <EyeIcon open={showPassword} />
+                </button>
+              </div>
+
+              {/* Strength checklist */}
+              {password.length > 0 && (
+                <ul className="mt-3 space-y-1.5">
+                  {[
+                    { key: "length",    label: "At least 8 characters" },
+                    { key: "uppercase", label: "One uppercase letter" },
+                    { key: "number",    label: "One number" },
+                    { key: "special",   label: "One special character (!@#$%^&*)" },
+                  ].map(({ key, label }) => {
+                    const ok = checks[key as keyof typeof checks];
+                    return (
+                      <li key={key} className={`flex items-center gap-2 text-xs transition-colors ${ok ? "text-emerald-400" : "text-zinc-500"}`}>
+                        <span className="w-3.5 text-center font-bold">{ok ? "✓" : "·"}</span>
+                        {label}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Confirm Password</label>
+              <div className="relative">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className={`${inputBase} ${
+                    confirmMismatch
+                      ? "border-red-500/70 focus:border-red-500 focus:ring-red-500/20"
+                      : passwordsMatch
+                        ? "border-emerald-500/70 focus:border-emerald-500 focus:ring-emerald-500/20"
+                        : "border-white/20 focus:border-purple-500 focus:ring-purple-500/20"
+                  }`}
+                />
+                <button type="button" onClick={() => setShowConfirm(!showConfirm)} tabIndex={-1}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  <EyeIcon open={showConfirm} />
+                </button>
+                {passwordsMatch && (
+                  <span className="absolute right-10 top-1/2 -translate-y-1/2 text-emerald-400 text-sm font-bold">✓</span>
+                )}
+              </div>
+              {confirmMismatch && (
+                <p className="mt-1.5 text-xs text-red-400">Passwords do not match</p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={!formReady || loading}
+              className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  Creating account…
+                </span>
+              ) : (
+                "Create Free Account →"
+              )}
+            </button>
+
+            {/* Terms */}
+            <p className="text-center text-xs text-zinc-600 leading-relaxed">
+              By signing up you agree to our{" "}
+              <Link href="/terms" className="text-zinc-500 hover:text-zinc-300 underline underline-offset-2 transition-colors">Terms of Service</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="text-zinc-500 hover:text-zinc-300 underline underline-offset-2 transition-colors">Privacy Policy</Link>
+            </p>
+          </form>
+
+          <p className="mt-6 text-center text-sm text-zinc-600">
+            Already have an account?{" "}
+            <Link href="/login" className="font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+              Log in
+            </Link>
+          </p>
+        </div>
+      </div>
+    </main>
+  );
+}
