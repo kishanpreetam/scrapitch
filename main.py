@@ -1,9 +1,11 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, HttpUrl
 from dotenv import load_dotenv
-import os
+import os as _os
+load_dotenv(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), ".env"))
 
-load_dotenv()
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+import os
 
 from scraper import scrape_website
 from email_generator import generate_emails
@@ -14,27 +16,46 @@ app = FastAPI(
     version="1.0.0",
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://scrapitch.vercel.app",
+        os.getenv("FRONTEND_URL", ""),
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class GenerateRequest(BaseModel):
     url: str
     framework: str = "All 3 Variants"
     tone: str = "Professional"
-    industry: str = "B2B Agency"
+    industry: str = "Auto-detect"
 
 
 class EmailVariant(BaseModel):
     variant: str
     name: str
-    subject_line: str
+    subject_lines: list[str]
     body: str
     score: int
     score_reasoning: str
+
+
+class FollowUp(BaseModel):
+    day: int
+    subject: str
+    body: str
 
 
 class GenerateResponse(BaseModel):
     url: str
     company_name: str
     variants: list[EmailVariant]
+    follow_up_sequence: list[FollowUp]
 
 
 @app.post("/generate", response_model=GenerateResponse)
@@ -48,8 +69,6 @@ async def generate(request: GenerateRequest):
         url = "https://" + url
 
     # Step 1: Scrape
-    # error is set on domain-fallback results too, but company_name will still
-    # be populated — only block if we have no company name at all.
     scraped = scrape_website(url)
     if scraped.get("company_name") in (None, "", "Unknown") and scraped.get("error"):
         raise HTTPException(
@@ -64,7 +83,7 @@ async def generate(request: GenerateRequest):
 
     # Step 2: Generate emails
     try:
-        variants = generate_emails(scraped)
+        result = generate_emails(scraped)
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -74,7 +93,8 @@ async def generate(request: GenerateRequest):
     return GenerateResponse(
         url=url,
         company_name=scraped["company_name"],
-        variants=variants,
+        variants=result["variants"],
+        follow_up_sequence=result.get("follow_up_sequence", []),
     )
 
 
