@@ -78,7 +78,7 @@ const faqSections = [
   },
   {
     section: "Limits & Usage",
-    icon: "⚡",
+    icon: "📊",
     questions: [
       {
         q: "Is there a limit on how many emails I can generate?",

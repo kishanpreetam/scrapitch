@@ -36,7 +36,11 @@ export default function LoginPage() {
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
 
     if (signInError) {
-      setError(signInError.message);
+      if (signInError.message === "Invalid login credentials") {
+        setError("No account found with that email and password. Please check your details or sign up.");
+      } else {
+        setError(signInError.message);
+      }
       setLoading(false);
       return;
     }
@@ -47,7 +51,7 @@ export default function LoginPage() {
   const handleGoogle = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/generator` },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
   };
 
@@ -65,7 +69,6 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-1.5 mb-6">
-              <span className="text-xl">⚡</span>
               <span className="text-2xl font-black tracking-tight">
                 <span className="text-white">Scrap</span>
                 <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">itch</span>

@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(ls /c/Users/premt/scrapitch/.env*)",
+      "Bash(ls /c/Users/premt/scrapitch/scrapitch-frontend/.env*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:3000 -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3000/generator -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s http://localhost:3000/signup -o /dev/null -w \" %{http_code}\")",
+      "Bash(curl -s http://localhost:3000/login -o /dev/null -w \" %{http_code}\")",
+      "Bash(curl -s http://localhost:3000/auth/callback -o /dev/null -w \"%{http_code}\")",
+      "Bash(pkill -f \"next\")",
+      "Bash(pkill -f \"uvicorn\")",
+      "Bash(echo \"Next.js PID: $!\")",
+      "Read(//tmp/**)",
+      "Bash(taskkill /PID 33548 /F)",
+      "Bash(taskkill /IM node.exe /F)",
+      "Bash(rm -f /tmp/nextjs.log)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(netstat -ano)",
+      "Bash(cmd /c \"taskkill /PID 33548 /F\")",
+      "Bash(cmd /c \"wmic process where ProcessId=33548 get Name,ProcessId,Status 2>&1\")",
+      "Bash(grep -E \"^-.*\\\\.\\(ts|tsx|js\\)$\")",
+      "Bash(python -c \"import os; print\\('~/scrapitch/.env:', os.path.exists\\(os.path.expanduser\\('~/scrapitch/.env'\\)\\)\\); print\\('cwd .env:', os.path.exists\\('.env'\\)\\); print\\('cwd:', os.getcwd\\(\\)\\)\")",
+      "Bash(venv/Scripts/pip show:*)",
+      "Bash(venv/Scripts/python -c \"from dotenv import load_dotenv; load_dotenv\\(\\); import os; key = os.getenv\\('ANTHROPIC_API_KEY'\\); print\\('Key found:', bool\\(key\\)\\); print\\('Key preview:', key[:20] + '...' if key else 'None'\\)\")",
+      "Bash(venv/Scripts/python -c ':*)"
+    ]
+  }
+}

@@ -28,7 +28,6 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-1.5 mb-3">
-              <span className="text-sm">⚡</span>
               <span className="text-sm font-black tracking-tight">
                 <span className="text-white">Scrap</span><span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">itch</span>
               </span>
