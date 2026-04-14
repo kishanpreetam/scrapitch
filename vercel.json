@@ -1,3 +1,9 @@
 {
-  "rootDirectory": "scrapitch-frontend"
+  "version": 2,
+  "builds": [
+    {
+      "src": "scrapitch-frontend/package.json",
+      "use": "@vercel/next"
+    }
+  ]
 }
