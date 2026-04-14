@@ -1,271 +1,550 @@
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Reveal from "@/components/Reveal";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "How It Works — Scrapitch",
   description:
-    "See exactly how Scrapitch scrapes prospect websites and generates personalized cold emails in under 10 seconds.",
+    "From URL to personalized cold email in under 10 seconds. Here's every step.",
 };
 
-const steps = [
+/* ─── SVG icons ─────────────────────────────────────────────────────────── */
+
+function IconLink({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+    </svg>
+  );
+}
+
+function IconCpu({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <rect x="9" y="9" width="6" height="6" />
+      <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" />
+    </svg>
+  );
+}
+
+function IconLayers({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <polygon points="12 2 2 7 12 12 22 7 12 2" />
+      <polyline points="2 17 12 22 22 17" />
+      <polyline points="2 12 12 17 22 12" />
+    </svg>
+  );
+}
+
+function IconMail({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <polyline points="2,4 12,13 22,4" />
+    </svg>
+  );
+}
+
+function IconRuler({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M21.3 8.7 8.7 21.3c-1 1-2.5 1-3.4 0l-2.6-2.6c-1-1-1-2.5 0-3.4L15.3 2.7c1-1 2.5-1 3.4 0l2.6 2.6c1 1 1 2.5 0 3.4Z" />
+      <path d="m7.5 10.5 2 2M10.5 7.5l2 2M13.5 4.5l2 2" />
+    </svg>
+  );
+}
+
+function IconTarget({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="6" />
+      <circle cx="12" cy="12" r="2" />
+    </svg>
+  );
+}
+
+/* ─── Step data ─────────────────────────────────────────────────────────── */
+
+type Step = {
+  num: string;
+  Icon: React.FC<{ className?: string }>;
+  title: string;
+  body: string;
+  calloutLabel?: string;
+  calloutItems?: string[];
+  calloutText?: string;
+  iconColor: string;
+  badgeColor: string;
+};
+
+const steps: Step[] = [
   {
     num: "01",
-    icon: "🔗",
+    Icon: IconLink,
     title: "Paste the prospect's URL",
-    body: "Copy any company website URL and paste it into Scrapitch. No browser extension needed, no manual data entry, no setup. Just a URL.",
-    detail:
-      "Works with any publicly accessible website — company homepages, SaaS landing pages, agency sites, consultant portfolios, e-commerce stores, and more.",
+    iconColor: "text-blue-400",
+    badgeColor: "bg-blue-500/10 ring-blue-500/20",
+    body: "Copy any company website URL and paste it into Scrapitch. Works with any publicly accessible site: SaaS, agencies, consultants, law firms, e-commerce, and more.",
+    calloutText:
+      "No browser extension, no account setup, no manual research. Just the URL.",
   },
   {
     num: "02",
-    icon: "🔍",
-    title: "Scrapitch scrapes their site",
-    body: "Our scraper fetches the homepage and /about page, strips noise, and extracts the signals that matter for cold email.",
-    detail:
-      "We extract: company name, what they do, who they serve, their value proposition, tone of voice, key differentiators, and any audience signals in their copy.",
+    Icon: IconCpu,
+    title: "AI scrapes and analyzes their site",
+    iconColor: "text-purple-400",
+    badgeColor: "bg-purple-500/10 ring-purple-500/20",
+    body: "Scrapitch fetches the homepage and /about page, strips noise, and extracts the signals that matter for cold outreach.",
+    calloutLabel: "What Scrapitch extracts:",
+    calloutItems: [
+      "Company name",
+      "What they do (service / product description)",
+      "Who they serve (target audience)",
+      "Value proposition",
+      "Tone of voice (formal / casual / technical / inspirational)",
+      "Key differentiators and pain points",
+    ],
   },
   {
     num: "03",
-    icon: "🧠",
-    title: "AI analyzes the intelligence",
-    body: "Claude processes the scraped data and builds a contextual profile of the prospect — their industry, pain points, audience, and brand voice.",
-    detail:
-      "The AI identifies the specific language, tone, and priorities of the company. This is what enables genuine personalization rather than just name-merging.",
+    Icon: IconLayers,
+    title: "Industry framework + tone applied",
+    iconColor: "text-emerald-400",
+    badgeColor: "bg-emerald-500/10 ring-emerald-500/20",
+    body: "The AI maps the prospect to one of 12 industry frameworks and applies your preferred sending tone. This shapes the angle, vocabulary, and structure of every email.",
+    calloutLabel: "What the AI considers:",
+    calloutItems: [
+      "Detected industry (or your manual selection): determines email angle",
+      "Sender tone preference: Professional, Casual, Bold, or Friendly",
+      "Website tone: formal / casual / technical / inspirational writing style",
+      "Framework selection: All 3, The Direct (PAS), Value-First, or The Curious",
+      "Subject line formula: under 6 words, curiosity-inducing",
+    ],
   },
   {
     num: "04",
-    icon: "✉️",
-    title: "3 email variants are generated",
-    body: "You receive three cold email variants — each using a different proven framework — tailored specifically to this prospect.",
-    detail:
-      "Variant A uses PAS (Problem-Agitation-Solution). Variant B leads with a concrete outcome. Variant C opens with a genuine icebreaker from their site.",
-  },
-  {
-    num: "05",
-    icon: "📊",
-    title: "Each email is scored 1–10",
-    body: "Every email gets a reply-rate score based on 6 factors: personalization depth, length, single CTA, problem-first framing, subject line quality, and spam avoidance.",
-    detail:
-      "The score comes with a plain-English explanation — so you understand exactly why an email ranks 7 vs 9 and what you could tweak.",
-  },
-  {
-    num: "06",
-    icon: "📋",
-    title: "Copy and send",
-    body: "Hit the copy button to grab subject + body. Paste straight into Instantly, Lemlist, Apollo, or your sending tool of choice.",
-    detail:
-      "Or use it as a starting point and edit before sending. The emails are intentionally written to sound like you — concise, specific, and human.",
+    Icon: IconMail,
+    title: "3 emails + follow-up sequence delivered",
+    iconColor: "text-purple-300",
+    badgeColor: "bg-purple-500/10 ring-purple-500/20",
+    body: "You receive 3 cold email variants, each scored 1–10 with reasoning, plus a full 3-email follow-up sequence ready to paste into your sending tool.",
+    calloutLabel: "What you receive:",
+    calloutItems: [
+      "Variant A · The Direct (PAS): under 60 words, pain-first",
+      "Variant B · Value-First: under 80 words, outcome-first",
+      "Variant C · The Curious: under 75 words, specific icebreaker",
+      "3 subject line options per variant",
+      "Follow-up Day 3, 7, and 14 (each under 50 words)",
+    ],
   },
 ];
+
+/* ─── Framework cards ────────────────────────────────────────────────────── */
 
 const frameworks = [
   {
-    name: "The Direct (PAS)",
     label: "Variant A",
-    color: "border-blue-500/30 bg-blue-500/5",
-    badge: "text-blue-300 bg-blue-500/20",
+    name: "The Direct (PAS)",
+    tagline: "Problem → Agitation → Solution",
     description:
-      "Problem → Agitation → Solution. Opens with a specific pain point, escalates it, then positions you as the fix. Under 60 words. Gets right to the point.",
+      "Opens with a specific pain point, escalates it, then positions you as the fix. Gets right to the point without filler.",
     wordCount: "Under 60 words",
-    best: "Prospects with obvious operational pain",
+    best: "Prospects with a clear operational pain point.",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/5",
+    badgeText: "text-blue-300",
+    badgeBg: "bg-blue-500/20",
+    accentText: "text-blue-400",
   },
   {
-    name: "Value-First",
     label: "Variant B",
-    color: "border-emerald-500/30 bg-emerald-500/5",
-    badge: "text-emerald-300 bg-emerald-500/20",
+    name: "Value-First",
+    tagline: "Lead with outcome, then explain how",
     description:
-      "Lead with a concrete outcome they could achieve, then explain how you deliver it. No fluff, just a compelling result and a clear path to it. Under 80 words.",
+      "Lead with a concrete outcome the prospect could achieve, then explain how you deliver it. No fluff, just a compelling result and a clear path to it.",
     wordCount: "Under 80 words",
-    best: "Growth-focused or ROI-driven buyers",
+    best: "ROI-focused or growth-stage buyers.",
+    border: "border-emerald-500/30",
+    bg: "bg-emerald-500/5",
+    badgeText: "text-emerald-300",
+    badgeBg: "bg-emerald-500/20",
+    accentText: "text-emerald-400",
   },
   {
-    name: "The Curious",
     label: "Variant C",
-    color: "border-purple-500/30 bg-purple-600/5",
-    badge: "text-purple-300 bg-pink-500/20",
+    name: "The Curious",
+    tagline: "Specific icebreaker → bridge to offer",
     description:
-      "Open with a specific, genuine icebreaker about something real on their website. Bridge naturally to your offer. Feels handwritten. Under 75 words.",
+      "Opens with a specific, genuine icebreaker drawn from something real on their website. Bridges naturally to your offer. Feels handwritten, not templated.",
     wordCount: "Under 75 words",
-    best: "Warm-feeling outreach to inbound-first buyers",
+    best: "Senior buyers and inbound-led companies.",
+    border: "border-purple-500/30",
+    bg: "bg-purple-600/5",
+    badgeText: "text-purple-300",
+    badgeBg: "bg-purple-500/20",
+    accentText: "text-purple-400",
   },
 ];
 
+/* ─── Scoring rows ───────────────────────────────────────────────────────── */
+
 const scoringFactors = [
-  { factor: "Personalization depth", weight: "30%", desc: "Does it reference specific details from their actual site?" },
-  { factor: "Length", weight: "20%", desc: "Does it respect the word limit for the framework?" },
-  { factor: "Single CTA", weight: "15%", desc: "Is there exactly one clear call to action?" },
-  { factor: "Problem-first framing", weight: "15%", desc: "Does it lead with their pain, not your credentials?" },
-  { factor: "Subject line quality", weight: "10%", desc: "Is it under 6 words and curiosity-inducing?" },
-  { factor: "No spam phrases", weight: "10%", desc: "Does it avoid generic clichés and opener tropes?" },
+  {
+    factor: "Personalization depth",
+    weight: "30%",
+    desc: "References specific scraped content, not generic phrases",
+  },
+  {
+    factor: "Length compliance",
+    weight: "20%",
+    desc: "Respects the word limit for the variant's framework",
+  },
+  {
+    factor: "Single CTA",
+    weight: "15%",
+    desc: "Exactly one clear call to action",
+  },
+  {
+    factor: "Problem-first framing",
+    weight: "15%",
+    desc: "Leads with their challenge, not your credentials",
+  },
+  {
+    factor: "Subject line quality",
+    weight: "10%",
+    desc: "Under 6 words, curiosity-inducing",
+  },
+  {
+    factor: "No spam phrases",
+    weight: "10%",
+    desc: 'Avoids "I hope this finds you well" and similar clichés',
+  },
 ];
+
+/* ─── Page ───────────────────────────────────────────────────────────────── */
 
 export default function HowItWorksPage() {
   return (
     <>
       <Navbar />
       <main className="pt-20">
-        {/* Hero */}
-        <section className="relative overflow-hidden border-b border-zinc-800/60">
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[400px] w-[600px] rounded-full bg-purple-500/5 blur-[100px]" />
-          </div>
-          <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-purple-400 mb-4">
-              Under the hood
-            </p>
-            <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-zinc-50 mb-6">
-              How Scrapitch works
-            </h1>
-            <p className="text-xl text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-              From URL to personalized cold email in under 10 seconds. Here&apos;s
-              every step of what happens.
-            </p>
+
+        {/* ── Hero ──────────────────────────────────────────────────────────── */}
+        <section className="border-b border-white/6 bg-section-alt">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
+            <Reveal>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-5">
+                Under the hood
+              </p>
+            </Reveal>
+            <Reveal delay={80}>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-[1.05]">
+                URL in. <span className="bg-linear-to-r from-[#7c3aed] to-[#a855f7] bg-clip-text text-transparent">Cold emails out.</span>
+              </h1>
+            </Reveal>
+            <Reveal delay={160}>
+              <p className="text-lg sm:text-xl text-[#a8a8a8] max-w-2xl mx-auto leading-relaxed">
+                Four steps. Ten seconds. Here&apos;s exactly what happens
+                between paste and send.
+              </p>
+            </Reveal>
           </div>
         </section>
 
-        {/* Step-by-step */}
-        <section className="py-24">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="space-y-8">
-              {steps.map((step, i) => (
-                <div
-                  key={step.num}
-                  className="relative grid sm:grid-cols-[auto_1fr] gap-6 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-8"
-                >
-                  {/* Connector line */}
-                  {i < steps.length - 1 && (
-                    <div className="absolute left-[2.25rem] sm:left-[3.5rem] top-full w-0.5 h-8 bg-zinc-800 -translate-x-1/2" />
-                  )}
+        {/* ── Four Steps — vertical timeline ────────────────────────────────── */}
+        <section className="py-24 sm:py-32">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <div className="relative">
+              {/* Vertical connector — desktop only */}
+              <div
+                aria-hidden="true"
+                className="hidden sm:block absolute left-[1.875rem] top-10 bottom-10 w-px bg-linear-to-r from-white/15 to-transparent"
+              />
 
-                  <div className="flex sm:flex-col items-center sm:items-start gap-3 sm:gap-2">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-xl">
-                      {step.icon}
+              <div className="space-y-6">
+                {steps.map((step, i) => (
+                  <Reveal key={step.num} delay={i * 80}>
+                    <div className="relative grid sm:grid-cols-[4rem_1fr] gap-0 sm:gap-6">
+                      {/* Number badge + icon column */}
+                      <div className="hidden sm:flex flex-col items-center pt-1 gap-2 z-10">
+                        <div
+                          className={`flex h-[3.75rem] w-[3.75rem] shrink-0 items-center justify-center rounded-2xl ring-1 ${step.badgeColor} ${step.iconColor}`}
+                        >
+                          <step.Icon className="h-6 w-6" />
+                        </div>
+                        <span style={{ borderRadius: "6px", padding: "3px 8px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#555555", border: "1px solid rgba(0,0,0,0.12)", background: "transparent" }}>
+                          {step.num}
+                        </span>
+                      </div>
+
+                      {/* Card */}
+                      <div className="rounded-2xl border border-white/8 bg-[#141414] p-6 sm:p-7" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+                        {/* Mobile: icon + number inline */}
+                        <div className="flex items-center gap-3 sm:hidden mb-4">
+                          <div
+                            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ring-1 ${step.badgeColor} ${step.iconColor}`}
+                          >
+                            <step.Icon className="h-5 w-5" />
+                          </div>
+                          <span style={{ borderRadius: "6px", padding: "3px 8px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#555555", border: "1px solid rgba(0,0,0,0.12)", background: "transparent" }}>
+                            STEP {step.num}
+                          </span>
+                        </div>
+
+                        <h3 className="text-xl font-bold text-white mb-3">
+                          {step.title}
+                        </h3>
+                        <p className="text-[#d4d4d4] leading-relaxed mb-4">
+                          {step.body}
+                        </p>
+
+                        {/* Detail callout */}
+                        {step.calloutLabel && step.calloutItems ? (
+                          <div className="border-l-2 border-white/15 pl-4">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-[#6b6b6b] mb-2">
+                              {step.calloutLabel}
+                            </p>
+                            <ul className="space-y-1.5">
+                              {step.calloutItems.map((item) => (
+                                <li
+                                  key={item}
+                                  className="flex items-start gap-2 text-sm text-[#a8a8a8]"
+                                >
+                                  <svg
+                                    className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${step.iconColor}`}
+                                    viewBox="0 0 12 12"
+                                    fill="currentColor"
+                                  >
+                                    <circle cx="6" cy="6" r="2.5" />
+                                  </svg>
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ) : step.calloutText ? (
+                          <p className="border-l-2 border-white/15 pl-4 text-sm text-[#a8a8a8] leading-relaxed">
+                            {step.calloutText}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
-                    <span className="text-xs font-mono font-bold text-purple-400/60 tracking-widest sm:ml-1">
-                      {step.num}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold text-zinc-50 mb-2">
-                      {step.title}
-                    </h3>
-                    <p className="text-zinc-300 leading-relaxed mb-3">{step.body}</p>
-                    <p className="text-sm text-zinc-500 leading-relaxed border-l-2 border-zinc-700 pl-4">
-                      {step.detail}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                  </Reveal>
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Email frameworks */}
-        <section className="border-t border-zinc-800/60 py-24 bg-zinc-900/20">
+        {/* ── Email frameworks ──────────────────────────────────────────────── */}
+        <section className="border-t border-white/6 py-24 sm:py-32 bg-section-alt">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <p className="text-sm font-semibold uppercase tracking-widest text-purple-400 mb-3">
-                The 3 frameworks
-              </p>
-              <h2 className="text-4xl font-black tracking-tight text-zinc-50">
-                Why three variants?
-              </h2>
-              <p className="mt-4 text-zinc-400 max-w-xl mx-auto">
-                Different buyers respond to different openers. Scrapitch gives
-                you all three so you can test or choose.
-              </p>
-            </div>
+            <Reveal>
+              <div className="text-center mb-16">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-4">
+                  Three frameworks
+                </p>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+                  Why three variants?
+                </h2>
+                <p className="text-[#a8a8a8] max-w-xl mx-auto text-lg leading-relaxed">
+                  Different buyers respond to different openers. Scrapitch gives
+                  you all three so you can test — or just pick the one that fits.
+                </p>
+              </div>
+            </Reveal>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              {frameworks.map((f) => (
-                <div
-                  key={f.name}
-                  className={`rounded-2xl border p-7 ${f.color}`}
-                >
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${f.badge} mb-4 inline-block`}>
-                    {f.label}
-                  </span>
-                  <h3 className="text-lg font-bold text-zinc-50 mt-2 mb-3">
-                    {f.name}
-                  </h3>
-                  <p className="text-sm text-zinc-400 leading-relaxed mb-5">
-                    {f.description}
-                  </p>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center gap-2 text-zinc-500">
-                      <span className="text-zinc-600">📏</span> {f.wordCount}
+            <div className="grid md:grid-cols-3 gap-5">
+              {frameworks.map((f, i) => (
+                <Reveal key={f.name} delay={i * 80}>
+                  <div
+                    className={`h-full flex flex-col rounded-2xl border ${f.border} ${f.bg} p-7`}
+                    style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
+                  >
+                    <div className="mb-4">
+                      <span style={
+                        i === 0
+                          ? { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#7c3aed", border: "1px solid rgba(124,58,237,0.25)", background: "transparent" }
+                          : i === 1
+                            ? { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#b45309", border: "1px solid rgba(180,83,9,0.25)", background: "transparent" }
+                            : { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#0369a1", border: "1px solid rgba(3,105,161,0.25)", background: "transparent" }
+                      }>
+                        {f.label}
+                      </span>
                     </div>
-                    <div className="flex items-start gap-2 text-zinc-500">
-                      <span className="text-zinc-600 shrink-0">🎯</span>
-                      <span>Best for: {f.best}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Scoring breakdown */}
-        <section className="border-t border-zinc-800/60 py-24">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14">
-              <p className="text-sm font-semibold uppercase tracking-widest text-purple-400 mb-3">
-                Reply-rate scoring
-              </p>
-              <h2 className="text-4xl font-black tracking-tight text-zinc-50">
-                How emails are scored
-              </h2>
-              <p className="mt-4 text-zinc-400 max-w-xl mx-auto">
-                Every email is scored 1–10 across these six weighted factors.
-                You see the breakdown so you know exactly what to fix.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-800 overflow-hidden">
-              {scoringFactors.map((s, i) => (
-                <div
-                  key={s.factor}
-                  className={`flex items-start gap-6 p-6 ${i < scoringFactors.length - 1 ? "border-b border-zinc-800" : ""}`}
-                >
-                  <div className="shrink-0 rounded-lg bg-purple-500/10 px-3 py-1.5">
-                    <span className="text-sm font-black text-purple-400">
-                      {s.weight}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-zinc-100 mb-1">
-                      {s.factor}
+                    <h3 className="text-lg font-bold text-white mb-1">
+                      {f.name}
+                    </h3>
+                    <p className={`text-sm font-medium mb-4 ${f.accentText}`}>
+                      {f.tagline}
                     </p>
-                    <p className="text-sm text-zinc-500">{s.desc}</p>
+                    <p className="text-sm text-[#a8a8a8] leading-relaxed flex-1 mb-6">
+                      {f.description}
+                    </p>
+                    <div className="space-y-2.5 mt-auto pt-5 border-t border-white/8">
+                      <div className="flex items-center gap-2.5 text-xs text-[#a8a8a8]">
+                        <IconRuler className={`h-3.5 w-3.5 shrink-0 ${f.accentText}`} />
+                        {f.wordCount}
+                      </div>
+                      <div className="flex items-start gap-2.5 text-xs text-[#a8a8a8]">
+                        <IconTarget className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${f.accentText}`} />
+                        <span>
+                          <span className="text-[#6b6b6b]">Best for: </span>
+                          {f.best}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </Reveal>
               ))}
             </div>
           </div>
         </section>
 
-        {/* CTA */}
-        <section className="border-t border-zinc-800/60 py-20">
-          <div className="mx-auto max-w-2xl px-4 text-center">
-            <h2 className="text-3xl font-black tracking-tight text-zinc-50 mb-4">
-              Ready to try it?
-            </h2>
-            <p className="text-zinc-400 mb-8">
-              Paste your first URL. See emails in 10 seconds.
-            </p>
-            <Link
-              href="/generator"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-8 py-3.5 text-base font-bold text-[#0a0a0a] hover:opacity-90 transition-opacity"
-            >
-              Open the generator →
-            </Link>
+        {/* ── Scoring breakdown ─────────────────────────────────────────────── */}
+        <section className="border-t border-white/6 py-24 sm:py-32">
+          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+            <Reveal>
+              <div className="text-center mb-14">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-4">
+                  Reply-rate scoring
+                </p>
+                <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+                  How reply-rate scores work
+                </h2>
+                <p className="text-[#a8a8a8] max-w-xl mx-auto text-lg leading-relaxed">
+                  Every email is scored 1–10 across 6 weighted factors.
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={80}>
+              <div className="rounded-2xl border border-white/8 overflow-hidden">
+                {scoringFactors.map((s, i) => (
+                  <div
+                    key={s.factor}
+                    className={`flex items-start gap-5 sm:gap-6 px-6 py-5 ${
+                      i % 2 !== 0 ? "bg-white/3" : ""
+                    } ${i < scoringFactors.length - 1 ? "border-b border-white/6" : ""}`}
+                  >
+                    {/* Weight badge */}
+                    <div className="shrink-0 min-w-[3.5rem] text-center rounded-lg bg-white/8 border border-white/10 px-2.5 py-1.5">
+                      <span className="text-sm font-black text-[#4ade80] tabular-nums">
+                        {s.weight}
+                      </span>
+                    </div>
+                    {/* Text */}
+                    <div>
+                      <p className="font-semibold text-[#f0f0f0] leading-snug mb-0.5">
+                        {s.factor}
+                      </p>
+                      <p className="text-sm text-[#a8a8a8]">{s.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
         </section>
+
+        {/* ── CTA ────────────────────────────────────────────────────────────── */}
+        <section className="border-t border-white/6 py-24 sm:py-32">
+          <div className="mx-auto max-w-2xl px-4 text-center">
+            <Reveal>
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
+                Ready to try it?
+              </h2>
+            </Reveal>
+            <Reveal delay={80}>
+              <p className="text-[#a8a8a8] text-lg mb-10">
+                Your first 3 generations are free.
+              </p>
+            </Reveal>
+            <Reveal delay={160}>
+              <Link
+                href="/generator"
+                className="inline-flex items-center gap-2.5 rounded-xl bg-[#7c3aed] px-9 py-4 text-base font-bold text-white hover:bg-[#6d28d9] transition-colors"
+              >
+                Open the generator
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-4 w-4"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </Link>
+            </Reveal>
+          </div>
+        </section>
+
       </main>
       <Footer />
     </>

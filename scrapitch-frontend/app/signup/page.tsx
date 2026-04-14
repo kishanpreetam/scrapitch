@@ -65,29 +65,23 @@ export default function SignupPage() {
     if (error) setError(error.message);
   };
 
-  const inputBase = "w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-600 focus:outline-none focus:ring-2 transition-all pr-11";
+  const inputBase = "w-full rounded-xl border bg-white/5 px-4 py-3 text-sm text-white placeholder-[#6b6b6b] focus:outline-none focus:ring-2 transition-all pr-11";
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 py-16">
-      {/* Radial glows */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[700px] rounded-full bg-purple-600/15 blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[400px] rounded-full bg-pink-500/10 blur-[100px]" />
-      </div>
-
       <div className="relative w-full max-w-md">
-        <div className="rounded-2xl border border-white/10 bg-zinc-900/70 backdrop-blur-sm p-10 sm:p-12">
+        <div className="rounded-2xl border border-white/10 bg-[#141414] p-10 sm:p-12">
 
           {/* Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-1.5 mb-6">
               <span className="text-2xl font-black tracking-tight">
                 <span className="text-white">Scrap</span>
-                <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">itch</span>
+                <span className="text-[#a855f7]">itch</span>
               </span>
             </Link>
-            <h1 className="text-2xl font-black text-zinc-50">Create your account</h1>
-            <p className="text-sm text-zinc-500 mt-1">3 free generations — no credit card required</p>
+            <h1 className="text-2xl font-black text-white">Create your account</h1>
+            <p className="text-sm text-[#6b6b6b] mt-1">3 free generations — no credit card required</p>
           </div>
 
           {/* Google OAuth */}
@@ -108,7 +102,7 @@ export default function SignupPage() {
           {/* Divider */}
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-xs text-zinc-600 font-medium">or</span>
+            <span className="text-xs text-[#6b6b6b] font-medium">or</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
@@ -122,33 +116,33 @@ export default function SignupPage() {
           <form className="space-y-4">
             {/* Full Name */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Full Name</label>
+              <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-1.5">Full Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Jane Smith"
                 required
-                className={`${inputBase} border-white/20 focus:border-purple-500 focus:ring-purple-500/20`}
+                className={`${inputBase} border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15`}
               />
             </div>
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Email</label>
+              <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-1.5">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className={`${inputBase} border-white/20 focus:border-purple-500 focus:ring-purple-500/20`}
+                className={`${inputBase} border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15`}
               />
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
+              <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-1.5">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -157,10 +151,10 @@ export default function SignupPage() {
                   placeholder="••••••••"
                   autoComplete="new-password"
                   required
-                  className={`${inputBase} border-white/20 focus:border-purple-500 focus:ring-purple-500/20`}
+                  className={`${inputBase} border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15`}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-[#6b6b6b] hover:text-[#d4d4d4] transition-colors">
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
@@ -184,7 +178,7 @@ export default function SignupPage() {
                   ].map(({ key, label }) => {
                     const ok = checks[key as keyof typeof checks];
                     return (
-                      <li key={key} className={`flex items-center gap-2 text-xs transition-colors ${ok ? "text-emerald-400" : "text-zinc-500"}`}>
+                      <li key={key} className={`flex items-center gap-2 text-xs transition-colors ${ok ? "text-emerald-400" : "text-[#6b6b6b]"}`}>
                         <span className="w-3.5 text-center font-bold">{ok ? "✓" : "·"}</span>
                         {label}
                       </li>
@@ -196,7 +190,7 @@ export default function SignupPage() {
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Confirm Password</label>
+              <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-1.5">Confirm Password</label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
@@ -210,11 +204,11 @@ export default function SignupPage() {
                       ? "border-red-500/70 focus:border-red-500 focus:ring-red-500/20"
                       : passwordsMatch
                         ? "border-emerald-500/70 focus:border-emerald-500 focus:ring-emerald-500/20"
-                        : "border-white/20 focus:border-purple-500 focus:ring-purple-500/20"
+                        : "border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15"
                   }`}
                 />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} tabIndex={-1}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-[#6b6b6b] hover:text-[#d4d4d4] transition-colors">
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
@@ -231,7 +225,7 @@ export default function SignupPage() {
               type="button"
               onClick={handleSignUp}
               disabled={!formReady || loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full rounded-xl bg-linear-to-r from-[#7c3aed] to-[#a855f7] py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -244,17 +238,17 @@ export default function SignupPage() {
             </button>
 
             {/* Terms */}
-            <p className="text-center text-xs text-zinc-600 leading-relaxed">
+            <p className="text-center text-xs text-[#6b6b6b] leading-relaxed">
               By signing up you agree to our{" "}
-              <Link href="/terms" className="text-zinc-500 hover:text-zinc-300 underline underline-offset-2 transition-colors">Terms of Service</Link>
+              <Link href="/terms" className="text-[#6b6b6b] hover:text-[#d4d4d4] underline underline-offset-2 transition-colors">Terms of Service</Link>
               {" "}and{" "}
-              <Link href="/privacy" className="text-zinc-500 hover:text-zinc-300 underline underline-offset-2 transition-colors">Privacy Policy</Link>
+              <Link href="/privacy" className="text-[#6b6b6b] hover:text-[#d4d4d4] underline underline-offset-2 transition-colors">Privacy Policy</Link>
             </p>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-600">
+          <p className="mt-6 text-center text-sm text-[#6b6b6b]">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+            <Link href="/login" className="font-semibold text-[#a855f7] hover:opacity-80 transition-opacity">
               Log in
             </Link>
           </p>

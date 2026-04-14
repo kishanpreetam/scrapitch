@@ -19,7 +19,7 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t-2 border-purple-400/30 bg-[#0a0a0a] mt-auto">
+    <footer className="relative z-10 border-t border-white/8 bg-[#0a0a0a] mt-auto">
       <div className="w-full px-10 lg:px-16 py-10">
 
         {/* 4-column grid — brand wider on the left */}
@@ -29,19 +29,19 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-1.5 mb-3">
               <span className="text-sm font-black tracking-tight">
-                <span className="text-white">Scrap</span><span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">itch</span>
+                <span className="text-white">Scrap</span><span className="text-[#a855f7]">itch</span>
               </span>
             </Link>
-            <p className="text-sm text-zinc-500 leading-relaxed">
+            <p className="text-sm text-[#6b6b6b] leading-relaxed">
               AI cold email from any URL. 3 scored variants in seconds.
             </p>
-            <p className="mt-3 text-xs text-zinc-600">$9.99/mo · Cancel anytime</p>
+            <p className="mt-3 text-xs text-[#6b6b6b]">$9.99/mo · Cancel anytime</p>
           </div>
 
           {/* Link columns */}
           {Object.entries(footerLinks).map(([group, items]) => (
             <div key={group}>
-              <p className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#6b6b6b] mb-3">
                 {group}
               </p>
               <ul className="space-y-3">
@@ -49,7 +49,7 @@ export default function Footer() {
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-sm text-zinc-400 hover:text-zinc-100 transition-colors"
+                      className="text-sm text-[#a8a8a8] hover:text-white transition-colors"
                     >
                       {label}
                     </Link>
@@ -61,9 +61,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-600">
+        <div className="mt-8 py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6b6b6b]">
           <p>© {new Date().getFullYear()} Scrapitch. All rights reserved.</p>
-          <p className="text-center text-zinc-700 max-w-md">
+          <p className="text-center text-[#6b6b6b] max-w-md">
             AI-generated emails are suggestions only. Users are responsible for compliance with CAN-SPAM, GDPR, and CASL.
           </p>
           <p>Built for agency owners, SDRs &amp; freelancers.</p>
