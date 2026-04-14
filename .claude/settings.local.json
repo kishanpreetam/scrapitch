@@ -28,7 +28,11 @@
       "Bash(venv/Scripts/python -c ':*)",
       "Bash(venv/Scripts/node_modules/.bin/next)",
       "Bash(npx --no-install next build)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(xargs grep:*)",
+      "Bash(taskkill /PID 19712 /F)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('node:', d.get\\('engines',{}\\).get\\('node','not set'\\)\\); print\\('build:', d.get\\('scripts',{}\\).get\\('build',''\\)\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }
