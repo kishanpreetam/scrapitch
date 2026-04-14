@@ -769,7 +769,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── BENTO FEATURES GRID ───────────────────────────── */}
-        <section className="reveal border-t border-[#e8e4df] py-28 md:py-36 bg-white">
+        <section className="reveal border-t border-[#e8e4df] py-28 md:py-36 bg-[#f7f6f3]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
               <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">Features</p>
@@ -824,7 +824,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── VS CHATGPT ───────────────────────────────────── */}
-        <section className="reveal border-t border-[#dde5ff] py-28 md:py-32 bg-[#f0f4ff]">
+        <section className="reveal border-t border-[#dde5ff] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-16">
               <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">vs generic AI</p>
@@ -869,7 +869,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── WHO IT'S FOR ─────────────────────────────────── */}
-        <section className="reveal border-t border-[#f0e8df] py-28 md:py-32 bg-[#fff8f0]">
+        <section className="reveal border-t border-[#f0e8df] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
               <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">Who it&apos;s for</p>
@@ -930,7 +930,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── REAL EMAIL PREVIEWS ──────────────────────────── */}
-        <section className="reveal border-t border-[#d1fae5] py-28 md:py-32 bg-[#f0fdf4]">
+        <section className="reveal border-t border-[#d1fae5] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
               <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">3 variants, every time</p>
@@ -1065,7 +1065,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── FAQ ──────────────────────────────────────────── */}
-        <section className="reveal border-t border-[#e8e4df] py-28 md:py-32 bg-white">
+        <section className="reveal border-t border-[#e8e4df] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
               <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">FAQ</p>
