@@ -15,7 +15,6 @@ export const metadata: Metadata = {
 const faqSections = [
   {
     section: "Product",
-    icon: "🎯",
     questions: [
       {
         q: "How does Scrapitch personalize emails?",
@@ -53,7 +52,6 @@ const faqSections = [
   },
   {
     section: "Pricing",
-    icon: "💳",
     questions: [
       {
         q: "Is there a free trial?",
@@ -79,7 +77,6 @@ const faqSections = [
   },
   {
     section: "Privacy & Compliance",
-    icon: "🛡️",
     questions: [
       {
         q: "Do you store my data?",
@@ -101,7 +98,6 @@ const faqSections = [
   },
   {
     section: "Technical",
-    icon: "🔍",
     questions: [
       {
         q: "How does the scraping work?",
@@ -157,9 +153,6 @@ export default function FAQPage() {
                 <div>
                   {/* Section header */}
                   <div className="flex items-center gap-3 mb-7">
-                    <span className="flex items-center justify-center w-10 h-10 rounded-xl text-xl shrink-0 bg-white/6">
-                      {section.icon}
-                    </span>
                     <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#7c3aed]">
                       {section.section}
                     </h2>
