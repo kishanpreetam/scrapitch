@@ -481,53 +481,14 @@ export default function LandingPage() {
               marginBottom: "32px",
               cursor: "default",
             }}>
-              {/* Left colored tag */}
-              <span style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "5px",
-                background: "linear-gradient(135deg, #7c3aed, #a855f7)",
-                borderRadius: "100px",
-                padding: "3px 10px",
-                fontSize: "11px",
-                fontWeight: "600",
-                color: "#ffffff",
-                letterSpacing: "0.02em",
-                textTransform: "uppercase",
-              }}>
-                <span style={{
-                  width: "5px",
-                  height: "5px",
-                  borderRadius: "50%",
-                  background: "#ffffff",
-                  opacity: 0.8,
-                  display: "inline-block",
-                  animation: "badge-pulse 2.5s ease-in-out infinite",
-                }} />
-                NEW
-              </span>
-              {/* Divider */}
-              <span style={{
-                width: "1px",
-                height: "12px",
-                background: "rgba(255,255,255,0.15)",
-                display: "inline-block",
-              }} />
-              {/* Text */}
               <span style={{
                 fontSize: "13px",
                 color: "rgba(255,255,255,0.65)",
                 fontWeight: "400",
                 letterSpacing: "0.01em",
               }}>
-                3 free email generations — no card required
+                Free to start. No card. No catch. →
               </span>
-              {/* Arrow */}
-              <span style={{
-                color: "rgba(255,255,255,0.35)",
-                fontSize: "13px",
-                marginLeft: "2px",
-              }}>→</span>
             </div>
 
             <h1 className="mx-auto max-w-4xl text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[1.02] mb-8">
