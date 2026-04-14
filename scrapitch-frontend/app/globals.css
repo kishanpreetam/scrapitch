@@ -17,10 +17,6 @@
   scroll-margin-top: 80px;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -143,13 +139,6 @@ input[type="password"]::-webkit-textfield-decoration-container {
   0%   { opacity: 1; }
   50%  { opacity: 0.75; }
   100% { opacity: 1; }
-}
-
-/* ── Smooth scroll (motion-safe) ─────────────────────── */
-@media (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-behavior: smooth;
-  }
 }
 
 /* ── Reduced motion overrides ─────────────────────────── */
