@@ -8,6 +8,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/lib/supabase";
 
 const navLinks = [
+  { href: "/",             label: "Home" },
   { href: "/how-it-works", label: "How It Works" },
   { href: "/use-cases",    label: "Use Cases" },
   { href: "/pricing",      label: "Pricing" },
