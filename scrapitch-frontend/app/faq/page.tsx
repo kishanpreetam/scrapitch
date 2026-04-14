@@ -2,6 +2,8 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import FaqAccordionItem from "@/components/FaqAccordionItem";
+import FaqContactCard from "@/components/FaqContactCard";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -155,9 +157,7 @@ export default function FAQPage() {
                 <div>
                   {/* Section header */}
                   <div className="flex items-center gap-3 mb-7">
-                    <span
-                      className="flex items-center justify-center w-10 h-10 rounded-xl text-xl shrink-0 bg-white/6"
-                    >
+                    <span className="flex items-center justify-center w-10 h-10 rounded-xl text-xl shrink-0 bg-white/6">
                       {section.icon}
                     </span>
                     <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#7c3aed]">
@@ -168,28 +168,7 @@ export default function FAQPage() {
                   {/* Accordion items */}
                   <div className="space-y-2">
                     {section.questions.map((faq) => (
-                      <details
-                        key={faq.q}
-                        className="group rounded-2xl border border-white/8 bg-[#141414] overflow-hidden"
-                        style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.16)"; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ""; (e.currentTarget as HTMLElement).style.boxShadow = ""; (e.currentTarget as HTMLElement).style.borderColor = ""; }}
-                      >
-                        <summary className="flex cursor-pointer items-start justify-between gap-4 px-5 py-5 list-none">
-                          <span className="font-semibold text-[#f5f5f0] group-hover:text-white transition-colors text-sm sm:text-base leading-snug">
-                            {faq.q}
-                          </span>
-                          <span
-                            className="text-[#6b6b6b] shrink-0 mt-0.5 transition-transform duration-300 group-open:rotate-180 text-base leading-none"
-                            aria-hidden="true"
-                          >
-                            ↓
-                          </span>
-                        </summary>
-                        <div className="px-5 pb-5 pt-3 text-sm text-[#a8a8a8] leading-relaxed border-t border-white/6">
-                          {faq.a}
-                        </div>
-                      </details>
+                      <FaqAccordionItem key={faq.q} q={faq.q} a={faq.a} />
                     ))}
                   </div>
                 </div>
@@ -202,28 +181,7 @@ export default function FAQPage() {
         <section className="border-t border-white/8 py-24 md:py-32 bg-[#111111]">
           <div className="mx-auto max-w-2xl px-4 text-center">
             <Reveal>
-              <div className="rounded-2xl border border-white/8 bg-[#141414] p-10 sm:p-14" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
-                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-3">
-                  Still have a question?
-                </h2>
-                <p className="text-[#a8a8a8] mb-10 text-base sm:text-lg">
-                  We respond within 24 hours.
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Link
-                    href="mailto:hello@scrapitch.com"
-                    className="w-full sm:w-auto rounded-xl border border-white/15 px-6 py-3 text-sm font-semibold text-[#d4d4d4] hover:border-white/25 hover:text-white transition-colors text-center"
-                  >
-                    Email us → hello@scrapitch.com
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="w-full sm:w-auto rounded-xl bg-[#7c3aed] px-6 py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-colors text-center"
-                  >
-                    Try Scrapitch free →
-                  </Link>
-                </div>
-              </div>
+              <FaqContactCard />
             </Reveal>
           </div>
         </section>
