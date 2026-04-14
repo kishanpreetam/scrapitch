@@ -206,8 +206,8 @@ export function HowItWorksStepList() {
               {/* Card */}
               <div
                 className="rounded-2xl border border-white/8 bg-[#141414] p-6 sm:p-7"
-                style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
+                style={{ transition: "all 0.2s ease" }}
+                onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}
               >
                 {/* Mobile: icon + number inline */}
@@ -260,8 +260,8 @@ export function HowItWorksFrameworkList() {
         <Reveal key={f.name} delay={i * 80}>
           <div
             className={`h-full flex flex-col rounded-2xl border ${f.border} ${f.bg} p-7`}
-            style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; }}
+            style={{ transition: "all 0.2s ease" }}
+            onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; }}
             onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
           >
             <div className="mb-4">

@@ -725,7 +725,7 @@ export default function LandingPage() {
                 <React.Fragment key={step.num}>
                   <div className="flex-1 relative reveal" style={{ transitionDelay: `${i * 100}ms` }}>
                     <span className="absolute -top-4 right-3 text-[110px] font-black select-none pointer-events-none leading-none z-0" style={{ color: "rgba(15,15,15,0.04)" }}>{step.num}</span>
-                    <div className="h-full rounded-xl border border-[#e8e4df] bg-white p-7 relative z-10" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)", borderLeft: `3px solid ${stepColors[i]}` }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
+                    <div className="h-full rounded-xl border border-[#e8e4df] bg-white p-7 relative z-10" style={{ transition: "all 0.2s ease", borderLeft: `3px solid ${stepColors[i]}` }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: `${stepColors[i]}1a`, color: stepColors[i] }}>
                         {step.icon}
                       </div>
@@ -747,7 +747,7 @@ export default function LandingPage() {
             <div className="lg:hidden grid sm:grid-cols-2 gap-5">
               {steps.map((step, i) => (
                 <Reveal key={step.num} delay={i * 80}>
-                  <div className="h-full relative rounded-xl border border-[#e8e4df] bg-white p-7" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)", borderLeft: `3px solid ${stepColors[i]}` }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
+                  <div className="h-full relative rounded-xl border border-[#e8e4df] bg-white p-7" style={{ transition: "all 0.2s ease", borderLeft: `3px solid ${stepColors[i]}` }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
                     <div className="absolute -top-4 right-4 text-[100px] font-black select-none pointer-events-none leading-none" style={{ color: "rgba(15,15,15,0.04)" }}>{step.num}</div>
                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl relative z-10" style={{ background: `${stepColors[i]}1a`, color: stepColors[i] }}>
                       {step.icon}
@@ -786,7 +786,7 @@ export default function LandingPage() {
                     className="h-full rounded-xl border border-[#e8e4df] bg-[#f7f6f3] p-8 hover:border-[#d4d0cb]"
                     onMouseMove={handleCardTilt}
                     onMouseLeave={handleCardTiltReset}
-                    style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)", borderTop: `2px solid ${card.topBorderColor}` }}
+                    style={{ transition: "all 0.2s ease", borderTop: `2px solid ${card.topBorderColor}` }}
                   >
                     {/* Tag / badge */}
                     {card.tag ? (
@@ -881,7 +881,7 @@ export default function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-6">
               {whoCards.slice(0, 3).map((card, i) => (
                 <Reveal key={card.role} delay={i * 70}>
-                  <div className="h-full rounded-xl border border-[#f0e8df] bg-white p-8" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "#e8d8cc"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+                  <div className="h-full rounded-xl border border-[#f0e8df] bg-white p-8" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "#e8d8cc"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-12 h-12 rounded-2xl bg-[#f7f1ea] flex items-center justify-center text-[#888888] shrink-0">
                         {card.icon}
@@ -906,7 +906,7 @@ export default function LandingPage() {
             <div className="flex flex-col md:flex-row gap-6 md:gap-8 md:justify-center">
               {whoCards.slice(3).map((card, i) => (
                 <Reveal key={card.role} delay={(i + 3) * 70} className="md:w-1/3">
-                  <div className="h-full rounded-xl border border-[#f0e8df] bg-white p-8" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "#e8d8cc"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+                  <div className="h-full rounded-xl border border-[#f0e8df] bg-white p-8" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "#e8d8cc"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
                     <div className="flex items-center gap-4 mb-6">
                       <div className="w-12 h-12 rounded-2xl bg-[#f7f1ea] flex items-center justify-center text-[#888888] shrink-0">
                         {card.icon}
@@ -943,8 +943,8 @@ export default function LandingPage() {
                 <Reveal key={v.variant} delay={i * 80}>
                   <div
                     className="relative overflow-hidden rounded-xl border border-[#d1fae5] bg-white p-8 h-full flex flex-col"
-                    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.08)", transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "#a3f0c7"; }}
+                    style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.08)", transition: "all 0.2s ease" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; e.currentTarget.style.borderColor = "#a3f0c7"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.08)"; e.currentTarget.style.borderColor = ""; }}
                   >
                     <div className="flex items-center justify-between mb-5">
@@ -996,7 +996,7 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 gap-8 items-start">
               {/* ── PRO CARD ── */}
               <Reveal delay={0}>
-                <div className="relative rounded-xl border border-[#e8e4df] bg-white overflow-hidden" style={{ borderTop: "4px solid #7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.1)", transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 16px rgba(124,58,237,0.1)"; }}>
+                <div className="relative rounded-xl border border-[#e8e4df] bg-white overflow-hidden" style={{ borderTop: "4px solid #7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.1)", transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 16px rgba(124,58,237,0.1)"; }}>
                   <div className="p-6 relative">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                       <span className="text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap" style={{ borderRadius: "6px", padding: "3px 10px", background: "#7c3aed" }}>
@@ -1026,7 +1026,7 @@ export default function LandingPage() {
 
               {/* ── GROWTH CARD ── */}
               <Reveal delay={80}>
-                <div className="rounded-xl border border-[#e8e4df] bg-white p-6" style={{ borderTop: "4px solid #fb923c", transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
+                <div className="rounded-xl border border-[#e8e4df] bg-white p-6" style={{ borderTop: "4px solid #fb923c", transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
                   <p className="text-sm font-bold uppercase tracking-widest text-[#888888] mb-4">Growth</p>
                   <div className="mb-1">
                     <span className="text-4xl font-black text-[#0f0f0f] leading-none">$15.99</span>
@@ -1080,8 +1080,8 @@ export default function LandingPage() {
                     className={`rounded-xl border overflow-hidden ${
                       openFaq === i ? "bg-white border-[#d4d0cb]" : "bg-[#f7f6f3] border-[#e8e4df] hover:border-[#d4d0cb]"
                     }`}
-                    style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }}
+                    style={{ transition: "all 0.2s ease" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
                   >
                     <button

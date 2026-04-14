@@ -116,7 +116,7 @@ function EmailCard({ variant }: { variant: Variant }) {
   };
 
   return (
-    <div className={`rounded-2xl border bg-[#141414] p-7 flex flex-col gap-4 ${CARD_BORDER[variant.variant] || "border-white/8"}`} style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
+    <div className={`rounded-2xl border bg-[#141414] p-7 flex flex-col gap-4 ${CARD_BORDER[variant.variant] || "border-white/8"}`} style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
       {/* Header row */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <span style={BADGE_STYLE[variant.variant] || { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#d4d4d4", border: "1px solid rgba(255,255,255,0.12)", background: "transparent" }}>
@@ -224,7 +224,7 @@ function FollowUpCard({ fu, index, total }: { fu: FollowUp; index: number; total
   };
 
   return (
-    <div className="rounded-xl border border-white/8 bg-[#141414] p-5 flex gap-5" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+    <div className="rounded-xl border border-white/8 bg-[#141414] p-5 flex gap-5" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
       <div className="shrink-0 flex flex-col items-center gap-1">
         <span style={
           fu.day === 3
@@ -361,7 +361,7 @@ export default function GeneratorPage() {
 
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 space-y-8">
           {/* Input card */}
-          <div className="rounded-2xl border border-white/8 bg-[#141414] p-8" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+          <div className="rounded-2xl border border-white/8 bg-[#141414] p-8" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
             <div className="mb-6">
               <label className="block text-sm font-semibold text-[#d4d4d4] mb-2">
                 Prospect website URL
@@ -577,7 +577,7 @@ export default function GeneratorPage() {
         {/* Bottom upgrade banner */}
         <div className="border-t border-white/6 py-8 bg-section-alt">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-xl border border-white/8 bg-[#141414] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+            <div className="rounded-xl border border-white/8 bg-[#141414] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
               <div>
                 <p className="text-sm font-semibold text-[#d4d4d4]">On the free tier?</p>
                 <p className="text-xs text-[#6b6b6b] mt-0.5">You get 3 generations free. Upgrade for unlimited access.</p>
