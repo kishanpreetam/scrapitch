@@ -25,7 +25,10 @@
       "Bash(python -c \"import os; print\\('~/scrapitch/.env:', os.path.exists\\(os.path.expanduser\\('~/scrapitch/.env'\\)\\)\\); print\\('cwd .env:', os.path.exists\\('.env'\\)\\); print\\('cwd:', os.getcwd\\(\\)\\)\")",
       "Bash(venv/Scripts/pip show:*)",
       "Bash(venv/Scripts/python -c \"from dotenv import load_dotenv; load_dotenv\\(\\); import os; key = os.getenv\\('ANTHROPIC_API_KEY'\\); print\\('Key found:', bool\\(key\\)\\); print\\('Key preview:', key[:20] + '...' if key else 'None'\\)\")",
-      "Bash(venv/Scripts/python -c ':*)"
+      "Bash(venv/Scripts/python -c ':*)",
+      "Bash(venv/Scripts/node_modules/.bin/next)",
+      "Bash(npx --no-install next build)",
+      "Bash(npx next:*)"
     ]
   }
 }
