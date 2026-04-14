@@ -19,9 +19,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "https://scrapitch.com",
+        "https://www.scrapitch.com",
         "http://localhost:3000",
-        "https://scrapitch.vercel.app",
-        os.getenv("FRONTEND_URL", ""),
     ],
     allow_credentials=True,
     allow_methods=["*"],
