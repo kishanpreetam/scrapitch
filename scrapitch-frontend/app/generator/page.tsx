@@ -1,13 +1,19 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { useAuth } from "@/components/AuthProvider";
+import { supabase } from "@/lib/supabase";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://web-production-f17a7.up.railway.app";
+
+type FollowUp = {
+  day: number;
+  subject: string;
+  body: string;
+};
 
 type Variant = {
   variant: string;
@@ -18,12 +24,6 @@ type Variant = {
   score_reasoning: string;
 };
 
-type FollowUp = {
-  day: number;
-  subject: string;
-  body: string;
-};
-
 type GenerateResponse = {
   url: string;
   company_name: string;
@@ -31,12 +31,11 @@ type GenerateResponse = {
   follow_up_sequence: FollowUp[];
 };
 
-// Badge inline styles per variant — A=purple, B=orange, C=blue
-const BADGE_STYLE: Record<string, React.CSSProperties> = {
-  A: { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#7c3aed", border: "1px solid rgba(124,58,237,0.25)", background: "transparent" },
-  B: { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#b45309", border: "1px solid rgba(180,83,9,0.25)", background: "transparent" },
-  C: { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#0369a1", border: "1px solid rgba(3,105,161,0.25)", background: "transparent" },
-};
+const BADGE = {
+  A: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+  B: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
+  C: "bg-pink-500/20 text-purple-300 border border-purple-500/30",
+} as Record<string, string>;
 
 const CARD_BORDER = {
   A: "border-blue-500/20 hover:border-blue-500/40",
@@ -44,62 +43,20 @@ const CARD_BORDER = {
   C: "border-purple-500/20 hover:border-purple-500/40",
 } as Record<string, string>;
 
-function extractDomain(url: string): string {
-  try {
-    return new URL(url).hostname.replace(/^www\./, "");
-  } catch {
-    return url;
-  }
-}
-
-function IconCopy({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect width="8" height="4" x="8" y="2" rx="1" ry="1" />
-      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
-    </svg>
-  );
-}
-
-function IconCheck({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
-  );
-}
-
 function ScoreBadge({ score }: { score: number }) {
-  const style: React.CSSProperties =
-    score >= 8
-      ? { borderRadius: "6px", padding: "3px 10px", fontSize: "13px", fontWeight: 600, color: "#16a34a", background: "#f0fdf4", border: "1px solid #bbf7d0" }
-      : score >= 5
-        ? { borderRadius: "6px", padding: "3px 10px", fontSize: "13px", fontWeight: 600, color: "#a16207", background: "#fefce8", border: "1px solid #fde68a" }
-        : { borderRadius: "6px", padding: "3px 10px", fontSize: "13px", fontWeight: 600, color: "#dc2626", background: "#fef2f2", border: "1px solid #fecaca" };
-  const label = score >= 8 ? "Elite" : score >= 5 ? "Strong" : "Needs work";
+  const cls =
+    score >= 9
+      ? "bg-emerald-500/20 text-emerald-400"
+      : score >= 7
+        ? "bg-yellow-500/20 text-yellow-400"
+        : score >= 5
+          ? "bg-orange-500/20 text-orange-400"
+          : "bg-red-500/20 text-red-400";
+  const label = score >= 9 ? "Elite" : score >= 7 ? "Strong" : score >= 5 ? "Average" : "Needs work";
   return (
-    <span style={style}>
+    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${cls}`}>
       {score}/10 · {label}
     </span>
-  );
-}
-
-function ScoreLegend() {
-  return (
-    <div className="flex items-center gap-4 text-xs text-white0">
-      <span className="flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block" />
-        8–10 Elite
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-yellow-400 inline-block" />
-        5–7 Strong
-      </span>
-      <span className="flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
-        1–4 Needs work
-      </span>
-    </div>
   );
 }
 
@@ -108,7 +65,8 @@ function EmailCard({ variant }: { variant: Variant }) {
   const [reasonOpen, setReasonOpen] = useState(false);
 
   const handleCopy = () => {
-    const text = `Subject: ${variant.subject_lines[0]}\n\n${variant.body}`;
+    const subject = variant.subject_lines[0] ?? "";
+    const text = `Subject: ${subject}\n\n${variant.body}`;
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -116,37 +74,41 @@ function EmailCard({ variant }: { variant: Variant }) {
   };
 
   return (
-    <div className={`rounded-2xl border bg-[#141414] p-7 flex flex-col gap-4 ${CARD_BORDER[variant.variant] || "border-white/8"}`} style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}>
+    <div
+      className={`rounded-2xl border bg-zinc-900/60 p-7 flex flex-col gap-4 transition-colors ${CARD_BORDER[variant.variant] || "border-zinc-700"}`}
+    >
       {/* Header row */}
       <div className="flex items-center justify-between flex-wrap gap-2">
-        <span style={BADGE_STYLE[variant.variant] || { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#d4d4d4", border: "1px solid rgba(255,255,255,0.12)", background: "transparent" }}>
-          Variant {variant.variant} · {variant.name}
+        <span
+          className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${BADGE[variant.variant] || "bg-zinc-700 text-zinc-300"}`}
+        >
+          Variant {variant.variant} — {variant.name}
         </span>
         <ScoreBadge score={variant.score} />
       </div>
 
       {/* Subject lines */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b] mb-2">
-          Subject lines (pick one)
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">
+          Subject line options
         </p>
-        <div className="space-y-1.5">
-          {variant.subject_lines.map((sl, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-[#6b6b6b] w-4 shrink-0">{i + 1}</span>
-              <p className="font-semibold text-[#f0f0f0] leading-snug text-sm">{sl}</p>
-            </div>
+        <ol className="space-y-1.5">
+          {variant.subject_lines.map((s, i) => (
+            <li key={i} className="flex gap-2">
+              <span className="text-xs font-bold text-zinc-600 mt-0.5 shrink-0">{i + 1}.</span>
+              <span className="font-semibold text-zinc-100 leading-snug text-sm">{s}</span>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
 
       {/* Body */}
       <div className="flex-1">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b] mb-1">
+        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-1">
           Email body
         </p>
-        <div className="rounded-lg bg-[#1c1c1c] border border-white/8 p-4">
-          <p className="text-sm text-[#d4d4d4] leading-relaxed whitespace-pre-wrap">
+        <div className="rounded-lg bg-zinc-950/60 border border-zinc-800 p-4">
+          <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
             {variant.body}
           </p>
         </div>
@@ -156,13 +118,15 @@ function EmailCard({ variant }: { variant: Variant }) {
       <div>
         <button
           onClick={() => setReasonOpen(!reasonOpen)}
-          className="flex items-center gap-2 text-xs font-medium text-white0 hover:text-[#d4d4d4] transition-colors"
+          className="flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
         >
-          <span className={`transition-transform inline-block ${reasonOpen ? "rotate-90" : ""}`}>▶</span>
+          <span className={`transition-transform ${reasonOpen ? "rotate-90" : ""}`}>
+            ▶
+          </span>
           Score reasoning
         </button>
         {reasonOpen && (
-          <p className="mt-2 text-xs text-[#a8a8a8] leading-relaxed border-l-2 border-white/15 pl-3">
+          <p className="mt-2 text-xs text-zinc-500 leading-relaxed border-l-2 border-zinc-700 pl-3">
             {variant.score_reasoning}
           </p>
         )}
@@ -171,108 +135,72 @@ function EmailCard({ variant }: { variant: Variant }) {
       {/* Copy button */}
       <button
         onClick={handleCopy}
-        className={`w-full rounded-lg py-2.5 text-sm font-semibold transition-all flex items-center justify-center gap-2 border ${
+        className={`w-full rounded-lg border py-2.5 text-sm font-semibold transition-all ${
           copied
             ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-            : "border-purple-500/30 bg-purple-500/5 text-[#d4d4d4] hover:bg-purple-500/10 hover:text-purple-300 hover:border-purple-500/50"
+            : "border-zinc-700 text-zinc-300 hover:border-purple-400/50 hover:text-purple-300"
         }`}
       >
-        {copied ? <IconCheck /> : <IconCopy />}
-        {copied ? "Copied!" : "Copy email"}
+        {copied ? "✓ Copied to clipboard" : "📋 Copy email"}
       </button>
     </div>
   );
 }
 
-function SkeletonCard() {
-  return (
-    <div className="rounded-2xl border border-white/8 bg-[#141414] p-7 flex flex-col gap-4 animate-pulse">
-      <div className="flex items-center justify-between">
-        <div className="h-6 w-36 bg-white/8 rounded-full" />
-        <div className="h-6 w-20 bg-white/8 rounded-full" />
-      </div>
-      <div className="space-y-2">
-        <div className="h-3 w-28 bg-white/8 rounded mb-3" />
-        <div className="h-4 w-full bg-white/6 rounded" />
-        <div className="h-4 w-4/5 bg-white/6 rounded" />
-        <div className="h-4 w-3/4 bg-white/6 rounded" />
-      </div>
-      <div>
-        <div className="h-3 w-20 bg-white/8 rounded mb-2" />
-        <div className="rounded-lg bg-[#1c1c1c] border border-white/8 p-4 space-y-2">
-          <div className="h-3 w-full bg-white/6 rounded" />
-          <div className="h-3 w-11/12 bg-white/6 rounded" />
-          <div className="h-3 w-4/5 bg-white/6 rounded" />
-          <div className="h-3 w-3/4 bg-white/6 rounded" />
-          <div className="h-3 w-2/3 bg-white/6 rounded" />
-        </div>
-      </div>
-      <div className="h-10 w-full bg-white/6 rounded-lg mt-auto" />
-    </div>
-  );
-}
+function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
+  const [open, setOpen] = useState(false);
 
-function FollowUpCard({ fu, index, total }: { fu: FollowUp; index: number; total: number }) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    const text = `Subject: ${fu.subject}\n\n${fu.body}`;
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+  if (!sequence || sequence.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-white/8 bg-[#141414] p-5 flex gap-5" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
-      <div className="shrink-0 flex flex-col items-center gap-1">
-        <span style={
-          fu.day === 3
-            ? { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#0369a1", border: "1px solid rgba(3,105,161,0.25)", background: "transparent" }
-            : fu.day === 7
-              ? { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#a16207", border: "1px solid rgba(161,98,7,0.25)", background: "transparent" }
-              : { borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#555555", border: "1px solid rgba(0,0,0,0.12)", background: "transparent" }
-        }>
-          Day {fu.day}
-        </span>
-        {index < total - 1 && <div className="w-px flex-1 bg-white/8 mt-2" />}
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="min-w-0">
-            <p className="text-xs font-semibold text-white0 uppercase tracking-widest mb-1">Subject</p>
-            <p className="font-semibold text-[#f0f0f0] text-sm leading-snug">{fu.subject}</p>
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex items-center justify-between w-full text-left"
+      >
+        <div className="flex items-center gap-3">
+          <span className={`text-zinc-500 transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
+          <div>
+            <p className="text-sm font-semibold text-zinc-200">Follow-up sequence</p>
+            <p className="text-xs text-zinc-600 mt-0.5">{sequence.length} follow-up emails ready to send</p>
           </div>
-          <button
-            onClick={handleCopy}
-            className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-              copied
-                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-                : "border-purple-500/30 bg-purple-500/5 text-[#a8a8a8] hover:text-purple-300 hover:bg-purple-500/10 hover:border-purple-500/50"
-            }`}
-          >
-            {copied ? <IconCheck size={12} /> : <IconCopy size={12} />}
-            {copied ? "Copied!" : "Copy"}
-          </button>
         </div>
-        <div className="rounded-lg bg-[#1c1c1c] border border-white/8 p-3">
-          <p className="text-sm text-[#d4d4d4] leading-relaxed whitespace-pre-wrap">{fu.body}</p>
+        <span className="text-xs font-medium text-zinc-500 shrink-0 ml-4">
+          {open ? "Collapse" : "Expand"}
+        </span>
+      </button>
+
+      {open && (
+        <div className="mt-5 space-y-4">
+          {sequence.map((fu, i) => (
+            <div key={i} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 bg-zinc-800 px-2 py-0.5 rounded-full">
+                  Follow-up {i + 1} · Day {fu.day}
+                </span>
+              </div>
+              <p className="text-xs font-semibold text-zinc-400 mb-2">
+                Subject: <span className="text-zinc-200">{fu.subject}</span>
+              </p>
+              <p className="text-sm text-zinc-400 leading-relaxed whitespace-pre-wrap">
+                {fu.body}
+              </p>
+            </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
 export default function GeneratorPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-  const stageTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.replace("/signup");
-    }
-  }, [user, authLoading, router]);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) router.replace("/signup");
+    });
+  }, [router]);
 
   const [url, setUrl] = useState("");
   const [framework, setFramework] = useState("All 3 Variants");
@@ -282,8 +210,6 @@ export default function GeneratorPage() {
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState("");
   const [result, setResult] = useState<GenerateResponse | null>(null);
-  const [usedIndustry, setUsedIndustry] = useState("");
-  const [wasAutoDetect, setWasAutoDetect] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasAttempted, setHasAttempted] = useState(false);
 
@@ -297,25 +223,25 @@ export default function GeneratorPage() {
     setError(null);
     setResult(null);
     setLoading(true);
-    setLoadingStage("Scraping website…");
-
-    // Clear any leftover stage timers
-    stageTimers.current.forEach(clearTimeout);
-    stageTimers.current = [
-      setTimeout(() => setLoadingStage("Analyzing content…"), 4000),
-      setTimeout(() => setLoadingStage("Writing emails…"), 9000),
-    ];
+    setLoadingStage("Analyzing website...");
 
     const normalised =
       url.startsWith("http://") || url.startsWith("https://")
         ? url.trim()
         : `https://${url.trim()}`;
 
+    const stageTimer = setTimeout(() => setLoadingStage("Generating emails…"), 4000);
+
     try {
       const res = await fetch(`${API_BASE}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: normalised, framework, tone, industry }),
+        body: JSON.stringify({
+          url: normalised,
+          framework,
+          tone,
+          industry,
+        }),
       });
 
       if (!res.ok) {
@@ -325,20 +251,16 @@ export default function GeneratorPage() {
 
       const data: GenerateResponse = await res.json();
       setResult(data);
-      setUsedIndustry(industry === "Auto-detect" ? "" : industry);
-      setWasAutoDetect(industry === "Auto-detect");
     } catch (err: unknown) {
       if (err instanceof TypeError && err.message.includes("fetch")) {
-        setError(
-          "Cannot connect to the API. Make sure the FastAPI server is running:\n\nuvicorn main:app --reload"
-        );
+        setError("Failed to connect. Please try again.");
       } else if (err instanceof Error) {
         setError(err.message);
       } else {
         setError("An unexpected error occurred.");
       }
     } finally {
-      stageTimers.current.forEach(clearTimeout);
+      clearTimeout(stageTimer);
       setLoading(false);
       setLoadingStage("");
     }
@@ -349,11 +271,11 @@ export default function GeneratorPage() {
       <Navbar />
       <main className="pt-20 min-h-screen">
         {/* Header */}
-        <section className="border-b border-white/6 py-16 sm:py-20 text-center bg-section-alt">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-white mb-4">
+        <section className="border-b border-zinc-800/60 py-16 sm:py-20 text-center">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-zinc-50 mb-4">
             Generate Cold Emails
           </h1>
-          <p className="text-[#a8a8a8] text-xl max-w-xl mx-auto">
+          <p className="text-zinc-400 text-xl max-w-xl mx-auto">
             Paste a prospect&apos;s URL and get 3 personalized emails with
             reply-rate scores in seconds.
           </p>
@@ -361,9 +283,10 @@ export default function GeneratorPage() {
 
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 space-y-8">
           {/* Input card */}
-          <div className="rounded-2xl border border-white/8 bg-[#141414] p-8" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-8">
+            {/* URL input */}
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-[#d4d4d4] mb-2">
+              <label className="block text-sm font-semibold text-zinc-300 mb-2">
                 Prospect website URL
               </label>
               <input
@@ -372,27 +295,28 @@ export default function GeneratorPage() {
                 onChange={(e) => setUrl(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
                 placeholder="https://yourprospect.com"
-                className="w-full rounded-xl border border-white/12 bg-[#1c1c1c] px-4 py-3 text-[#f0f0f0] placeholder-[#6b6b6b] focus:border-[#a855f7]/50 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/15 transition-all text-base"
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-purple-400/60 focus:outline-none focus:ring-2 focus:ring-purple-400/20 transition-all text-base"
               />
               <div className="mt-2.5 flex items-center gap-2">
-                <span style={{ borderRadius: "6px", padding: "3px 10px", fontSize: "11px", fontWeight: 500, letterSpacing: "0.02em", color: "#a16207", border: "1px solid rgba(161,98,7,0.25)", background: "transparent" }}>
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-400/20 bg-purple-500/[0.06] px-2.5 py-1 text-[11px] font-semibold text-purple-400/80 uppercase tracking-wide">
                   Coming soon
                 </span>
-                <span className="text-xs text-[#6b6b6b]">
-                  LinkedIn &amp; Twitter context: for now, Scrapitch scrapes the company website for full personalization.
+                <span className="text-xs text-zinc-600">
+                  🔗 LinkedIn &amp; Twitter context — for now, Scrapitch scrapes the company website for full personalization.
                 </span>
               </div>
             </div>
 
+            {/* Dropdowns */}
             <div className="grid sm:grid-cols-3 gap-4 mb-8">
               <div>
-                <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
                   Framework
                 </label>
                 <select
                   value={framework}
                   onChange={(e) => setFramework(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-white/12 bg-[#1c1c1c] px-3 text-sm text-white focus:border-[#a855f7]/50 focus:outline-none focus:ring-1 focus:ring-[#a855f7]/15 transition-all"
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-purple-400/60 focus:outline-none focus:ring-1 focus:ring-purple-400/20 transition-all"
                 >
                   <option>All 3 Variants</option>
                   <option>The Direct (PAS)</option>
@@ -401,13 +325,13 @@ export default function GeneratorPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
                   Tone
                 </label>
                 <select
                   value={tone}
                   onChange={(e) => setTone(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-white/12 bg-[#1c1c1c] px-3 text-sm text-white focus:border-[#a855f7]/50 focus:outline-none focus:ring-1 focus:ring-[#a855f7]/15 transition-all"
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-purple-400/60 focus:outline-none focus:ring-1 focus:ring-purple-400/20 transition-all"
                 >
                   <option>Professional</option>
                   <option>Casual</option>
@@ -416,13 +340,13 @@ export default function GeneratorPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-2">
+                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
                   Your Industry
                 </label>
                 <select
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-white/12 bg-[#1c1c1c] px-3 text-sm text-white focus:border-[#a855f7]/50 focus:outline-none focus:ring-1 focus:ring-[#a855f7]/15 transition-all"
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-purple-400/60 focus:outline-none focus:ring-1 focus:ring-purple-400/20 transition-all"
                 >
                   <option>Auto-detect</option>
                   <option>B2B SaaS</option>
@@ -441,18 +365,19 @@ export default function GeneratorPage() {
               </div>
             </div>
 
+            {/* Generate button */}
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="w-full rounded-xl bg-linear-to-r from-[#7c3aed] to-[#a855f7] py-3.5 text-base font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3.5 text-base font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-3">
                   <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  <span>{loadingStage || "Generating..."}</span>
+                  <span className="animate-pulse">{loadingStage || "Generating..."}</span>
                 </span>
               ) : (
-                "Generate Cold Emails"
+                "⚡ Generate Cold Emails"
               )}
             </button>
           </div>
@@ -465,64 +390,23 @@ export default function GeneratorPage() {
             </div>
           )}
 
-          {/* Loading skeleton */}
-          {loading && (
-            <div className="space-y-6">
-              <div className="text-center py-2">
-                <p className="text-[#d4d4d4] font-medium mb-3">
-                  {loadingStage || "Scraping website and writing emails..."}
-                </p>
-                <div className="flex items-center justify-center gap-1.5">
-                  {[0, 1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="h-1.5 rounded-full bg-purple-500/50 animate-pulse"
-                      style={{
-                        width: i === 2 ? "2rem" : "0.5rem",
-                        animationDelay: `${i * 150}ms`,
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="grid md:grid-cols-3 gap-5">
-                <SkeletonCard />
-                <SkeletonCard />
-                <SkeletonCard />
-              </div>
-            </div>
-          )}
-
           {/* Results */}
           {result && (
             <div className="space-y-6">
-              {/* Results header */}
-              <div>
-                <h2 className="text-xl font-bold text-white">
-                  3 emails for{" "}
-                  <span className="text-purple-400">{result.company_name}</span>
-                </h2>
-                <div className="flex items-center gap-2 mt-1 flex-wrap text-sm text-white0">
-                  <span>{extractDomain(result.url)}</span>
-                  {(usedIndustry || wasAutoDetect) && (
-                    <>
-                      <span className="text-[#6b6b6b]">·</span>
-                      <span className="text-[#a8a8a8] font-medium">
-                        {usedIndustry || "Auto-detected industry"}
-                      </span>
-                      {wasAutoDetect && (
-                        <>
-                          <span className="text-[#6b6b6b]">·</span>
-                          <span className="text-xs text-[#6b6b6b] italic">Auto-detected</span>
-                        </>
-                      )}
-                    </>
-                  )}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold text-zinc-50">
+                    Results for{" "}
+                    <span className="text-purple-400">{result.company_name}</span>
+                  </h2>
+                  <p className="text-sm text-zinc-500 mt-0.5">
+                    {result.url}
+                  </p>
+                </div>
+                <div className="text-xs text-zinc-600 text-right hidden sm:block">
+                  🟢 9–10 Elite &nbsp;·&nbsp; 🟡 7–8 Strong &nbsp;·&nbsp; 🟠 5–6 Average &nbsp;·&nbsp; 🔴 1–4 Needs work
                 </div>
               </div>
-
-              {/* Inline score legend */}
-              <ScoreLegend />
 
               <div className="grid md:grid-cols-3 gap-5">
                 {result.variants.map((v) => (
@@ -530,44 +414,22 @@ export default function GeneratorPage() {
                 ))}
               </div>
 
-              <p className="text-xs text-[#6b6b6b] text-center">
+              <FollowUpSection sequence={result.follow_up_sequence} />
+
+              <p className="text-xs text-zinc-600 text-center">
                 Tip: Edit before sending. The AI gives you a strong start — your voice makes it land.
               </p>
-
-              {/* Follow-up sequence */}
-              {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
-                <div className="mt-4">
-                  <h3 className="text-lg font-bold text-[#f0f0f0] mb-4">
-                    Follow-up Sequence
-                    <span className="ml-2 text-xs font-normal text-white0">Send these if no reply</span>
-                  </h3>
-                  <div className="space-y-3">
-                    {result.follow_up_sequence.map((fu, i) => (
-                      <FollowUpCard
-                        key={i}
-                        fu={fu}
-                        index={i}
-                        total={result.follow_up_sequence.length}
-                      />
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           )}
 
           {/* Empty state */}
           {!result && !loading && !error && (
-            <div className="rounded-2xl border border-dashed border-white/8 py-20 text-center bg-[#141414]">
-              <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <p className="text-[#f5f5f0] font-semibold mb-2">
+            <div className="rounded-2xl border border-dashed border-zinc-800 py-20 text-center">
+              <p className="text-5xl mb-4">📬</p>
+              <p className="text-zinc-400 font-medium mb-2">
                 Your emails will appear here
               </p>
-              <p className="text-sm text-[#fffff0]/35">
+              <p className="text-sm text-zinc-600">
                 Paste any prospect URL above and hit Generate
               </p>
             </div>
@@ -575,16 +437,16 @@ export default function GeneratorPage() {
         </div>
 
         {/* Bottom upgrade banner */}
-        <div className="border-t border-white/6 py-8 bg-section-alt">
+        <div className="border-t border-zinc-800/60 py-8">
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-xl border border-white/8 bg-[#141414] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3" style={{ transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}>
+            <div className="rounded-xl border border-purple-400/20 bg-purple-500/[0.06] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
               <div>
-                <p className="text-sm font-semibold text-[#d4d4d4]">On the free tier?</p>
-                <p className="text-xs text-[#6b6b6b] mt-0.5">You get 3 generations free. Upgrade for unlimited access.</p>
+                <p className="text-sm font-semibold text-zinc-300">On the free tier?</p>
+                <p className="text-xs text-zinc-500 mt-0.5">You get 3 generations free. Upgrade for unlimited access.</p>
               </div>
               <Link
                 href="/pricing"
-                className="shrink-0 rounded-lg bg-[#7c3aed] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#6d28d9] transition-colors whitespace-nowrap"
+                className="shrink-0 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-5 py-2.5 text-sm font-bold text-white hover:opacity-90 transition-opacity whitespace-nowrap"
               >
                 Upgrade for $9.99/mo →
               </Link>
