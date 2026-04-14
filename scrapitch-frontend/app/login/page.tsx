@@ -57,25 +57,19 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4 py-16">
-      {/* Radial glows */}
-      <div className="pointer-events-none fixed inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[700px] rounded-full bg-purple-600/15 blur-[120px]" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[300px] w-[400px] rounded-full bg-pink-500/10 blur-[100px]" />
-      </div>
-
       <div className="relative w-full max-w-md">
-        <div className="rounded-2xl border border-white/10 bg-zinc-900/70 backdrop-blur-sm p-10 sm:p-12">
+        <div className="rounded-2xl border border-white/10 bg-[#141414] p-10 sm:p-12">
 
           {/* Logo */}
           <div className="text-center mb-8">
             <Link href="/" className="inline-flex items-center gap-1.5 mb-6">
               <span className="text-2xl font-black tracking-tight">
                 <span className="text-white">Scrap</span>
-                <span className="bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">itch</span>
+                <span className="text-[#a855f7]">itch</span>
               </span>
             </Link>
-            <h1 className="text-2xl font-black text-zinc-50">Welcome back</h1>
-            <p className="text-sm text-zinc-500 mt-1">Log in to your account</p>
+            <h1 className="text-2xl font-black text-white">Welcome back</h1>
+            <p className="text-sm text-[#6b6b6b] mt-1">Log in to your account</p>
           </div>
 
           {/* Google OAuth */}
@@ -96,7 +90,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-xs text-zinc-600 font-medium">or</span>
+            <span className="text-xs text-[#6b6b6b] font-medium">or</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
@@ -109,19 +103,19 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Email</label>
+              <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-1.5">Email</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder-zinc-600 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all"
+                className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder-[#6b6b6b] focus:border-[#a855f7]/50 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/15 transition-all"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5">Password</label>
+              <label className="block text-xs font-semibold text-[#a8a8a8] uppercase tracking-wider mb-1.5">Password</label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -129,15 +123,15 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 pr-11 text-sm text-white placeholder-zinc-600 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all"
+                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 pr-11 text-sm text-white placeholder-[#6b6b6b] focus:border-[#a855f7]/50 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/15 transition-all"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors">
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a8a8a8] hover:text-[#d4d4d4] transition-colors">
                   <EyeIcon open={showPassword} />
                 </button>
               </div>
               <div className="mt-1.5 text-right">
-                <Link href="#" className="text-xs text-zinc-600 hover:text-zinc-400 transition-colors">
+                <Link href="#" className="text-xs text-[#6b6b6b] hover:text-[#a8a8a8] transition-colors">
                   Forgot password?
                 </Link>
               </div>
@@ -146,7 +140,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full rounded-xl bg-linear-to-r from-[#7c3aed] to-[#a855f7] py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -159,9 +153,9 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-zinc-600">
+          <p className="mt-6 text-center text-sm text-[#6b6b6b]">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
+            <Link href="/signup" className="font-semibold text-[#a855f7] hover:opacity-80 transition-opacity">
               Sign up free
             </Link>
           </p>
