@@ -38,8 +38,8 @@ export function PricingCardFree() {
   return (
     <div
       className="rounded-2xl border border-white/8 bg-[#141414] p-8 flex flex-col h-full"
-      style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
+      style={{ transition: "all 0.2s ease" }}
+      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}
     >
       <div className="mb-6">
@@ -73,8 +73,8 @@ export function PricingCardPro() {
   return (
     <div
       className="relative rounded-2xl border border-white/8 bg-[#141414] overflow-hidden flex flex-col h-full"
-      style={{ borderTop: "2px solid #7c3aed", transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
+      style={{ borderTop: "2px solid #7c3aed", transition: "all 0.2s ease" }}
+      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}
     >
       <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
@@ -116,8 +116,8 @@ export function PricingCardGrowth() {
   return (
     <div
       className="rounded-2xl border border-white/8 bg-[#141414] p-8 flex flex-col h-full"
-      style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
+      style={{ transition: "all 0.2s ease" }}
+      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}
     >
       <div className="mb-6">

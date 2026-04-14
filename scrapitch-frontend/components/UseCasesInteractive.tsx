@@ -30,8 +30,8 @@ export function UseCaseCard({ uc, accent, isEven }: { uc: UseCase; accent: Accen
   return (
     <div
       className={`grid lg:grid-cols-2 gap-10 lg:gap-16 items-start rounded-2xl border ${accent.border} ${accent.bg} p-8 sm:p-10 lg:p-12`}
-      style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }}
+      style={{ transition: "all 0.2s ease" }}
+      onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }}
       onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; }}
     >
       {/* Content column — alternates left/right on desktop */}
@@ -140,8 +140,8 @@ export function SendingToolGrid() {
         <div
           key={tool.name}
           className="flex flex-col items-center gap-3 rounded-2xl border border-white/8 bg-[#141414] p-6"
-          style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
-          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
+          style={{ transition: "all 0.2s ease" }}
+          onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)"; }}
           onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = ""; e.currentTarget.style.borderColor = ""; }}
         >
           <span className="text-2xl">{tool.icon}</span>

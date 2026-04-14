@@ -6,9 +6,9 @@ export default function FaqContactCard() {
   return (
     <div
       className="rounded-2xl border border-white/8 bg-[#141414] p-10 sm:p-14"
-      style={{ transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)" }}
+      style={{ transition: "all 0.2s ease" }}
       onMouseEnter={e => {
-        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.transform = "translateY(-2px)";
         e.currentTarget.style.boxShadow = "0 12px 40px rgba(124,58,237,0.12), 0 4px 12px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1)";
         e.currentTarget.style.borderColor = "rgba(255,255,255,0.16)";
       }}
