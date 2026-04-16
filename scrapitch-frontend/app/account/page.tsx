@@ -423,14 +423,14 @@ export default function AccountPage() {
                             href="/pricing"
                             className="inline-block rounded-xl bg-linear-to-r from-[#7c3aed] to-[#a855f7] px-6 py-3 text-sm font-bold text-white hover:opacity-90 hover:shadow-[0_0_24px_rgba(168,85,247,0.35)] transition-all"
                           >
-                            Upgrade for $9.99/mo →
+                            Upgrade for $9.99/mo
                           </Link>
                         </div>
                       )}
 
                       {profile?.plan === "pro" && (
                         <div className="rounded-xl border border-white/10 bg-[#1c1c1c]/40 p-5">
-                          <p className="text-sm text-[#d4d4d4] font-medium mb-1">Pro plan — billed monthly</p>
+                          <p className="text-sm text-[#d4d4d4] font-medium mb-1">Pro plan, billed monthly</p>
                           <p className="text-sm text-white0 mb-4">
                             Billing is managed through Stripe. Cancel anytime.
                           </p>

@@ -29,13 +29,13 @@ export default function FaqContactCard() {
           href="mailto:hello@scrapitch.com"
           className="w-full sm:w-auto rounded-xl border border-white/15 px-6 py-3 text-sm font-semibold text-[#d4d4d4] hover:border-white/25 hover:text-white transition-colors text-center"
         >
-          Email us → hello@scrapitch.com
+          Email us: hello@scrapitch.com
         </Link>
         <Link
           href="/signup"
           className="w-full sm:w-auto rounded-xl bg-[#7c3aed] px-6 py-3 text-sm font-bold text-white hover:bg-[#6d28d9] transition-colors text-center"
         >
-          Try Scrapitch free →
+          Try Scrapitch free
         </Link>
       </div>
     </div>
