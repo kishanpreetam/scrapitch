@@ -17,17 +17,17 @@ const useCases = [
     audience: "SDR at a SaaS company",
     headline: "Hit your meeting quota without burning 4 hours on research",
     problem:
-      "You're supposed to be selling. Instead you're reading LinkedIn profiles, Googling company news, and copying homepage copy into ChatGPT. The math of 80 touches a week doesn't work at 30 minutes of research per account.",
+      "You're supposed to be selling. Instead you're reading LinkedIn profiles, Googling company news, and copying homepage copy into AI tools. The math of 80 touches a week doesn't work at 30 minutes of research per account.",
     solution:
-      "Scrapitch compresses prospect research from 30 minutes to 10 seconds. You get personalized copy that sounds like you researched all morning, because the AI did.",
+      "Scrapitch's Research Agent compresses prospect research from 30 minutes to 10 seconds. The Writing Agent generates personalized copy. The Scoring Agent tells you which variant to send first.",
     outcomes: [
       "Research 50 accounts in the time it used to take to prep 5",
       "Emails that reference the prospect's actual language, not a template",
-      "Scoring tells you which variant to send first",
+      "An independent Scoring Agent tells you which variant to send first",
     ],
     snippet: {
       subject: "Your onboarding flow question",
-      body: "Noticed [Company] recently expanded into enterprise accounts based on your updated pricing page. Most teams at that stage hit friction around onboarding time-to-value. We cut that by 40% for similar SaaS teams. Worth a quick call?",
+      body: "Noticed [Company] recently expanded into enterprise accounts based on your updated pricing page. Most teams at that stage hit friction around onboarding time to value. We cut that by 40% for similar SaaS teams. Worth a quick call?",
     },
     cta: "Try it for SDRs",
     accentColor: "blue",
@@ -39,14 +39,14 @@ const useCases = [
     problem:
       "You're great at delivery. You're not great at consistent outbound. The pipeline runs dry between referrals, templates feel generic, and you don't have time to personally research every prospect.",
     solution:
-      "Scrapitch does the research. Paste your prospect's URL, get 3 emails that reference exactly what they do and who they serve. Personalized without the manual work.",
+      "Three agents do the research. Paste your prospect's URL. Agent 1 reads their site. Agent 2 writes 3 emails that reference exactly what they do and who they serve. Agent 3 scores each one.",
     outcomes: [
       "20+ personalized emails per hour without a researcher",
       "Emails reference the prospect's real value prop and tone",
-      "A/B test 3 frameworks without writing 3 emails from scratch",
+      "Test 3 frameworks without writing 3 emails from scratch",
     ],
     snippet: {
-      subject: "Your e-commerce client results",
+      subject: "Your ecommerce client results",
       body: "Just read through your case study on the DTC brand. Impressive 3x revenue result. Curious whether you're personalizing your own outreach or using templates. Happy to show what's working for similar agencies.",
     },
     cta: "Try it for Agency Owners",
@@ -62,12 +62,12 @@ const useCases = [
       "Scrapitch levels the playing field. You get the same quality personalized outreach that big agencies use, without hiring an SDR or spending hours on manual research.",
     outcomes: [
       "Outreach that sounds like you've studied the prospect's business",
-      "Costs less than one hour of your billable time",
+      "Takes less time than writing one email manually",
       "The Curious variant is built for solo practitioners. Feels human.",
     ],
     snippet: {
       subject: "Noticed your positioning shift",
-      body: "Saw you recently repositioned from 'brand strategy' to 'revenue-led brand building'. That's a sharp move for the current market. I help consultants with exactly that kind of messaging clarity. Open to a 15-min conversation?",
+      body: "Saw you recently repositioned from 'brand strategy' to 'revenue led brand building'. That's a sharp move for the current market. I help consultants with exactly that kind of messaging clarity. Open to a 15 minute conversation?",
     },
     cta: "Try it for Freelancers",
     accentColor: "purple",
@@ -77,17 +77,17 @@ const useCases = [
     audience: "Recruiter reaching out to companies",
     headline: "Reach hiring managers with emails they actually read",
     problem:
-      '"We specialize in placing [role] candidates" lands in the trash. Hiring managers delete 90% of recruiter emails before the second sentence. You need to sound like you\'ve done homework, not like a mass-blast.',
+      '"We specialize in placing [role] candidates" lands in the trash. Hiring managers delete 90% of recruiter emails before the second sentence. You need to sound like you\'ve done homework, not like a mass blast.',
     solution:
-      "Scrapitch reads the company's website to understand their tech stack, culture language, team positioning, and growth signals. Your outreach references what they actually care about.",
+      "Scrapitch's Research Agent reads the company's website to understand their tech stack, culture language, team positioning, and growth signals. The Writing Agent crafts outreach that references what they actually care about.",
     outcomes: [
       'Emails that pass the "did they actually research us?" test',
       "Reference the company's real hiring context and positioning",
-      "Industry-specific angle: detect tech/SaaS vs manufacturing vs legal",
+      "Industry specific angle: detect tech, SaaS, manufacturing, or legal automatically",
     ],
     snippet: {
       subject: "Your eng team growth signal",
-      body: "Saw [Company] launched two new product lines and your engineering job board jumped from 3 to 11 open roles last month. We place senior engineers in exactly that growth stage. Worth a 10-minute call this week?",
+      body: "Saw [Company] launched two new product lines and your engineering job board jumped from 3 to 11 open roles last month. We place senior engineers in exactly that growth stage. Worth a 10 minute call this week?",
     },
     cta: "Try it for Recruiters",
     accentColor: "purple",
@@ -99,15 +99,15 @@ const useCases = [
     problem:
       "You're doing everything: product, hiring, customer success, and now outbound. You know cold email works but you can't spend 45 minutes crafting a personalized pitch to one prospect.",
     solution:
-      "Scrapitch gives you a founder-grade cold email in 10 seconds. Paste the URL, pick your tone, copy the best variant, and send. The whole sequence, initial email plus 3 follow-ups, is ready before your next meeting.",
+      "Scrapitch gives you a founder grade cold email in 10 seconds. Paste the URL, copy the best variant, and send. The whole sequence, initial email plus 3 follow ups, is ready before your next meeting.",
     outcomes: [
-      "Full outreach sequence (email + follow-ups) ready in under 2 minutes",
+      "Full outreach sequence (email plus follow ups) ready in under 2 minutes",
       "Sounds like you wrote it after reading their site carefully",
       "Handles research so you can spend your time on strategy, not writing",
     ],
     snippet: {
       subject: "Your API pricing page",
-      body: "Read through your developer docs and noticed you switched to usage-based pricing last quarter. Smart move for PLG. We help early-stage SaaS teams with exactly that kind of growth infrastructure. Have 15 minutes this week?",
+      body: "Read through your developer docs and noticed you switched to usage based pricing last quarter. Smart move for PLG. We help early stage SaaS teams with exactly that kind of growth infrastructure. Have 15 minutes this week?",
     },
     cta: "Try it for Founders",
     accentColor: "amber",
@@ -248,7 +248,7 @@ export default function UseCasesPage() {
                   <div>
                     <p className="font-semibold text-[#f0f0f0] mb-1">No native integration needed</p>
                     <p className="text-sm text-[#a8a8a8] leading-relaxed">
-                      Scrapitch generates ready-to-send copy. Hit copy, paste into your tool of choice. Works with Instantly, Lemlist, Apollo, Clay, Smartlead, HubSpot, Outreach, or any CSV-based workflow. No Zapier, no API setup.
+                      Scrapitch generates ready to send copy. Hit copy, paste into your tool of choice. Works with Instantly, Lemlist, Apollo, Clay, Smartlead, HubSpot, Outreach, or any CSV based workflow. No Zapier, no API setup.
                     </p>
                   </div>
                 </div>
