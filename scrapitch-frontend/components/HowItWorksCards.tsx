@@ -142,7 +142,7 @@ const frameworks = [
   {
     label: "Variant A",
     name: "The Direct (PAS)",
-    tagline: "Problem → Agitation → Solution",
+    tagline: "Problem, Agitation, Solution",
     description: "Opens with a specific pain point, escalates it, then positions you as the fix. Gets right to the point without filler.",
     wordCount: "Under 60 words",
     best: "Prospects with a clear operational pain point.",
@@ -164,7 +164,7 @@ const frameworks = [
   {
     label: "Variant C",
     name: "The Curious",
-    tagline: "Specific icebreaker → bridge to offer",
+    tagline: "Specific icebreaker, bridge to offer",
     description: "Opens with a specific, genuine icebreaker drawn from something real on their website. Bridges naturally to your offer. Feels handwritten, not templated.",
     wordCount: "Under 75 words",
     best: "Senior buyers and inbound-led companies.",
