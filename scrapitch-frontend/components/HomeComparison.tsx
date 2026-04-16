@@ -54,10 +54,12 @@ export default function HomeComparison() {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Without Scrapitch */}
           <div style={{
-            background: "rgba(239,68,68,0.04)",
-            border: "1px solid rgba(239,68,68,0.2)",
+            background: "white",
+            border: "1px solid rgba(0,0,0,0.08)",
+            borderLeft: "3px solid #e8a87c",
             borderRadius: 16,
             padding: 28,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
               <div>
@@ -99,7 +101,11 @@ export default function HomeComparison() {
                       color: isDone ? "#ef4444" : isActive ? "#f59e0b" : "#8a8a82",
                       border: `1px solid ${isDone ? "rgba(239,68,68,0.3)" : isActive ? "rgba(245,158,11,0.3)" : "rgba(0,0,0,0.08)"}`,
                     }}>
-                      {isDone ? "✓" : isActive ? "…" : "○"}
+                      {isDone ? "✓" : isActive ? (
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                      ) : "○"}
                     </span>
                     <span style={{ fontSize: 14, color: step.status === "pending" ? "#8a8a82" : "#5a5a52", flex: 1 }}>
                       {step.label}
@@ -115,10 +121,12 @@ export default function HomeComparison() {
 
           {/* With Scrapitch */}
           <div style={{
-            background: "rgba(59,130,246,0.04)",
-            border: "1px solid rgba(59,130,246,0.25)",
+            background: "white",
+            border: "1px solid rgba(0,0,0,0.08)",
+            borderLeft: "3px solid #3b82f6",
             borderRadius: 16,
             padding: 28,
+            boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
               <div>

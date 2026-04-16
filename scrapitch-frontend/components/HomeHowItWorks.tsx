@@ -97,6 +97,7 @@ export default function HomeHowItWorks() {
               )}
               <div
                 ref={(el) => { stepRefs.current[i] = el; }}
+                className="hover:-translate-y-0.5"
                 style={{
                   padding: "24px 20px",
                   borderRadius: 16,
@@ -118,10 +119,13 @@ export default function HomeHowItWorks() {
                   {step.icon}
                 </div>
                 <span style={{
-                  fontSize: 11, fontWeight: 800, fontFamily: "monospace",
-                  letterSpacing: "0.15em", display: "block", marginBottom: 6,
+                  display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  width: 26, height: 26, borderRadius: "50%", marginBottom: 10,
+                  background: i <= activeStep ? "rgba(59,130,246,0.12)" : "rgba(0,0,0,0.05)",
+                  border: `1px solid ${i <= activeStep ? "rgba(59,130,246,0.3)" : "rgba(0,0,0,0.1)"}`,
+                  fontSize: 10, fontWeight: 800, fontFamily: "monospace",
                   color: i <= activeStep ? "#3b82f6" : "#8a8a82",
-                  transition: "color 0.5s ease",
+                  transition: "all 0.5s ease",
                 }}>
                   {step.num}
                 </span>
@@ -159,10 +163,13 @@ export default function HomeHowItWorks() {
               </div>
               <div>
                 <span style={{
-                  fontSize: 11, fontWeight: 800, fontFamily: "monospace",
-                  letterSpacing: "0.12em", display: "block", marginBottom: 4,
+                  display: "inline-flex", alignItems: "center", justifyContent: "center",
+                  width: 26, height: 26, borderRadius: "50%", marginBottom: 8,
+                  background: i <= activeStep ? "rgba(59,130,246,0.12)" : "rgba(0,0,0,0.05)",
+                  border: `1px solid ${i <= activeStep ? "rgba(59,130,246,0.3)" : "rgba(0,0,0,0.1)"}`,
+                  fontSize: 10, fontWeight: 800, fontFamily: "monospace",
                   color: i <= activeStep ? "#3b82f6" : "#8a8a82",
-                  transition: "color 0.5s ease",
+                  transition: "all 0.5s ease",
                 }}>
                   {step.num}
                 </span>
