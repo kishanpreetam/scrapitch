@@ -63,7 +63,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center shrink-0 z-10">
             <span className="text-xl font-bold tracking-tight">
-              <span className="text-white">Scrap</span><span className="text-[#a855f7]">itch</span>
+              <span className="text-white">Scrap</span><span className="text-[#3b82f6]">itch</span>
             </span>
           </Link>
 
@@ -75,7 +75,7 @@ export default function Navbar() {
                 href={href}
                 className={`text-sm font-medium transition-colors ${
                   pathname === href
-                    ? "text-[#7c3aed]"
+                    ? "text-[#3b82f6]"
                     : "text-[#888888] hover:text-white"
                 }`}
               >
@@ -154,7 +154,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-lg bg-[#7c3aed] px-4 py-2 text-sm font-semibold text-white hover:bg-[#6d28d9] transition-colors"
+                  className="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2563eb] transition-colors"
                 >
                   Sign Up Free
                 </Link>
@@ -210,7 +210,7 @@ export default function Navbar() {
                 <Link
                   href="/signup"
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center rounded-lg bg-[#7c3aed] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#6d28d9] transition-colors"
+                  className="block text-center rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2563eb] transition-colors"
                 >
                   Sign Up Free
                 </Link>

@@ -29,7 +29,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-1.5 mb-3">
               <span className="text-sm font-black tracking-tight">
-                <span className="text-white">Scrap</span><span className="text-[#a855f7]">itch</span>
+                <span className="text-white">Scrap</span><span className="text-[#3b82f6]">itch</span>
               </span>
             </Link>
             <p className="text-sm text-[#6b6b6b] leading-relaxed">
