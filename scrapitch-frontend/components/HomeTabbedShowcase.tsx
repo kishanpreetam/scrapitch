@@ -29,6 +29,7 @@ function EmailVariantsTab() {
       {variants.map((v, i) => (
         <div key={i} style={{
           background: "#f8f6f2", border: "1px solid rgba(0,0,0,0.06)",
+          borderLeft: `3px solid ${["#3b82f6", "#22c55e", "#f59e0b"][i]}`,
           borderRadius: 14, padding: 20,
           boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
         }}>
@@ -39,7 +40,7 @@ function EmailVariantsTab() {
               color: v.scoreColor, background: v.scoreBg, border: `1px solid ${v.scoreBorder}`,
             }}>{v.score}/10</span>
           </div>
-          <p style={{ fontSize: 11, color: "#8a8a82", marginBottom: 10, fontWeight: 600 }}>
+          <p style={{ fontSize: 11, color: "#8a8a82", marginBottom: 10, fontWeight: 600, fontFamily: "monospace" }}>
             Subject: &ldquo;{v.subject}&rdquo;
           </p>
           <p style={{ fontSize: 12, color: "#5a5a52", lineHeight: 1.6 }}>{v.body}</p>
@@ -236,11 +237,11 @@ export default function HomeTabbedShowcase() {
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                flex: 1, minWidth: 120, padding: "9px 16px", borderRadius: 8,
+                flex: 1, minWidth: 120, padding: "9px 16px", borderRadius: 999,
                 fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap",
-                background: activeTab === tab ? "rgba(59,130,246,0.12)" : "transparent",
-                color: activeTab === tab ? "#3b82f6" : "#8a8a82",
-                border: `1px solid ${activeTab === tab ? "rgba(59,130,246,0.3)" : "transparent"}`,
+                background: activeTab === tab ? "#3b82f6" : "transparent",
+                color: activeTab === tab ? "white" : "#8a8a82",
+                border: `1px solid ${activeTab === tab ? "#3b82f6" : "transparent"}`,
                 transition: "all 0.2s ease",
               }}
             >

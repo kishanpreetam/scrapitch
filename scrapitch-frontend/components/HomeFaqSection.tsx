@@ -45,6 +45,7 @@ export default function HomeFaqSection() {
               style={{
                 background: "#ffffff",
                 border: `1px solid ${open === i ? "rgba(59,130,246,0.25)" : "rgba(0,0,0,0.08)"}`,
+                borderLeft: open === i ? "3px solid #3b82f6" : "1px solid rgba(0,0,0,0.08)",
                 borderRadius: 12,
                 overflow: "hidden",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
@@ -72,15 +73,18 @@ export default function HomeFaqSection() {
                   ↓
                 </span>
               </button>
-              {open === i && (
+              <div style={{
+                maxHeight: open === i ? 300 : 0,
+                overflow: "hidden",
+                transition: "max-height 0.3s ease",
+              }}>
                 <div style={{
-                  padding: "0 22px 18px",
+                  padding: "16px 22px 18px",
                   borderTop: "1px solid rgba(0,0,0,0.06)",
-                  paddingTop: 16,
                 }}>
                   <p style={{ fontSize: 14, color: "#5a5a52", lineHeight: 1.7 }}>{faq.a}</p>
                 </div>
-              )}
+              </div>
             </div>
           ))}
         </div>

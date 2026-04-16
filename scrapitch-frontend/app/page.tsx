@@ -10,16 +10,16 @@ import HomeFaqSection from "@/components/HomeFaqSection";
 // ── Data ──────────────────────────────────────────────────────────
 
 const tableRows = [
-  { feature: "Prospect research", traditional: "Manual. Google the company, read their site, take notes.", scrapitch: "Automatic. Paste the URL, AI reads their entire site." },
-  { feature: "Personalization", traditional: "Based on whatever you remember to include.", scrapitch: "Pulled directly from their homepage, about page, and case studies." },
-  { feature: "Industry context", traditional: "You figure out the angle yourself.", scrapitch: "Auto-detected from 12 industry frameworks." },
-  { feature: "Tone of voice", traditional: "One default writing style.", scrapitch: "Matches the prospect's own writing tone." },
-  { feature: "Email structure", traditional: "Unstructured or template-based.", scrapitch: "3 proven frameworks: PAS, Value-First, Curious." },
-  { feature: "Subject lines", traditional: "Write one, hope it works.", scrapitch: "3 options per variant, optimized for opens." },
-  { feature: "Follow-up sequence", traditional: "Write each one manually or skip it.", scrapitch: "Auto-generated Day 3, 7, 14 with fresh angles." },
-  { feature: "Quality check", traditional: "Re-read it yourself, no scoring.", scrapitch: "6-factor reply rate score with reasoning." },
-  { feature: "Time per prospect", traditional: "15 to 30 minutes.", scrapitch: "About 10 seconds." },
-  { feature: "Consistency", traditional: "Depends on your energy and focus that day.", scrapitch: "Same quality every single time." },
+  { feature: "Prospect research", traditional: "Manual. Google them, read their site, take notes", scrapitch: "Automatic. Paste the URL, done" },
+  { feature: "Personalization", traditional: "Whatever you remember to include", scrapitch: "Pulled from their homepage, about page, case studies" },
+  { feature: "Industry context", traditional: "You figure out the angle", scrapitch: "Auto-detected from 12 frameworks" },
+  { feature: "Tone", traditional: "One default style", scrapitch: "Matches the prospect's own tone" },
+  { feature: "Email structure", traditional: "Unstructured or template", scrapitch: "3 proven frameworks (PAS, Value-First, Curious)" },
+  { feature: "Subject lines", traditional: "Write one, hope it works", scrapitch: "3 options per variant, optimized for opens" },
+  { feature: "Follow-ups", traditional: "Write each manually or skip", scrapitch: "Auto-generated Day 3, 7, 14" },
+  { feature: "Quality check", traditional: "Re-read it yourself", scrapitch: "6-factor score with reasoning" },
+  { feature: "Time", traditional: "15 to 30 minutes", scrapitch: "About 10 seconds" },
+  { feature: "Consistency", traditional: "Depends on your energy", scrapitch: "Same quality every time" },
 ];
 
 const whoCards = [
@@ -59,6 +59,13 @@ const whoCards = [
       </svg>
     ),
   },
+];
+
+const cardIconStyles = [
+  { bg: "rgba(59,130,246,0.08)", color: "#3b82f6", border: "rgba(59,130,246,0.15)" },
+  { bg: "rgba(34,197,94,0.08)", color: "#22c55e", border: "rgba(34,197,94,0.15)" },
+  { bg: "rgba(245,158,11,0.08)", color: "#f59e0b", border: "rgba(245,158,11,0.15)" },
+  { bg: "rgba(168,85,247,0.08)", color: "#a855f7", border: "rgba(168,85,247,0.15)" },
 ];
 
 // ── Page ──────────────────────────────────────────────────────────
@@ -138,7 +145,7 @@ export default function LandingPage() {
                 See how it works
               </Link>
             </div>
-            <p className="text-sm text-[#64748b]">No setup required</p>
+            <p className="text-sm text-[#64748b]">No setup required. Ready in seconds.</p>
           </div>
         </section>
 
@@ -174,11 +181,10 @@ export default function LandingPage() {
               {whoCards.map((card, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl p-7 transition-all duration-200"
+                  className="rounded-2xl p-7 transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                   style={{
                     background: "#ffffff",
                     border: "1px solid rgba(0,0,0,0.06)",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
                   }}
                 >
                   <div className="flex items-start gap-4">
@@ -186,9 +192,9 @@ export default function LandingPage() {
                       className="flex items-center justify-center rounded-xl shrink-0"
                       style={{
                         width: 44, height: 44,
-                        background: "rgba(59,130,246,0.08)",
-                        color: "#3b82f6",
-                        border: "1px solid rgba(59,130,246,0.15)",
+                        background: cardIconStyles[i].bg,
+                        color: cardIconStyles[i].color,
+                        border: `1px solid ${cardIconStyles[i].border}`,
                       }}
                     >
                       {card.icon}
@@ -213,7 +219,7 @@ export default function LandingPage() {
                 The old way vs the Scrapitch way
               </h2>
               <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: "#5a5a52" }}>
-                Most cold email workflows involve manual research, copy-paste prompting, and guesswork. Scrapitch automates the entire process.
+                Most cold email workflows involve manual research, guesswork, and repetitive prompting. Scrapitch handles it all.
               </p>
             </div>
 
@@ -280,10 +286,10 @@ export default function LandingPage() {
                 href="/how-it-works"
                 className="rounded-xl border border-white/15 px-10 py-4 text-lg font-semibold text-[#94a3b8] hover:border-white/25 hover:text-white transition-colors"
               >
-                See It In Action
+                See it in action
               </Link>
             </div>
-            <p className="text-sm text-[#64748b]">No setup required</p>
+            <p className="text-sm text-[#64748b]">No setup required. Works with any website.</p>
           </div>
         </section>
 
