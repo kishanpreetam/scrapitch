@@ -77,11 +77,11 @@ export default function SignupPage() {
             <Link href="/" className="inline-flex items-center gap-1.5 mb-6">
               <span className="text-2xl font-black tracking-tight">
                 <span className="text-white">Scrap</span>
-                <span className="text-[#a855f7]">itch</span>
+                <span className="text-[#3b82f6]">itch</span>
               </span>
             </Link>
             <h1 className="text-2xl font-black text-white">Create your account</h1>
-            <p className="text-sm text-[#6b6b6b] mt-1">3 free generations — no credit card required</p>
+            <p className="text-sm text-[#6b6b6b] mt-1">Start generating in seconds — no setup required</p>
           </div>
 
           {/* Google OAuth */}
@@ -123,7 +123,7 @@ export default function SignupPage() {
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Jane Smith"
                 required
-                className={`${inputBase} border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15`}
+                className={`${inputBase} border-white/20 focus:border-[#3b82f6]/50 focus:ring-[#3b82f6]/15`}
               />
             </div>
 
@@ -136,7 +136,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className={`${inputBase} border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15`}
+                className={`${inputBase} border-white/20 focus:border-[#3b82f6]/50 focus:ring-[#3b82f6]/15`}
               />
             </div>
 
@@ -151,7 +151,7 @@ export default function SignupPage() {
                   placeholder="••••••••"
                   autoComplete="new-password"
                   required
-                  className={`${inputBase} border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15`}
+                  className={`${inputBase} border-white/20 focus:border-[#3b82f6]/50 focus:ring-[#3b82f6]/15`}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
                   className="absolute right-3 top-1/2 -translate-y-1/2 z-10 text-[#6b6b6b] hover:text-[#d4d4d4] transition-colors">
@@ -204,7 +204,7 @@ export default function SignupPage() {
                       ? "border-red-500/70 focus:border-red-500 focus:ring-red-500/20"
                       : passwordsMatch
                         ? "border-emerald-500/70 focus:border-emerald-500 focus:ring-emerald-500/20"
-                        : "border-white/20 focus:border-[#a855f7]/50 focus:ring-[#a855f7]/15"
+                        : "border-white/20 focus:border-[#3b82f6]/50 focus:ring-[#3b82f6]/15"
                   }`}
                 />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} tabIndex={-1}
@@ -225,7 +225,7 @@ export default function SignupPage() {
               type="button"
               onClick={handleSignUp}
               disabled={!formReady || loading}
-              className="w-full rounded-xl bg-linear-to-r from-[#7c3aed] to-[#a855f7] py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full rounded-xl bg-[#3b82f6] py-3 text-sm font-bold text-white hover:bg-[#2563eb] transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -233,7 +233,7 @@ export default function SignupPage() {
                   Creating account…
                 </span>
               ) : (
-                "Create Free Account →"
+                "Create Account →"
               )}
             </button>
 
@@ -248,7 +248,7 @@ export default function SignupPage() {
 
           <p className="mt-6 text-center text-sm text-[#6b6b6b]">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-[#a855f7] hover:opacity-80 transition-opacity">
+            <Link href="/login" className="font-semibold text-[#3b82f6] hover:opacity-80 transition-opacity">
               Log in
             </Link>
           </p>

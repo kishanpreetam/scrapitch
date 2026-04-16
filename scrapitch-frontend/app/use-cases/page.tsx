@@ -59,7 +59,7 @@ const useCases = [
     problem:
       "You're skilled at your craft but not at selling. Cold email feels cringe, every template sounds the same, and you don't have time to research each prospect from scratch.",
     solution:
-      "Scrapitch levels the playing field. You get the same quality personalized outreach that big agencies use — at $9.99/month instead of $5k for an SDR.",
+      "Scrapitch levels the playing field. You get the same quality personalized outreach that big agencies use — without hiring an SDR or spending hours on manual research.",
     outcomes: [
       "Outreach that sounds like you've studied the prospect's business",
       "Costs less than one hour of your billable time",
@@ -103,7 +103,7 @@ const useCases = [
     outcomes: [
       "Full outreach sequence (email + follow-ups) ready in under 2 minutes",
       "Sounds like you wrote it after reading their site carefully",
-      "Free tier covers early prospecting before you need volume",
+      "Handles research so you can spend your time on strategy, not writing",
     ],
     snippet: {
       subject: "Your API pricing page",
@@ -135,18 +135,18 @@ const accentMap: Record<
     snippetBorder: "border-emerald-500/20",
   },
   purple: {
-    border: "border-purple-500/30",
-    bg: "bg-purple-500/5",
-    badge: "text-purple-300 bg-purple-500/20",
-    check: "text-purple-400",
-    snippetBorder: "border-purple-500/20",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/5",
+    badge: "text-blue-300 bg-blue-500/20",
+    check: "text-blue-400",
+    snippetBorder: "border-blue-500/20",
   },
   pink: {
-    border: "border-purple-500/30",
-    bg: "bg-purple-500/5",
-    badge: "text-purple-300 bg-purple-500/20",
-    check: "text-purple-400",
-    snippetBorder: "border-purple-500/20",
+    border: "border-blue-500/30",
+    bg: "bg-blue-500/5",
+    badge: "text-blue-300 bg-blue-500/20",
+    check: "text-blue-400",
+    snippetBorder: "border-blue-500/20",
   },
   amber: {
     border: "border-amber-500/30",
@@ -173,7 +173,7 @@ export default function UseCasesPage() {
             </Reveal>
             <Reveal delay={80}>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.05] mb-6">
-                Built for everyone who <span className="bg-linear-to-r from-[#7c3aed] to-[#a855f7] bg-clip-text text-transparent">does outbound.</span>
+                Built for everyone who <span style={{ color: "#3b82f6" }}>does outbound.</span>
               </h1>
             </Reveal>
             <Reveal delay={160}>
@@ -267,19 +267,16 @@ export default function UseCasesPage() {
             </Reveal>
             <Reveal delay={80}>
               <p className="text-lg text-[#a8a8a8] mb-10 leading-relaxed">
-                Doesn&apos;t matter. Scrapitch works for all of them. Start free, no card required.
+                Doesn&apos;t matter. Scrapitch works for all of them. Completely free, no setup required.
               </p>
             </Reveal>
             <Reveal delay={160}>
               <Link
                 href="/signup"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#7c3aed] px-10 py-4 text-base font-bold text-white hover:bg-[#6d28d9] transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-10 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Try it free →
+                Get Started →
               </Link>
-              <p className="mt-4 text-sm text-[#6b6b6b]">
-                No credit card required &middot; 3 free generations included
-              </p>
             </Reveal>
           </div>
         </section>

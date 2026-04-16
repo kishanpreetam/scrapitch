@@ -36,7 +36,7 @@ export default function HowItWorksPage() {
             </Reveal>
             <Reveal delay={80}>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-[1.05]">
-                URL in. <span className="bg-linear-to-r from-[#7c3aed] to-[#a855f7] bg-clip-text text-transparent">Cold emails out.</span>
+                URL in. <span style={{ color: "#3b82f6" }}>Cold emails out.</span>
               </h1>
             </Reveal>
             <Reveal delay={160}>
@@ -103,7 +103,7 @@ export default function HowItWorksPage() {
                     } ${i < scoringFactors.length - 1 ? "border-b border-white/6" : ""}`}
                   >
                     <div className="shrink-0 min-w-14 text-center rounded-lg bg-white/8 border border-white/10 px-2.5 py-1.5">
-                      <span className="text-sm font-black text-[#4ade80] tabular-nums">{s.weight}</span>
+                      <span className="text-sm font-black text-[#3b82f6] tabular-nums">{s.weight}</span>
                     </div>
                     <div>
                       <p className="font-semibold text-[#f0f0f0] leading-snug mb-0.5">{s.factor}</p>
@@ -125,14 +125,9 @@ export default function HowItWorksPage() {
               </h2>
             </Reveal>
             <Reveal delay={80}>
-              <p className="text-[#a8a8a8] text-lg mb-10">
-                Your first 3 generations are free.
-              </p>
-            </Reveal>
-            <Reveal delay={160}>
               <Link
                 href="/generator"
-                className="inline-flex items-center gap-2.5 rounded-xl bg-[#7c3aed] px-9 py-4 text-base font-bold text-white hover:bg-[#6d28d9] transition-colors"
+                className="inline-flex items-center gap-2.5 rounded-xl bg-[#3b82f6] px-9 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
                 Open the generator
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
