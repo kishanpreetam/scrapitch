@@ -169,6 +169,20 @@ def cleanup_text(text: str) -> str:
     return text
 
 
+def enforce_word_limit(text: str, max_words: int) -> str:
+    """Truncate text to the last complete sentence within max_words."""
+    words = text.split()
+    if len(words) <= max_words:
+        return text
+    truncated = " ".join(words[:max_words])
+    last_period = truncated.rfind(".")
+    last_question = truncated.rfind("?")
+    last_sentence_end = max(last_period, last_question)
+    if last_sentence_end > 0:
+        return truncated[:last_sentence_end + 1]
+    return truncated + "."
+
+
 def _detect_industry(scraped_data: dict) -> str:
     combined = " ".join([
         scraped_data.get("what_they_do", ""),
@@ -367,7 +381,18 @@ Return ONLY valid JSON in this exact format (no markdown, no explanation):
             "- Use periods or commas to separate thoughts. Write short sentences instead of long dashed sentences.\n"
             "- BAD: \"Your trade-in offer is compelling \u2014 but most prospects drop off before converting.\"\n"
             "- GOOD: \"Your trade-in offer is compelling. But most prospects drop off before converting.\"\n"
-            "- Keep emails conversational and human. Write like a smart colleague sending a quick note, not a marketing textbook.\n"
+            "- BAD: \"credit toward iPhone 17, iPhone Air, and iPhone 17 Pro \u2014 is repeated prominently\"\n"
+            "- GOOD: \"credit toward iPhone 17, iPhone Air, and iPhone 17 Pro. It's repeated prominently.\"\n\n"
+            "TONE AND LENGTH:\n"
+            "- Write like you're a smart salesperson who just spent 2 minutes reading their website and is firing off a quick, thoughtful email. Not like a copywriting textbook. Not like AI.\n"
+            "- BAD (too formal, too structured): \"That gap between interest and action is where revenue disappears. We help close it without rebuilding your funnel.\"\n"
+            "- GOOD (sounds human): \"Most visitors on that page are interested but never convert. We've helped similar brands fix that without changing the offer itself.\"\n"
+            "- BAD (too long, too corporate): \"Businesses promoting the iPhone trade-in program often see strong top-of-funnel interest but weak follow-through at checkout. We help convert more of those visitors into completed trade-ins, without changing the offer itself.\"\n"
+            "- GOOD (short, direct): \"Strong traffic to your trade-in page but completions look low. We help brands like yours close that gap. Worth a quick conversation?\"\n"
+            "- Every email should feel like it took 30 seconds to write, even though it didn't. Short sentences. No filler. Get to the point.\n\n"
+            "ENTERPRISE CONTEXT:\n"
+            "- If the target website is a major enterprise (Apple, Google, Microsoft, Amazon, etc.), adjust the emails to be relevant. Do not pitch services to a trillion-dollar company as if they need your help with basic marketing. Instead, frame emails appropriately for the context.\n\n"
+            "WORD LIMITS:\n"
             "- Variant A body MUST be under 60 words. Count them. Cut if over.\n"
             "- Variant B body MUST be under 80 words. Count them. Cut if over.\n"
             "- Variant C body MUST be under 75 words. Count them. Cut if over.\n"
@@ -403,9 +428,14 @@ Return ONLY valid JSON in this exact format (no markdown, no explanation):
             f"Raw response was:\n{text_content}"
         )
 
-    # Post-process: strip em dashes, double dashes, and arrows from all output fields
+    # Per-variant word limits (with a small buffer above the stated target)
+    _WORD_LIMITS = {"A": 65, "B": 85, "C": 80}
+
+    # Post-process: clean formatting, then enforce word limits
     for variant in data.get("variants", []):
-        variant["body"] = cleanup_text(variant.get("body", ""))
+        body = cleanup_text(variant.get("body", ""))
+        limit = _WORD_LIMITS.get(variant.get("variant", ""), 85)
+        variant["body"] = enforce_word_limit(body, limit)
         variant["subject_lines"] = [cleanup_text(s) for s in variant.get("subject_lines", [])]
         variant["score_reasoning"] = cleanup_text(variant.get("score_reasoning", ""))
 
