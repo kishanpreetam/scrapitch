@@ -8,15 +8,15 @@ const withoutSteps = [
   { label: "Find pain points", status: "active" as const },
   { label: "Write email draft", status: "pending" as const },
   { label: "Write 2 more variants", status: "pending" as const },
-  { label: "Create follow-ups", status: "pending" as const },
+  { label: "Create follow ups", status: "pending" as const },
 ];
 
 const withSteps = [
   { label: "Paste URL" },
-  { label: "AI scrapes & analyzes" },
-  { label: "3 emails generated" },
-  { label: "Follow-ups ready" },
-  { label: "Scores calculated" },
+  { label: "Agent 1 researches their site" },
+  { label: "Agent 2 writes 3 variants" },
+  { label: "Agent 3 scores each email" },
+  { label: "Follow ups ready" },
   { label: "Copy & send" },
 ];
 

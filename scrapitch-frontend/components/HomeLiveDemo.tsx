@@ -5,18 +5,24 @@ import { useState, useEffect, useRef } from "react";
 const DEMO_URL = "acmeagency.com";
 type Phase = "typing" | "loading" | "result" | "fade";
 
+const LOADING_STEPS = [
+  "Agent 1: Researching website...",
+  "Agent 2: Writing 3 variants...",
+  "Agent 3: Scoring emails...",
+];
+
 const cards = [
   {
-    label: "The Direct / PAS",
+    label: "The Direct, PAS",
     score: 9,
     scoreColor: "#22c55e",
     scoreBg: "rgba(34,197,94,0.1)",
     scoreBorder: "rgba(34,197,94,0.25)",
     subject: "Your pipeline gap",
-    body: "Most agencies lose 30–40% of inbound leads before they convert. We fix that with AI-written sequences referencing what prospects actually care about. Worth a 15-min call?",
+    body: "Most agencies lose 30 to 40% of inbound leads before they convert. We fix that with AI-written sequences referencing what prospects actually care about. Worth a 15 min call?",
   },
   {
-    label: "Value-First",
+    label: "Value First",
     score: 8,
     scoreColor: "#f59e0b",
     scoreBg: "rgba(245,158,11,0.1)",
@@ -31,13 +37,14 @@ const cards = [
     scoreBg: "rgba(34,197,94,0.1)",
     scoreBorder: "rgba(34,197,94,0.25)",
     subject: "Noticed your case study",
-    body: "Just read through your SaaS case study. Impressive 3x growth result. Curious whether you're automating cold outreach yet or still doing it manually. Happy to share what's working.",
+    body: "Just read through your SaaS case study. Impressive 3x growth result. Curious whether you are automating cold outreach yet or still doing it manually. Happy to share what is working.",
   },
 ];
 
 export default function HomeLiveDemo() {
   const [phase, setPhase] = useState<Phase>("typing");
   const [typed, setTyped] = useState("");
+  const [loadingStep, setLoadingStep] = useState(0);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -49,14 +56,18 @@ export default function HomeLiveDemo() {
         timer.current = setTimeout(() => setPhase("loading"), 700);
       }
     } else if (phase === "loading") {
-      timer.current = setTimeout(() => setPhase("result"), 2000);
+      if (loadingStep < LOADING_STEPS.length) {
+        timer.current = setTimeout(() => setLoadingStep(loadingStep + 1), 600);
+      } else {
+        timer.current = setTimeout(() => { setLoadingStep(0); setPhase("result"); }, 400);
+      }
     } else if (phase === "result") {
       timer.current = setTimeout(() => setPhase("fade"), 4500);
     } else if (phase === "fade") {
-      timer.current = setTimeout(() => { setTyped(""); setPhase("typing"); }, 700);
+      timer.current = setTimeout(() => { setTyped(""); setLoadingStep(0); setPhase("typing"); }, 700);
     }
     return clear;
-  }, [phase, typed]);
+  }, [phase, typed, loadingStep]);
 
   const showResult = phase === "result" || phase === "fade";
 
@@ -72,7 +83,7 @@ export default function HomeLiveDemo() {
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">LIVE PREVIEW</p>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>See it in action</h2>
-          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>Watch Scrapitch turn a URL into 3 scored cold emails.</p>
+          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>Watch three AI agents turn a URL into 3 scored cold emails.</p>
         </div>
 
         <div
@@ -115,7 +126,9 @@ export default function HomeLiveDemo() {
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
                 <span style={{ fontSize: 12, color: "#5a5a52" }}>
-                  {phase === "loading" ? "Analyzing website…" : "Done · 3 emails ready"}
+                  {phase === "loading"
+                    ? (loadingStep < LOADING_STEPS.length ? LOADING_STEPS[loadingStep] : "Done. 3 emails ready")
+                    : "Done. 3 emails ready"}
                 </span>
                 <span style={{ fontSize: 12, color: "#8a8a82" }}>{phase === "loading" ? "…" : "100%"}</span>
               </div>
@@ -183,7 +196,7 @@ export default function HomeLiveDemo() {
             display: "flex", justifyContent: "space-between", alignItems: "center",
           }}>
             <span style={{ fontSize: 11, color: "#8a8a82" }}>Generated in ~9.4s</span>
-            <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 600 }}>✓ Follow-up sequence included</span>
+            <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 600 }}>Follow up sequence included</span>
           </div>
         </div>
         <p style={{ textAlign: "center", fontSize: 11, color: "#8a8a82", marginTop: 8 }}>

@@ -141,7 +141,7 @@ function EmailCard({ variant }: { variant: Variant }) {
             : "border-zinc-700 text-zinc-300 hover:border-blue-400/50 hover:text-blue-300"
         }`}
       >
-        {copied ? "✓ Copied to clipboard" : "📋 Copy email"}
+        {copied ? "Copied to clipboard" : "Copy email"}
       </button>
     </div>
   );
@@ -161,8 +161,8 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
         <div className="flex items-center gap-3">
           <span className={`text-zinc-500 transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
           <div>
-            <p className="text-sm font-semibold text-zinc-200">Follow-up sequence</p>
-            <p className="text-xs text-zinc-600 mt-0.5">{sequence.length} follow-up emails ready to send</p>
+            <p className="text-sm font-semibold text-zinc-200">Follow up sequence</p>
+            <p className="text-xs text-zinc-600 mt-0.5">{sequence.length} follow up emails ready to send</p>
           </div>
         </div>
         <span className="text-xs font-medium text-zinc-500 shrink-0 ml-4">
@@ -176,7 +176,7 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
             <div key={i} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 bg-zinc-800 px-2 py-0.5 rounded-full">
-                  Follow-up {i + 1} · Day {fu.day}
+                  Follow up {i + 1} · Day {fu.day}
                 </span>
               </div>
               <p className="text-xs font-semibold text-zinc-400 mb-2">
@@ -274,8 +274,10 @@ export default function GeneratorPage() {
             Generate Cold Emails
           </h1>
           <p className="text-zinc-400 text-xl max-w-xl mx-auto">
-            Paste a prospect&apos;s URL and get 3 personalized emails with
-            reply-rate scores in seconds.
+            Paste a prospect&apos;s URL. Three AI agents will research their site, write 3 personalized variants, and score each one.
+          </p>
+          <p className="text-zinc-600 text-sm mt-3">
+            Agent 1: Research Analyst &nbsp;&middot;&nbsp; Agent 2: Email Writer &nbsp;&middot;&nbsp; Agent 3: Scoring Judge
           </p>
         </section>
 
@@ -352,7 +354,7 @@ export default function GeneratorPage() {
                   <span className="animate-pulse">{loadingStage || "Generating..."}</span>
                 </span>
               ) : (
-                "⚡ Generate Cold Emails"
+                "Generate Cold Emails"
               )}
             </button>
           </div>
@@ -379,7 +381,7 @@ export default function GeneratorPage() {
                   </p>
                 </div>
                 <div className="text-xs text-zinc-600 text-right hidden sm:block">
-                  🟢 9–10 Elite &nbsp;·&nbsp; 🟡 7–8 Strong &nbsp;·&nbsp; 🟠 5–6 Average &nbsp;·&nbsp; 🔴 1–4 Needs work
+                  9-10 Elite &nbsp;·&nbsp; 7-8 Strong &nbsp;·&nbsp; 5-6 Average &nbsp;·&nbsp; 1-4 Needs work
                 </div>
               </div>
 
@@ -400,7 +402,7 @@ export default function GeneratorPage() {
           {/* Empty state */}
           {!result && !loading && !error && (
             <div className="rounded-2xl border border-dashed border-zinc-800 py-20 text-center">
-              <p className="text-5xl mb-4">📬</p>
+              <p className="text-5xl mb-4"></p>
               <p className="text-zinc-400 font-medium mb-2">
                 Your emails will appear here
               </p>

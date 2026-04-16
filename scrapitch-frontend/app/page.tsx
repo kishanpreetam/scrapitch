@@ -10,22 +10,22 @@ import HomeFaqSection from "@/components/HomeFaqSection";
 // ── Data ──────────────────────────────────────────────────────────
 
 const tableRows = [
-  { feature: "Prospect research", traditional: "Manual. Google them, read their site, take notes", scrapitch: "Automatic. Paste the URL, done" },
+  { feature: "Prospect research", traditional: "Manual. Google them, read their site, take notes", scrapitch: "Dedicated Research Agent reads their entire site" },
   { feature: "Personalization", traditional: "Whatever you remember to include", scrapitch: "Pulled from their homepage, about page, case studies" },
-  { feature: "Industry context", traditional: "You figure out the angle", scrapitch: "Auto-detected from 12 frameworks" },
+  { feature: "Industry context", traditional: "You figure out the angle", scrapitch: "Auto detected from 12 frameworks" },
   { feature: "Tone", traditional: "One default style", scrapitch: "Matches the prospect's own tone" },
-  { feature: "Email structure", traditional: "Unstructured or template", scrapitch: "3 proven frameworks (PAS, Value-First, Curious)" },
+  { feature: "Email structure", traditional: "Unstructured or template", scrapitch: "3 proven frameworks (PAS, Value First, Curious)" },
   { feature: "Subject lines", traditional: "Write one, hope it works", scrapitch: "3 options per variant, optimized for opens" },
-  { feature: "Follow-ups", traditional: "Write each manually or skip", scrapitch: "Auto-generated Day 3, 7, 14" },
-  { feature: "Quality check", traditional: "Re-read it yourself", scrapitch: "6-factor score with reasoning" },
+  { feature: "Follow ups", traditional: "Write each manually or skip", scrapitch: "Auto generated Day 3, 7, 14" },
+  { feature: "Quality check", traditional: "Re-read it yourself", scrapitch: "Independent AI agent scores on 6 factors" },
   { feature: "Time", traditional: "15 to 30 minutes", scrapitch: "About 10 seconds" },
-  { feature: "Consistency", traditional: "Depends on your energy", scrapitch: "Same quality every time" },
+  { feature: "Consistency", traditional: "Depends on your energy", scrapitch: "Three agents check each other's work" },
 ];
 
 const whoCards = [
   {
     role: "SDR at a B2B SaaS company",
-    desc: "Spending 20 min researching every prospect and still writing semi-generic copy? Paste the URL. Get 3 emails and follow-ups in 10 seconds.",
+    desc: "Spending 20 min researching every prospect and still writing semi-generic copy? Paste the URL. Get 3 emails and follow ups in 10 seconds.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -34,7 +34,7 @@ const whoCards = [
   },
   {
     role: "Agency owner doing outbound",
-    desc: "Generic merge-tag templates get ignored. Scrapitch reads the prospect's site and writes emails that reference their actual business.",
+    desc: "Generic merge tag templates get ignored. Scrapitch reads the prospect's site and writes emails that reference their actual business.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -127,7 +127,7 @@ export default function LandingPage() {
 
             {/* Subtitle */}
             <p className="mx-auto max-w-xl text-xl text-[#94a3b8] leading-relaxed mb-10">
-              Paste a prospect&apos;s URL. Get 3 personalized cold emails with reply-rate scores in under 10 seconds.
+              Paste a prospect&apos;s URL. Three specialized AI agents research their site, write 3 personalized variants, and score each one independently.
             </p>
 
             {/* CTAs */}
@@ -273,7 +273,7 @@ export default function LandingPage() {
               Your next reply is<br />one URL away.
             </h2>
             <p className="text-xl text-[#94a3b8] mb-10 max-w-xl mx-auto leading-relaxed">
-              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply-rate scoring, and a full follow-up sequence. All in under 10 seconds.
+              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply rate scoring, and a full follow up sequence. All in under 10 seconds.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
               <Link
