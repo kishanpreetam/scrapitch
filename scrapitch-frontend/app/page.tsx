@@ -25,7 +25,7 @@ const comparisonRows = [
 const whoCards = [
   {
     role: "SDR at a B2B SaaS company",
-    desc: "Spending 20 min researching every prospect and still writing semi-generic copy? Paste the URL — get 3 emails + follow-ups in 10 seconds.",
+    desc: "Spending 20 min researching every prospect and still writing semi-generic copy? Paste the URL. Get 3 emails and follow-ups in 10 seconds.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -43,7 +43,7 @@ const whoCards = [
   },
   {
     role: "Freelance consultant",
-    desc: "No time to write personalized emails for every lead. URL in → personalized email out. Spend time closing, not writing.",
+    desc: "No time to write personalized emails for every lead. URL in, personalized email out. Spend time closing, not writing.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -105,7 +105,7 @@ export default function LandingPage() {
             }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#60a5fa", display: "inline-block", marginRight: 8 }} />
               <span style={{ fontSize: 13, color: "#93c5fd", fontWeight: 500, letterSpacing: "0.01em" }}>
-                AI-powered cold email in seconds →
+                AI-powered cold email in seconds
               </span>
             </div>
 
@@ -129,7 +129,7 @@ export default function LandingPage() {
                 href="/signup"
                 className="rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Get Started →
+                Get Started
               </Link>
               <Link
                 href="/how-it-works"
@@ -210,7 +210,7 @@ export default function LandingPage() {
               </h2>
               <p className="mt-4 text-lg text-[#94a3b8] max-w-xl mx-auto">
                 Generic AI writes emails. Scrapitch writes emails about{" "}
-                <em className="not-italic text-white font-semibold">your specific prospect</em> — after reading their website, detecting their industry, and matching their tone.
+                <em className="not-italic text-white font-semibold">your specific prospect</em>. It reads their website, detects their industry, and matches their tone.
               </p>
             </div>
 
@@ -253,7 +253,7 @@ export default function LandingPage() {
                 href="/signup"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Try it now — see the difference →
+                Try it now and see the difference
               </Link>
             </div>
           </div>
@@ -272,20 +272,20 @@ export default function LandingPage() {
               Your next reply is<br />one URL away.
             </h2>
             <p className="text-xl text-[#94a3b8] mb-10 max-w-xl mx-auto leading-relaxed">
-              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply-rate scoring, and a full follow-up sequence — in under 10 seconds.
+              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply-rate scoring, and a full follow-up sequence. All in under 10 seconds.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
               <Link
                 href="/signup"
                 className="rounded-xl bg-[#3b82f6] px-10 py-4 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Get Started →
+                Get Started
               </Link>
               <Link
                 href="/how-it-works"
                 className="rounded-xl border border-white/15 px-10 py-4 text-lg font-semibold text-[#94a3b8] hover:border-white/25 hover:text-white transition-colors"
               >
-                See It In Action →
+                See It In Action
               </Link>
             </div>
             <p className="text-sm text-[#64748b]">No setup required · completely free</p>
