@@ -192,12 +192,12 @@ _AGENT2_SYSTEM = (
     "- Exactly one CTA per email. Low-friction only.\n"
     "- Write like a smart colleague firing off a quick note, not like a marketing textbook\n\n"
     "WORD LIMITS (strictly enforced):\n"
-    "- Variant A (The Direct / PAS): MAXIMUM 60 words. Count them.\n"
-    "- Variant B (Value-First): MAXIMUM 80 words. Count them.\n"
-    "- Variant C (The Curious): MAXIMUM 75 words. Count them.\n"
-    "- Day 3 follow-up: MAXIMUM 40 words\n"
-    "- Day 7 follow-up: MAXIMUM 50 words\n"
-    "- Day 14 follow-up: MAXIMUM 40 words\n\n"
+    "- Variant A (The Direct / PAS): MAXIMUM 90 words. Count them.\n"
+    "- Variant B (Value-First): MAXIMUM 110 words. Count them.\n"
+    "- Variant C (The Curious): MAXIMUM 100 words. Count them.\n"
+    "- Day 3 follow-up: MAXIMUM 50 words\n"
+    "- Day 7 follow-up: MAXIMUM 60 words\n"
+    "- Day 14 follow-up: MAXIMUM 50 words\n\n"
     "INDUSTRY TONE GUIDE (apply based on detected industry):\n"
     "- B2B SaaS: Direct, metrics-driven. Reference growth, churn, pipeline. CTA: 'Worth a quick conversation?'\n"
     "- Marketing & Creative Agency: Conversational, sharp. Speak peer-to-peer. CTA: 'Open to comparing notes?'\n"
@@ -235,6 +235,12 @@ _AGENT2_SYSTEM = (
     "- Under 6 words each\n"
     "- Reference something specific to the prospect\n"
     "- No dashes, no arrows, no exclamation marks\n\n"
+    "USE SPECIFIC REFERENCES:\n"
+    "Use the specific_references from the research to make each email feel like you actually read their website. "
+    "Mention a specific service name, a case study result, a client type, or a metric. The more specific the "
+    "reference, the better the email performs.\n\n"
+    "Do not sacrifice specificity for brevity. A 90-word email that references their actual case study will "
+    "always outperform a 50-word email that could be sent to anyone.\n\n"
     "EXAMPLES OF GOOD EMAILS:\n"
     "'Saw you work with mid-market SaaS on retention. Most teams at that stage lose 15-20% of trialists "
     "before onboarding completes. We help fix that specific gap. Worth a quick conversation?'\n\n"
@@ -259,11 +265,19 @@ _AGENT2_SYSTEM = (
 
 _AGENT3_SYSTEM = (
     "You are a cold email quality judge. You score cold emails on a 1-10 scale across 6 factors. "
-    "You are strict and honest. A score of 9-10 means genuinely elite. Most emails should score 6-8.\n\n"
+    "You are honest but fair. Use the full scoring range appropriately.\n\n"
+    "Scoring guide:\n"
+    "- 9-10 (Elite): Exceptional. References multiple specific details, perfect length, sounds genuinely handwritten. Rare.\n"
+    "- 7-8 (Strong): Good personalization, appropriate length, clear CTA, reads naturally. This is where most well-written cold emails should land.\n"
+    "- 5-6 (Average): Some personalization but could be more specific. Decent structure but feels templated.\n"
+    "- 3-4 (Needs work): Generic, too long or too short, weak CTA, could be sent to anyone.\n"
+    "- 1-2 (Poor): Spam-level. No personalization, multiple CTAs, corporate jargon.\n\n"
+    "Most emails from this system should score 7-8 because they use scraped website data. Only score below 7 if the "
+    "email genuinely fails to reference specific prospect details or breaks a core rule. Do not be harsh for the sake of it.\n\n"
     "Score each email variant against these factors:\n"
     "1. Personalization depth (30%): Does it reference SPECIFIC details from the prospect research? "
     "Not generic praise, but actual company details like service names, case study results, or client types. Score 1-10.\n"
-    "2. Length compliance (20%): Is Variant A under 60 words? Variant B under 80? Variant C under 75? "
+    "2. Length compliance (20%): Is Variant A under 90 words? Variant B under 110? Variant C under 100? "
     "Full marks only if within limit. Score 1-10.\n"
     "3. Single CTA (15%): Exactly one clear, low-friction call to action? No multi-asks? Score 1-10.\n"
     "4. Problem-first framing (15%): Does it lead with their context and challenges, not the sender's product? Score 1-10.\n"
@@ -352,7 +366,7 @@ def generate_emails(scraped_data: dict) -> dict:
         )
 
     # Post-process: clean formatting, then enforce word limits
-    _WORD_LIMITS = {"A": 65, "B": 85, "C": 80}
+    _WORD_LIMITS = {"A": 95, "B": 115, "C": 105}
     for variant in emails.get("variants", []):
         body = cleanup_text(variant.get("body", ""))
         limit = _WORD_LIMITS.get(variant.get("variant", ""), 85)
