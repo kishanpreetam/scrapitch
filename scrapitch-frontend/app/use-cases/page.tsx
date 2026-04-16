@@ -19,7 +19,7 @@ const useCases = [
     problem:
       "You're supposed to be selling. Instead you're reading LinkedIn profiles, Googling company news, and copying homepage copy into ChatGPT. The math of 80 touches a week doesn't work at 30 minutes of research per account.",
     solution:
-      "Scrapitch compresses prospect research from 30 minutes to 10 seconds. You get personalized copy that sounds like you researched all morning — because the AI did.",
+      "Scrapitch compresses prospect research from 30 minutes to 10 seconds. You get personalized copy that sounds like you researched all morning, because the AI did.",
     outcomes: [
       "Research 50 accounts in the time it used to take to prep 5",
       "Emails that reference the prospect's actual language, not a template",
@@ -27,9 +27,9 @@ const useCases = [
     ],
     snippet: {
       subject: "Your onboarding flow question",
-      body: "Noticed [Company] recently expanded into enterprise accounts based on your updated pricing page. Most teams at that stage hit friction around onboarding time-to-value. We cut that by 40% for similar SaaS teams — worth a quick call?",
+      body: "Noticed [Company] recently expanded into enterprise accounts based on your updated pricing page. Most teams at that stage hit friction around onboarding time-to-value. We cut that by 40% for similar SaaS teams. Worth a quick call?",
     },
-    cta: "Try it for SDRs →",
+    cta: "Try it for SDRs",
     accentColor: "blue",
   },
   {
@@ -39,7 +39,7 @@ const useCases = [
     problem:
       "You're great at delivery. You're not great at consistent outbound. The pipeline runs dry between referrals, templates feel generic, and you don't have time to personally research every prospect.",
     solution:
-      "Scrapitch does the research. Paste your prospect's URL, get 3 emails that reference exactly what they do and who they serve — personalized without the manual work.",
+      "Scrapitch does the research. Paste your prospect's URL, get 3 emails that reference exactly what they do and who they serve. Personalized without the manual work.",
     outcomes: [
       "20+ personalized emails per hour without a researcher",
       "Emails reference the prospect's real value prop and tone",
@@ -47,9 +47,9 @@ const useCases = [
     ],
     snippet: {
       subject: "Your e-commerce client results",
-      body: "Just read through your case study on the DTC brand — impressive 3x revenue result. Curious whether you're personalizing your own outreach or using templates. Happy to show what's working for similar agencies.",
+      body: "Just read through your case study on the DTC brand. Impressive 3x revenue result. Curious whether you're personalizing your own outreach or using templates. Happy to show what's working for similar agencies.",
     },
-    cta: "Try it for Agency Owners →",
+    cta: "Try it for Agency Owners",
     accentColor: "emerald",
   },
   {
@@ -59,17 +59,17 @@ const useCases = [
     problem:
       "You're skilled at your craft but not at selling. Cold email feels cringe, every template sounds the same, and you don't have time to research each prospect from scratch.",
     solution:
-      "Scrapitch levels the playing field. You get the same quality personalized outreach that big agencies use — without hiring an SDR or spending hours on manual research.",
+      "Scrapitch levels the playing field. You get the same quality personalized outreach that big agencies use, without hiring an SDR or spending hours on manual research.",
     outcomes: [
       "Outreach that sounds like you've studied the prospect's business",
       "Costs less than one hour of your billable time",
-      "The Curious variant is built for solo practitioners — feels human",
+      "The Curious variant is built for solo practitioners. Feels human.",
     ],
     snippet: {
       subject: "Noticed your positioning shift",
-      body: "Saw you recently repositioned from 'brand strategy' to 'revenue-led brand building' — that's a sharp move for the current market. I help consultants with exactly that kind of messaging clarity. Open to a 15-min conversation?",
+      body: "Saw you recently repositioned from 'brand strategy' to 'revenue-led brand building'. That's a sharp move for the current market. I help consultants with exactly that kind of messaging clarity. Open to a 15-min conversation?",
     },
-    cta: "Try it for Freelancers →",
+    cta: "Try it for Freelancers",
     accentColor: "purple",
   },
   {
@@ -89,7 +89,7 @@ const useCases = [
       subject: "Your eng team growth signal",
       body: "Saw [Company] launched two new product lines and your engineering job board jumped from 3 to 11 open roles last month. We place senior engineers in exactly that growth stage. Worth a 10-minute call this week?",
     },
-    cta: "Try it for Recruiters →",
+    cta: "Try it for Recruiters",
     accentColor: "purple",
   },
   {
@@ -97,9 +97,9 @@ const useCases = [
     audience: "Founder doing their own outreach",
     headline: "Outbound that doesn't take your whole morning",
     problem:
-      "You're doing everything — product, hiring, customer success, and now outbound. You know cold email works but you can't spend 45 minutes crafting a personalized pitch to one prospect.",
+      "You're doing everything: product, hiring, customer success, and now outbound. You know cold email works but you can't spend 45 minutes crafting a personalized pitch to one prospect.",
     solution:
-      "Scrapitch gives you a founder-grade cold email in 10 seconds. Paste the URL, pick your tone, copy the best variant, and send. The whole sequence — initial + 3 follow-ups — is ready before your next meeting.",
+      "Scrapitch gives you a founder-grade cold email in 10 seconds. Paste the URL, pick your tone, copy the best variant, and send. The whole sequence, initial email plus 3 follow-ups, is ready before your next meeting.",
     outcomes: [
       "Full outreach sequence (email + follow-ups) ready in under 2 minutes",
       "Sounds like you wrote it after reading their site carefully",
@@ -107,9 +107,9 @@ const useCases = [
     ],
     snippet: {
       subject: "Your API pricing page",
-      body: "Read through your developer docs and noticed you switched to usage-based pricing last quarter — smart move for PLG. We help early-stage SaaS teams with exactly that kind of growth infrastructure. Have 15 minutes this week?",
+      body: "Read through your developer docs and noticed you switched to usage-based pricing last quarter. Smart move for PLG. We help early-stage SaaS teams with exactly that kind of growth infrastructure. Have 15 minutes this week?",
     },
-    cta: "Try it for Founders →",
+    cta: "Try it for Founders",
     accentColor: "amber",
   },
 ];
@@ -178,7 +178,7 @@ export default function UseCasesPage() {
             </Reveal>
             <Reveal delay={160}>
               <p className="text-xl text-[#a8a8a8] max-w-2xl mx-auto leading-relaxed">
-                Whether you carry a quota, run an agency, or do your own outreach — Scrapitch handles the research and writing.
+                Whether you carry a quota, run an agency, or do your own outreach. Scrapitch handles the research and writing.
               </p>
             </Reveal>
             <Reveal delay={240}>
@@ -248,7 +248,7 @@ export default function UseCasesPage() {
                   <div>
                     <p className="font-semibold text-[#f0f0f0] mb-1">No native integration needed</p>
                     <p className="text-sm text-[#a8a8a8] leading-relaxed">
-                      Scrapitch generates ready-to-send copy. Hit copy, paste into your tool of choice. Works with Instantly, Lemlist, Apollo, Clay, Smartlead, HubSpot, Outreach — or any CSV-based workflow. No Zapier, no API setup.
+                      Scrapitch generates ready-to-send copy. Hit copy, paste into your tool of choice. Works with Instantly, Lemlist, Apollo, Clay, Smartlead, HubSpot, Outreach, or any CSV-based workflow. No Zapier, no API setup.
                     </p>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function UseCasesPage() {
                 href="/signup"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-10 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Get Started →
+                Get Started
               </Link>
             </Reveal>
           </div>

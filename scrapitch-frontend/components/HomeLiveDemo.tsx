@@ -22,7 +22,7 @@ const cards = [
     scoreBg: "rgba(245,158,11,0.1)",
     scoreBorder: "rgba(245,158,11,0.25)",
     subject: "2x reply rate, zero extra work",
-    body: "Agencies using personalized cold outreach see 2x reply rates vs templates. Scrapitch writes them in 10 seconds per prospect — referencing their actual site. Happy to show you a demo.",
+    body: "Agencies using personalized cold outreach see 2x reply rates vs templates. Scrapitch writes them in 10 seconds per prospect, referencing their actual site. Happy to show you a demo.",
   },
   {
     label: "The Curious",
@@ -31,7 +31,7 @@ const cards = [
     scoreBg: "rgba(34,197,94,0.1)",
     scoreBorder: "rgba(34,197,94,0.25)",
     subject: "Noticed your case study",
-    body: "Just read through your SaaS case study — impressive 3x growth result. Curious whether you're automating cold outreach yet or still doing it manually. Happy to share what's working.",
+    body: "Just read through your SaaS case study. Impressive 3x growth result. Curious whether you're automating cold outreach yet or still doing it manually. Happy to share what's working.",
   },
 ];
 
@@ -100,7 +100,7 @@ export default function HomeLiveDemo() {
               color: showResult ? "#22c55e" : "#60a5fa",
               border: `1px solid ${showResult ? "rgba(34,197,94,0.3)" : "rgba(59,130,246,0.25)"}`,
             }}>
-              {phase === "loading" ? "Analyzing…" : showResult ? "Done ✓" : "Analyze →"}
+              {phase === "loading" ? "Analyzing…" : showResult ? "Done ✓" : "Analyze"}
             </span>
           </div>
 

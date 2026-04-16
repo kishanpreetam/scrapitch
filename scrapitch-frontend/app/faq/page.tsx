@@ -9,7 +9,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "FAQ — Scrapitch",
   description:
-    "Everything you need to know about Scrapitch — personalization, industries, pricing, privacy, and how the scraping works.",
+    "Everything you need to know about Scrapitch: personalization, industries, pricing, privacy, and how the scraping works.",
 };
 
 const faqSections = [
@@ -18,7 +18,7 @@ const faqSections = [
     questions: [
       {
         q: "How does Scrapitch personalize emails?",
-        a: "It reads the prospect's actual website copy — hero headline, about page, value proposition, tone, audience — and passes that as structured context to the AI. Every generated email is required to reference specific scraped content. If scraping fails, we fall back to domain-level data and flag it.",
+        a: "It reads the prospect's actual website copy: hero headline, about page, value proposition, tone, and audience. It passes that as structured context to the AI. Every generated email is required to reference specific scraped content. If scraping fails, we fall back to domain-level data and flag it.",
       },
       {
         q: "What industries does Scrapitch support?",
@@ -26,7 +26,7 @@ const faqSections = [
       },
       {
         q: "How is this different from ChatGPT or Apollo?",
-        a: "ChatGPT requires you to research the prospect yourself and write a prompt. Apollo uses name-merge templates. Scrapitch scrapes the live website, auto-detects the industry, applies the right framework, and generates structured cold emails with subject variants and follow-up sequences — all in under 10 seconds.",
+        a: "ChatGPT requires you to research the prospect yourself and write a prompt. Apollo uses name-merge templates. Scrapitch scrapes the live website, auto-detects the industry, applies the right framework, and generates structured cold emails with subject variants and follow-up sequences. All in under 10 seconds.",
       },
       {
         q: "Can I use it for any niche?",
@@ -55,11 +55,11 @@ const faqSections = [
     questions: [
       {
         q: "Is Scrapitch free to use?",
-        a: "Yes — Scrapitch is completely free. No plans, no credit card, no limits. Create an account and start generating immediately.",
+        a: "Yes. Scrapitch is completely free. No plans, no credit card, no limits. Create an account and start generating immediately.",
       },
       {
         q: "Do I need to create an account?",
-        a: "Yes. An account is required to use the generator. Sign up takes under 30 seconds — no credit card or payment info needed.",
+        a: "Yes. An account is required to use the generator. Sign up takes under 30 seconds. No credit card or payment info needed.",
       },
     ],
   },
@@ -72,11 +72,11 @@ const faqSections = [
       },
       {
         q: "Is web scraping legal?",
-        a: "Scraping publicly accessible web pages for legitimate communication purposes is generally legal in most jurisdictions. Scrapitch only accesses publicly available content — the same content anyone can see in a browser. We do not bypass authentication or access private pages.",
+        a: "Scraping publicly accessible web pages for legitimate communication purposes is generally legal in most jurisdictions. Scrapitch only accesses publicly available content, the same content anyone can see in a browser. We do not bypass authentication or access private pages.",
       },
       {
         q: "Are the generated emails CAN-SPAM compliant?",
-        a: "The email copy follows CAN-SPAM best practices: no deceptive subject lines, no false identity, clear purpose. Full compliance also requires your sending domain setup, physical address, and unsubscribe mechanism — managed by your sending tool.",
+        a: "The email copy follows CAN-SPAM best practices: no deceptive subject lines, no false identity, clear purpose. Full compliance also requires your sending domain setup, physical address, and unsubscribe mechanism, managed by your sending tool.",
       },
       {
         q: "Are the emails GDPR compliant?",
@@ -127,7 +127,7 @@ export default function FAQPage() {
             </Reveal>
             <Reveal delay={160}>
               <p className="text-lg sm:text-xl text-[#a8a8a8] max-w-lg mx-auto leading-relaxed">
-                From how it personalizes to what data we store — it&apos;s all here.
+                From how it personalizes to what data we store. It&apos;s all here.
               </p>
             </Reveal>
           </div>

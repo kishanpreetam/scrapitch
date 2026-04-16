@@ -81,7 +81,7 @@ export default function SignupPage() {
               </span>
             </Link>
             <h1 className="text-2xl font-black text-white">Create your account</h1>
-            <p className="text-sm text-[#6b6b6b] mt-1">Start generating in seconds — no setup required</p>
+            <p className="text-sm text-[#6b6b6b] mt-1">Start generating in seconds. No setup required.</p>
           </div>
 
           {/* Google OAuth */}
@@ -233,7 +233,7 @@ export default function SignupPage() {
                   Creating account…
                 </span>
               ) : (
-                "Create Account →"
+                "Create Account"
               )}
             </button>
 
