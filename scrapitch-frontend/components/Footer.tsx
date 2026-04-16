@@ -7,7 +7,6 @@ const footerLinks = {
     { href: "/generator",    label: "Generator" },
   ],
   Company: [
-    { href: "/pricing", label: "Pricing" },
     { href: "/faq",     label: "FAQ" },
   ],
   Legal: [
@@ -35,7 +34,7 @@ export default function Footer() {
             <p className="text-sm text-[#6b6b6b] leading-relaxed">
               AI cold email from any URL. 3 scored variants in seconds.
             </p>
-            <p className="mt-3 text-xs text-[#6b6b6b]">$9.99/mo · Cancel anytime</p>
+            <p className="mt-3 text-xs text-[#6b6b6b]">AI cold email from any URL.</p>
           </div>
 
           {/* Link columns */}

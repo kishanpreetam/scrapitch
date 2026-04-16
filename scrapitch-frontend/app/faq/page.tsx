@@ -51,27 +51,15 @@ const faqSections = [
     ],
   },
   {
-    section: "Pricing",
+    section: "Account & Access",
     questions: [
       {
-        q: "Is there a free trial?",
-        a: "Yes. Create a free account and get 3 email generations — no credit card required. After that, Pro is $9.99/month for unlimited access.",
+        q: "Is Scrapitch free to use?",
+        a: "Yes — Scrapitch is completely free. No plans, no credit card, no limits. Create an account and start generating immediately.",
       },
       {
-        q: "What happens after my 3 free generations?",
-        a: "You'll see an upgrade prompt. Your existing results are preserved. Upgrade to Pro for unlimited access.",
-      },
-      {
-        q: "Can I cancel anytime?",
-        a: "Yes, cancel from account settings at any time. No contracts, no cancellation fees. Access continues through the end of your current billing period.",
-      },
-      {
-        q: "Do you offer refunds?",
-        a: "Yes — within 7 days of your first paid charge if you're not satisfied. Email hello@scrapitch.com.",
-      },
-      {
-        q: "What's included in the Growth plan?",
-        a: "Everything in Pro, plus upcoming features: Google News-triggered outreach, Icebreaker mode (personalized openers from recent news/activity), spam score checker, and bulk URL processing. Growth plan customers get early access.",
+        q: "Do I need to create an account?",
+        a: "Yes. An account is required to use the generator. Sign up takes under 30 seconds — no credit card or payment info needed.",
       },
     ],
   },
@@ -134,7 +122,7 @@ export default function FAQPage() {
             </Reveal>
             <Reveal delay={80}>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-[1.05]">
-                Every question, <span className="bg-linear-to-r from-[#7c3aed] to-[#a855f7] bg-clip-text text-transparent">answered.</span>
+                Every question, <span style={{ color: "#3b82f6" }}>answered.</span>
               </h1>
             </Reveal>
             <Reveal delay={160}>
@@ -153,7 +141,7 @@ export default function FAQPage() {
                 <div>
                   {/* Section header */}
                   <div className="flex items-center gap-3 mb-7">
-                    <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#7c3aed]">
+                    <h2 className="text-xl sm:text-2xl font-black tracking-tight text-[#3b82f6]">
                       {section.section}
                     </h2>
                   </div>

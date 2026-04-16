@@ -61,34 +61,6 @@ const whoCards = [
   },
 ];
 
-const freeFeatures = [
-  "3 email generations",
-  "All 3 email variants (PAS, Value-First, Curious)",
-  "3 subject lines per variant",
-  "Reply rate scoring",
-  "Follow-up sequence included",
-  "No credit card required",
-];
-
-const proFeatures = [
-  "Unlimited generations",
-  "Priority processing",
-  "All 3 email variants (PAS, Value-First, Curious)",
-  "3 subject lines per variant",
-  "Reply rate scoring + reasoning",
-  "Full follow-up sequence (Day 3/7/14)",
-  "12 industry frameworks + tone detection",
-  "All future Phase 1 updates",
-];
-
-const growthFeatures = [
-  { text: "Everything in Pro" },
-  { text: "Google News trigger emails", soon: true },
-  { text: "Icebreaker-only mode", soon: true },
-  { text: "Spam score checker", soon: true },
-  { text: "Competitor mention detection", soon: true },
-];
-
 // ── Page ──────────────────────────────────────────────────────────
 
 export default function LandingPage() {
@@ -133,7 +105,7 @@ export default function LandingPage() {
             }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#60a5fa", display: "inline-block", marginRight: 8 }} />
               <span style={{ fontSize: 13, color: "#93c5fd", fontWeight: 500, letterSpacing: "0.01em" }}>
-                Free to start. No card. No catch. →
+                AI-powered cold email in seconds →
               </span>
             </div>
 
@@ -157,7 +129,7 @@ export default function LandingPage() {
                 href="/signup"
                 className="rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Start Free →
+                Get Started →
               </Link>
               <Link
                 href="/how-it-works"
@@ -166,7 +138,7 @@ export default function LandingPage() {
                 See how it works
               </Link>
             </div>
-            <p className="text-sm text-[#64748b]">3 free generations · no credit card · cancel anytime</p>
+            <p className="text-sm text-[#64748b]">No setup required · completely free</p>
           </div>
         </section>
 
@@ -183,14 +155,14 @@ export default function LandingPage() {
         <HomeTabbedShowcase />
 
         {/* ── 6. WHO IT'S FOR ─────────────────────────────────── */}
-        <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
+        <section className="border-t border-slate-200 py-24 md:py-32" style={{ background: "#f8fafc" }}>
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">USE CASES</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#0f172a" }}>
                 Built for anyone doing B2B outreach
               </h2>
-              <p className="mt-4 text-lg text-[#94a3b8]">
+              <p className="mt-4 text-lg" style={{ color: "#475569" }}>
                 If you write cold emails to people who have a website, Scrapitch speeds up your research and makes your copy better.
               </p>
             </div>
@@ -199,10 +171,10 @@ export default function LandingPage() {
               {whoCards.map((card, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl p-7 transition-all duration-200 hover:border-[rgba(59,130,246,0.35)] group"
+                  className="rounded-2xl p-7 transition-all duration-200 group"
                   style={{
-                    background: "#111111",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "white",
+                    border: "1px solid #e2e8f0",
                   }}
                 >
                   <div className="flex items-start gap-4">
@@ -211,15 +183,15 @@ export default function LandingPage() {
                       style={{
                         width: 44, height: 44,
                         background: "rgba(59,130,246,0.08)",
-                        color: "#60a5fa",
+                        color: "#3b82f6",
                         border: "1px solid rgba(59,130,246,0.15)",
                       }}
                     >
                       {card.icon}
                     </div>
                     <div>
-                      <p className="text-base font-bold text-white mb-2">{card.role}</p>
-                      <p className="text-sm text-[#94a3b8] leading-relaxed">{card.desc}</p>
+                      <p className="text-base font-bold mb-2" style={{ color: "#0f172a" }}>{card.role}</p>
+                      <p className="text-sm leading-relaxed" style={{ color: "#475569" }}>{card.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -234,10 +206,10 @@ export default function LandingPage() {
             <div className="text-center mb-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">WHY SCRAPITCH</p>
               <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
-                Why not just use ChatGPT?
+                Why not just use generic AI?
               </h2>
               <p className="mt-4 text-lg text-[#94a3b8] max-w-xl mx-auto">
-                ChatGPT writes emails. Scrapitch writes emails about{" "}
+                Generic AI writes emails. Scrapitch writes emails about{" "}
                 <em className="not-italic text-white font-semibold">your specific prospect</em> — after reading their website, detecting their industry, and matching their tone.
               </p>
             </div>
@@ -260,7 +232,7 @@ export default function LandingPage() {
                 >
                   <div className="px-5 py-3.5 text-sm text-[#94a3b8]">{row.feature}</div>
                   <div className="px-5 py-3.5 text-center flex items-center justify-center" style={{ borderLeft: "1px solid rgba(255,255,255,0.05)" }}>
-                    <span className="text-xl font-black" style={{ color: "#22c55e" }}>✓</span>
+                    <span className="text-xl font-black" style={{ color: "#3b82f6" }}>✓</span>
                   </div>
                   <div className="px-5 py-3.5 text-center flex items-center justify-center" style={{ borderLeft: "1px solid rgba(255,255,255,0.05)" }}>
                     {row.generic === null ? (
@@ -269,7 +241,7 @@ export default function LandingPage() {
                         color: "#f59e0b", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.25)",
                       }}>Manual only</span>
                     ) : (
-                      <span className="text-xl font-bold" style={{ color: "rgba(255,255,255,0.2)" }}>✗</span>
+                      <span className="text-xl font-bold" style={{ color: "#4a5568" }}>✗</span>
                     )}
                   </div>
                 </div>
@@ -281,105 +253,13 @@ export default function LandingPage() {
                 href="/signup"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Try it free — see the difference →
+                Try it now — see the difference →
               </Link>
             </div>
           </div>
         </section>
 
-        {/* ── 8. PRICING ──────────────────────────────────────── */}
-        <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">PRICING</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">Simple, honest pricing.</h2>
-              <p className="mt-4 text-lg text-[#94a3b8]">Start free. Upgrade when you&apos;re ready.</p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-6 items-start">
-              {/* Free */}
-              <div className="rounded-2xl p-6" style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#64748b] mb-4">Free</p>
-                <div className="mb-1">
-                  <span className="text-4xl font-black text-white leading-none">$0</span>
-                </div>
-                <p className="text-xs text-[#64748b] mb-5">forever · no card required</p>
-                <ul className="space-y-2.5 mb-6">
-                  {freeFeatures.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#94a3b8]">
-                      <span className="text-[#3b82f6] font-bold shrink-0 mt-px">✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="block w-full text-center rounded-xl border border-white/12 py-2.5 text-sm font-bold text-[#94a3b8] hover:border-white/20 hover:text-white transition-colors">
-                  Get Started →
-                </Link>
-              </div>
-
-              {/* Pro — highlighted */}
-              <div className="rounded-2xl p-6 relative" style={{
-                background: "#0d1b2e",
-                border: "2px solid #3b82f6",
-                boxShadow: "0 0 40px rgba(59,130,246,0.12)",
-              }}>
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap rounded-md px-3 py-1" style={{ background: "#3b82f6" }}>
-                    Most Popular
-                  </span>
-                </div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#60a5fa] mb-4 mt-2">Pro</p>
-                <div className="mb-1">
-                  <span className="text-4xl font-black text-white leading-none">$9.99</span>
-                </div>
-                <p className="text-xs text-[#64748b] mb-5">/ month · cancel anytime</p>
-                <ul className="space-y-2.5 mb-6">
-                  {proFeatures.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-[#94a3b8]">
-                      <span className="text-[#3b82f6] font-bold shrink-0 mt-px">✓</span>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="block w-full text-center rounded-xl bg-[#3b82f6] py-2.5 text-sm font-bold text-white hover:bg-[#2563eb] transition-colors">
-                  Start Pro →
-                </Link>
-                <p className="text-center text-xs text-[#64748b] mt-3">3 free generations to start · no card required</p>
-              </div>
-
-              {/* Growth */}
-              <div className="rounded-2xl p-6" style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.08)" }}>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#64748b] mb-4">Growth</p>
-                <div className="mb-1">
-                  <span className="text-4xl font-black text-white leading-none">$15.99</span>
-                </div>
-                <p className="text-xs text-[#64748b] mb-5">/ month · cancel anytime</p>
-                <ul className="space-y-2.5 mb-6">
-                  {growthFeatures.map((f) => (
-                    <li key={f.text} className="flex items-center justify-between gap-2 text-sm text-[#94a3b8]">
-                      <span className="flex items-start gap-2.5">
-                        <span className="text-[#3b82f6] font-bold shrink-0 mt-px">✓</span>
-                        {f.text}
-                      </span>
-                      {f.soon && (
-                        <span style={{
-                          fontSize: 10, fontWeight: 600, padding: "2px 7px", borderRadius: 5, flexShrink: 0,
-                          color: "#60a5fa", background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.2)",
-                        }}>Soon</span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/signup" className="block w-full text-center rounded-xl border border-white/12 py-2.5 text-sm font-bold text-[#94a3b8] hover:border-white/20 hover:text-white transition-colors">
-                  Start Growth →
-                </Link>
-                <p className="text-center text-xs text-[#64748b] mt-3">Lock in early-access pricing</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 9. FAQ ──────────────────────────────────────────── */}
+        {/* ── 8. FAQ ──────────────────────────────────────────── */}
         <HomeFaqSection />
 
         {/* ── 10. FINAL CTA ───────────────────────────────────── */}
@@ -399,7 +279,7 @@ export default function LandingPage() {
                 href="/signup"
                 className="rounded-xl bg-[#3b82f6] px-10 py-4 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Start Free →
+                Get Started →
               </Link>
               <Link
                 href="/how-it-works"
@@ -408,7 +288,7 @@ export default function LandingPage() {
                 See It In Action →
               </Link>
             </div>
-            <p className="text-sm text-[#64748b]">3 free email generations · cancel anytime · no setup required</p>
+            <p className="text-sm text-[#64748b]">No setup required · completely free</p>
           </div>
         </section>
 
