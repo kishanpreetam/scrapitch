@@ -61,43 +61,43 @@ export default function HomeLiveDemo() {
   const showResult = phase === "result" || phase === "fade";
 
   return (
-    <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0f0f0f" }}>
+    <section className="py-24 md:py-32" style={{ background: "#faf8f5" }}>
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">LIVE PREVIEW</p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">See it in action</h2>
-          <p className="mt-4 text-lg text-[#94a3b8]">Watch Scrapitch turn a URL into 3 scored cold emails.</p>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>See it in action</h2>
+          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>Watch Scrapitch turn a URL into 3 scored cold emails.</p>
         </div>
 
         <div
           className={`rounded-2xl transition-opacity duration-700 ${phase === "fade" ? "opacity-0" : "opacity-100"}`}
           style={{
-            background: "#111111",
-            border: "1px solid rgba(59,130,246,0.2)",
+            background: "#ffffff",
+            border: "1px solid rgba(0,0,0,0.07)",
             padding: "24px",
-            boxShadow: "0 0 60px rgba(59,130,246,0.06)",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
           }}
         >
           {/* URL input row */}
           <div style={{
             display: "flex", alignItems: "center", gap: 12,
-            background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.08)",
+            background: "#f5f3ef", border: "1px solid rgba(0,0,0,0.08)",
             borderRadius: 12, padding: "12px 16px", marginBottom: 16,
           }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#64748b" strokeWidth={2}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#8a8a82" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
             </svg>
-            <span style={{ flex: 1, fontFamily: "monospace", fontSize: 14, color: "#94a3b8" }}>
+            <span style={{ flex: 1, fontFamily: "monospace", fontSize: 14, color: "#5a5a52" }}>
               {typed.length > 0
                 ? <>{`https://${typed}`}</>
-                : <span style={{ color: "#64748b" }}>https://</span>
+                : <span style={{ color: "#8a8a82" }}>https://</span>
               }
-              {phase === "typing" && <span className="cursor-blink" style={{ color: "#fff" }}>|</span>}
+              {phase === "typing" && <span className="cursor-blink" style={{ color: "#1a1a1a" }}>|</span>}
             </span>
             <span style={{
               fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 999, flexShrink: 0,
               background: showResult ? "rgba(34,197,94,0.1)" : "rgba(59,130,246,0.1)",
-              color: showResult ? "#22c55e" : "#60a5fa",
+              color: showResult ? "#22c55e" : "#3b82f6",
               border: `1px solid ${showResult ? "rgba(34,197,94,0.3)" : "rgba(59,130,246,0.25)"}`,
             }}>
               {phase === "loading" ? "Analyzing…" : showResult ? "Done ✓" : "Analyze"}
@@ -108,12 +108,12 @@ export default function HomeLiveDemo() {
           {(phase === "loading" || showResult) && (
             <div style={{ marginBottom: 16 }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 12, color: "#94a3b8" }}>
+                <span style={{ fontSize: 12, color: "#5a5a52" }}>
                   {phase === "loading" ? "Analyzing website…" : "Done · 3 emails ready"}
                 </span>
-                <span style={{ fontSize: 12, color: "#64748b" }}>{phase === "loading" ? "…" : "100%"}</span>
+                <span style={{ fontSize: 12, color: "#8a8a82" }}>{phase === "loading" ? "…" : "100%"}</span>
               </div>
-              <div style={{ height: 4, background: "rgba(255,255,255,0.06)", borderRadius: 999, overflow: "hidden" }}>
+              <div style={{ height: 4, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden" }}>
                 <div
                   className={phase === "loading" ? "demo-bar" : ""}
                   style={{
@@ -132,8 +132,8 @@ export default function HomeLiveDemo() {
                   <div
                     key={i}
                     style={{
-                      background: "#1a1a1a",
-                      border: "1px solid rgba(255,255,255,0.08)",
+                      background: "#f8f6f2",
+                      border: "1px solid rgba(0,0,0,0.06)",
                       borderRadius: 12,
                       padding: 16,
                       opacity: phase === "result" ? 1 : 0,
@@ -142,29 +142,29 @@ export default function HomeLiveDemo() {
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                      <span style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8" }}>{card.label}</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#5a5a52" }}>{card.label}</span>
                       <span style={{
                         fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 6,
                         color: card.scoreColor, background: card.scoreBg, border: `1px solid ${card.scoreBorder}`,
                       }}>{card.score}/10</span>
                     </div>
-                    <p style={{ fontSize: 11, color: "#64748b", marginBottom: 8, fontStyle: "italic" }}>
+                    <p style={{ fontSize: 11, color: "#8a8a82", marginBottom: 8, fontStyle: "italic" }}>
                       &ldquo;{card.subject}&rdquo;
                     </p>
-                    <p style={{ fontSize: 11, color: "#94a3b8", lineHeight: 1.6 }}>
+                    <p style={{ fontSize: 11, color: "#5a5a52", lineHeight: 1.6 }}>
                       {card.body.slice(0, 90)}…
                     </p>
                   </div>
                 ))
               : [...Array(3)].map((_, i) => (
                   <div key={i} style={{
-                    background: "#1a1a1a", border: "1px solid rgba(255,255,255,0.06)",
+                    background: "#f8f6f2", border: "1px solid rgba(0,0,0,0.06)",
                     borderRadius: 12, padding: 16,
                   }}>
-                    <div style={{ height: 8, background: "rgba(255,255,255,0.06)", borderRadius: 4, width: "65%", marginBottom: 10 }} />
-                    <div style={{ height: 6, background: "rgba(255,255,255,0.04)", borderRadius: 4, width: "80%", marginBottom: 6 }} />
-                    <div style={{ height: 6, background: "rgba(255,255,255,0.04)", borderRadius: 4, width: "65%", marginBottom: 6 }} />
-                    <div style={{ height: 6, background: "rgba(255,255,255,0.04)", borderRadius: 4, width: "50%" }} />
+                    <div style={{ height: 8, background: "rgba(0,0,0,0.06)", borderRadius: 4, width: "65%", marginBottom: 10 }} />
+                    <div style={{ height: 6, background: "rgba(0,0,0,0.04)", borderRadius: 4, width: "80%", marginBottom: 6 }} />
+                    <div style={{ height: 6, background: "rgba(0,0,0,0.04)", borderRadius: 4, width: "65%", marginBottom: 6 }} />
+                    <div style={{ height: 6, background: "rgba(0,0,0,0.04)", borderRadius: 4, width: "50%" }} />
                   </div>
                 ))
             }
@@ -173,14 +173,14 @@ export default function HomeLiveDemo() {
           {/* Footer row */}
           <div style={{
             marginTop: 16, paddingTop: 12,
-            borderTop: "1px solid rgba(255,255,255,0.06)",
+            borderTop: "1px solid rgba(0,0,0,0.06)",
             display: "flex", justifyContent: "space-between", alignItems: "center",
           }}>
-            <span style={{ fontSize: 11, color: "#64748b" }}>Generated in ~9.4s</span>
+            <span style={{ fontSize: 11, color: "#8a8a82" }}>Generated in ~9.4s</span>
             <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 600 }}>✓ Follow-up sequence included</span>
           </div>
         </div>
-        <p style={{ textAlign: "center", fontSize: 11, color: "#64748b", marginTop: 8 }}>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#8a8a82", marginTop: 8 }}>
           Looping demo · real generation takes ~10 seconds
         </p>
       </div>
