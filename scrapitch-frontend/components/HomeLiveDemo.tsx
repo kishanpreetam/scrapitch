@@ -61,8 +61,14 @@ export default function HomeLiveDemo() {
   const showResult = phase === "result" || phase === "fade";
 
   return (
-    <section className="py-24 md:py-32" style={{ background: "#faf8f5" }}>
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <section className="py-24 md:py-32" style={{ background: "#faf8f5", position: "relative" }}>
+      {/* Subtle dot grid overlay */}
+      <div aria-hidden="true" style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        opacity: 0.04,
+        backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23000000'/%3E%3C/svg%3E\")",
+      }} />
+      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">LIVE PREVIEW</p>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>See it in action</h2>
