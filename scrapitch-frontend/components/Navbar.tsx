@@ -11,7 +11,6 @@ const navLinks = [
   { href: "/",             label: "Home" },
   { href: "/how-it-works", label: "How It Works" },
   { href: "/use-cases",    label: "Use Cases" },
-  { href: "/pricing",      label: "Pricing" },
   { href: "/faq",          label: "FAQ" },
 ];
 
@@ -156,7 +155,7 @@ export default function Navbar() {
                   href="/signup"
                   className="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2563eb] transition-colors"
                 >
-                  Sign Up Free
+                  Sign Up
                 </Link>
               </>
             )}
@@ -212,7 +211,7 @@ export default function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="block text-center rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2563eb] transition-colors"
                 >
-                  Sign Up Free
+                  Sign Up
                 </Link>
                 <Link
                   href="/login"

@@ -138,7 +138,7 @@ function EmailCard({ variant }: { variant: Variant }) {
         className={`w-full rounded-lg border py-2.5 text-sm font-semibold transition-all ${
           copied
             ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-            : "border-zinc-700 text-zinc-300 hover:border-purple-400/50 hover:text-purple-300"
+            : "border-zinc-700 text-zinc-300 hover:border-blue-400/50 hover:text-blue-300"
         }`}
       >
         {copied ? "✓ Copied to clipboard" : "📋 Copy email"}
@@ -295,10 +295,10 @@ export default function GeneratorPage() {
                 onChange={(e) => setUrl(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
                 placeholder="https://yourprospect.com"
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-purple-400/60 focus:outline-none focus:ring-2 focus:ring-purple-400/20 transition-all text-base"
+                className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base"
               />
               <div className="mt-2.5 flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-purple-400/20 bg-purple-500/[0.06] px-2.5 py-1 text-[11px] font-semibold text-purple-400/80 uppercase tracking-wide">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/20 bg-blue-500/6 px-2.5 py-1 text-[11px] font-semibold text-blue-400/80 uppercase tracking-wide">
                   Coming soon
                 </span>
                 <span className="text-xs text-zinc-600">
@@ -316,7 +316,7 @@ export default function GeneratorPage() {
                 <select
                   value={framework}
                   onChange={(e) => setFramework(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-purple-400/60 focus:outline-none focus:ring-1 focus:ring-purple-400/20 transition-all"
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
                 >
                   <option>All 3 Variants</option>
                   <option>The Direct (PAS)</option>
@@ -331,7 +331,7 @@ export default function GeneratorPage() {
                 <select
                   value={tone}
                   onChange={(e) => setTone(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-purple-400/60 focus:outline-none focus:ring-1 focus:ring-purple-400/20 transition-all"
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
                 >
                   <option>Professional</option>
                   <option>Casual</option>
@@ -346,7 +346,7 @@ export default function GeneratorPage() {
                 <select
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-purple-400/60 focus:outline-none focus:ring-1 focus:ring-purple-400/20 transition-all"
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
                 >
                   <option>Auto-detect</option>
                   <option>B2B SaaS</option>
@@ -369,7 +369,7 @@ export default function GeneratorPage() {
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 py-3.5 text-base font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-xl bg-[#3b82f6] py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-3">
@@ -397,7 +397,7 @@ export default function GeneratorPage() {
                 <div>
                   <h2 className="text-xl font-bold text-zinc-50">
                     Results for{" "}
-                    <span className="text-purple-400">{result.company_name}</span>
+                    <span className="text-blue-400">{result.company_name}</span>
                   </h2>
                   <p className="text-sm text-zinc-500 mt-0.5">
                     {result.url}
@@ -436,23 +436,6 @@ export default function GeneratorPage() {
           )}
         </div>
 
-        {/* Bottom upgrade banner */}
-        <div className="border-t border-zinc-800/60 py-8">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="rounded-xl border border-purple-400/20 bg-purple-500/[0.06] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-zinc-300">On the free tier?</p>
-                <p className="text-xs text-zinc-500 mt-0.5">You get 3 generations free. Upgrade for unlimited access.</p>
-              </div>
-              <Link
-                href="/pricing"
-                className="shrink-0 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-5 py-2.5 text-sm font-bold text-white hover:opacity-90 transition-opacity whitespace-nowrap"
-              >
-                Upgrade for $9.99/mo →
-              </Link>
-            </div>
-          </div>
-        </div>
       </main>
       <Footer />
     </>

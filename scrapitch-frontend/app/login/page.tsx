@@ -65,7 +65,7 @@ export default function LoginPage() {
             <Link href="/" className="inline-flex items-center gap-1.5 mb-6">
               <span className="text-2xl font-black tracking-tight">
                 <span className="text-white">Scrap</span>
-                <span className="text-[#a855f7]">itch</span>
+                <span className="text-[#3b82f6]">itch</span>
               </span>
             </Link>
             <h1 className="text-2xl font-black text-white">Welcome back</h1>
@@ -110,7 +110,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@example.com"
                 required
-                className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder-[#6b6b6b] focus:border-[#a855f7]/50 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/15 transition-all"
+                className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 text-sm text-white placeholder-[#6b6b6b] focus:border-[#3b82f6]/50 focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/15 transition-all"
               />
             </div>
 
@@ -123,7 +123,7 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 pr-11 text-sm text-white placeholder-[#6b6b6b] focus:border-[#a855f7]/50 focus:outline-none focus:ring-2 focus:ring-[#a855f7]/15 transition-all"
+                  className="w-full rounded-xl border border-white/20 bg-white/5 px-4 py-3 pr-11 text-sm text-white placeholder-[#6b6b6b] focus:border-[#3b82f6]/50 focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/15 transition-all"
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} tabIndex={-1}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a8a8a8] hover:text-[#d4d4d4] transition-colors">
@@ -140,7 +140,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-linear-to-r from-[#7c3aed] to-[#a855f7] py-3 text-sm font-bold text-white hover:opacity-90 transition-opacity disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full rounded-xl bg-[#3b82f6] py-3 text-sm font-bold text-white hover:bg-[#2563eb] transition-colors disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -155,7 +155,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-sm text-[#6b6b6b]">
             Don&apos;t have an account?{" "}
-            <Link href="/signup" className="font-semibold text-[#a855f7] hover:opacity-80 transition-opacity">
+            <Link href="/signup" className="font-semibold text-[#3b82f6] hover:opacity-80 transition-opacity">
               Sign up free
             </Link>
           </p>
