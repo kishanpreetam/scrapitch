@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const tabs = ["Email Variants", "Follow-up Sequence", "Reply Scoring"] as const;
+const tabs = ["Email Variants", "Follow up Sequence", "Reply Scoring"] as const;
 type Tab = typeof tabs[number];
 
 // ── Tab 1: Email Variants ─────────────────────────────────────────
@@ -11,18 +11,18 @@ function EmailVariantsTab() {
   const variants = [
     {
       variantId: "A",
-      label: "The Direct / PAS",
+      label: "The Direct, PAS",
       accentColor: "#3b82f6",
       score: 9,
       scoreColor: "#22c55e",
       scoreBg: "rgba(34,197,94,0.1)",
       scoreBorder: "rgba(34,197,94,0.25)",
-      subject: "Your inbound follow-up gap",
+      subject: "Your inbound follow up gap",
       preview: "Most agencies lose 40% of inbound leads before the first reply. The window is 5 minutes. Most teams respond in 2 days. We automate the first 3 touches so nothing falls through. Worth a quick conversation?",
     },
     {
       variantId: "B",
-      label: "Value-First",
+      label: "Value First",
       accentColor: "#22c55e",
       score: 8,
       scoreColor: "#f59e0b",
@@ -40,7 +40,7 @@ function EmailVariantsTab() {
       scoreBg: "rgba(34,197,94,0.1)",
       scoreBorder: "rgba(34,197,94,0.25)",
       subject: "Your SaaS growth case study",
-      preview: "Read through your SaaS growth case study. The 3x revenue result in 90 days stood out. Curious whether you're doing that kind of specific, targeted outreach for your own pipeline or still relying on templates. Worth exploring?",
+      preview: "Read through your SaaS growth case study. The 3x revenue result in 90 days stood out. Curious whether you are doing that kind of specific, targeted outreach for your own pipeline or still relying on templates. Worth exploring?",
     },
   ];
 
@@ -124,7 +124,7 @@ function FollowUpTab() {
     {
       day: "Day 3",
       type: "Light bump",
-      subject: "Quick follow-up",
+      subject: "Quick follow up",
       body: "Just wanted to resurface this. Still think there's a fit here. Happy to keep it to 15 minutes if that's easier.",
       isLast: false,
     },
@@ -237,7 +237,8 @@ function ScoringTab() {
         </div>
         <div>
           <p style={{ fontSize: 18, fontWeight: 800, color: "#1a1a1a", marginBottom: 2 }}>Reply Rate Score</p>
-          <p style={{ fontSize: 13, color: "#5a5a52", marginBottom: 8 }}>Weighted across 6 factors</p>
+          <p style={{ fontSize: 13, color: "#5a5a52", marginBottom: 4 }}>Weighted across 6 factors</p>
+          <p style={{ fontSize: 12, color: "#8a8a82", marginBottom: 8 }}>Scored by an independent agent, not the email writer.</p>
           <span style={{
             fontSize: 11, fontWeight: 700,
             color: "#15803d",
@@ -303,9 +304,9 @@ export default function HomeTabbedShowcase() {
   const [activeTab, setActiveTab] = useState<Tab>("Email Variants");
 
   const content: Record<Tab, React.ReactNode> = {
-    "Email Variants":     <EmailVariantsTab />,
-    "Follow-up Sequence": <FollowUpTab />,
-    "Reply Scoring":      <ScoringTab />,
+    "Email Variants":    <EmailVariantsTab />,
+    "Follow up Sequence": <FollowUpTab />,
+    "Reply Scoring":     <ScoringTab />,
   };
 
   return (
@@ -317,7 +318,7 @@ export default function HomeTabbedShowcase() {
             Everything you need to close more deals
           </h2>
           <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>
-            Not a template engine. A research and writing layer that reads, understands, and writes.
+            Not a template engine. Three specialized agents that research, write, and score.
           </p>
         </div>
 

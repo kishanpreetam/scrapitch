@@ -10,7 +10,7 @@ const faqs = [
   },
   {
     q: "What industries does it support?",
-    a: "12 verticals with tailored frameworks: B2B SaaS, Marketing & Creative Agency, Sales & Revenue Consulting, IT Services & MSP, Recruiting & Staffing, Legal Services, Financial Services & Fintech, Real Estate, Healthcare & MedTech, Manufacturing & Industrial, Ecommerce & DTC, and Freelancer / Solo Consultant. Auto-detect picks the right one from the URL.",
+    a: "12 verticals with tailored frameworks: B2B SaaS, Marketing & Creative Agency, Sales & Revenue Consulting, IT Services & MSP, Recruiting & Staffing, Legal Services, Financial Services & Fintech, Real Estate, Healthcare & MedTech, Manufacturing & Industrial, Ecommerce & DTC, and Freelancer / Solo Consultant. Auto detect picks the right one from the URL.",
   },
   {
     q: "How is the reply rate score calculated?",
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "How is this different from other email tools?",
-    a: "Most tools require you to do all the research yourself. Scrapitch does the research layer automatically: it scrapes the site, detects the industry, matches the tone, selects the right framework, and returns three ready-to-send emails with scoring. URL to email in 10 seconds, not 20 minutes.",
+    a: "Scrapitch uses three specialized AI agents instead of a single prompt. One researches, one writes, one scores. The scoring agent is independent from the writer, so scores are honest.",
   },
   {
     q: "Do you store my data or the prospect's data?",
