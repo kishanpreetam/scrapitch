@@ -68,22 +68,21 @@ export default function HomeHowItWorks() {
   }, []);
 
   return (
-    <section className="border-t border-slate-200 py-24 md:py-32" style={{ background: "#f8fafc" }}>
+    <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
       <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">HOW IT WORKS</p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#0f172a" }}>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
             Four steps.{" "}
             <span style={{ color: "#3b82f6" }}>Ten seconds.</span>
           </h2>
-          <p className="mt-4 text-lg" style={{ color: "#475569" }}>No research. No templates. No wasted hours.</p>
+          <p className="mt-4 text-lg text-[#94a3b8]">No research. No templates. No wasted hours.</p>
         </div>
 
         {/* Desktop layout */}
         <div className="hidden lg:grid grid-cols-4 gap-3">
           {steps.map((step, i) => (
             <div key={i} style={{ position: "relative" }}>
-              {/* Connecting line */}
               {i < steps.length - 1 && (
                 <div style={{
                   position: "absolute",
@@ -92,7 +91,7 @@ export default function HomeHowItWorks() {
                   right: "-50%",
                   height: 1,
                   zIndex: 0,
-                  background: i < activeStep ? "#3b82f6" : "#e2e8f0",
+                  background: i < activeStep ? "#3b82f6" : "rgba(255,255,255,0.08)",
                   transition: "background 0.5s ease",
                 }} />
               )}
@@ -101,8 +100,8 @@ export default function HomeHowItWorks() {
                 style={{
                   padding: "24px 20px",
                   borderRadius: 16,
-                  border: `1px solid ${i <= activeStep ? "rgba(59,130,246,0.3)" : "#e2e8f0"}`,
-                  background: i <= activeStep ? "rgba(59,130,246,0.04)" : "white",
+                  border: `1px solid ${i <= activeStep ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.08)"}`,
+                  background: i <= activeStep ? "rgba(59,130,246,0.08)" : "#111111",
                   transition: "all 0.5s ease",
                   position: "relative",
                   zIndex: 1,
@@ -112,7 +111,7 @@ export default function HomeHowItWorks() {
                   width: 48, height: 48, borderRadius: 12, marginBottom: 16,
                   display: "flex", alignItems: "center", justifyContent: "center",
                   background: i <= activeStep ? "rgba(59,130,246,0.12)" : "rgba(59,130,246,0.06)",
-                  color: i <= activeStep ? "#3b82f6" : "#94a3b8",
+                  color: i <= activeStep ? "#3b82f6" : "#64748b",
                   transition: "all 0.5s ease",
                 }}>
                   {step.icon}
@@ -125,8 +124,8 @@ export default function HomeHowItWorks() {
                 }}>
                   {step.num}
                 </span>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 8 }}>{step.title}</h3>
-                <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>{step.desc}</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fafafa", marginBottom: 8 }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.6 }}>{step.desc}</p>
               </div>
             </div>
           ))}
@@ -141,8 +140,8 @@ export default function HomeHowItWorks() {
               style={{
                 padding: "20px 24px",
                 borderRadius: 16,
-                border: `1px solid ${i <= activeStep ? "rgba(59,130,246,0.3)" : "#e2e8f0"}`,
-                background: i <= activeStep ? "rgba(59,130,246,0.04)" : "white",
+                border: `1px solid ${i <= activeStep ? "rgba(59,130,246,0.3)" : "rgba(255,255,255,0.08)"}`,
+                background: i <= activeStep ? "rgba(59,130,246,0.08)" : "#111111",
                 display: "flex", gap: 16, alignItems: "flex-start",
                 transition: "all 0.5s ease",
               }}
@@ -151,7 +150,7 @@ export default function HomeHowItWorks() {
                 width: 44, height: 44, borderRadius: 10, flexShrink: 0,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 background: i <= activeStep ? "rgba(59,130,246,0.12)" : "rgba(59,130,246,0.06)",
-                color: i <= activeStep ? "#3b82f6" : "#94a3b8",
+                color: i <= activeStep ? "#3b82f6" : "#64748b",
                 transition: "all 0.5s ease",
               }}>
                 {step.icon}
@@ -165,8 +164,8 @@ export default function HomeHowItWorks() {
                 }}>
                   {step.num}
                 </span>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#0f172a", marginBottom: 6 }}>{step.title}</h3>
-                <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.6 }}>{step.desc}</p>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: "#fafafa", marginBottom: 6 }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.6 }}>{step.desc}</p>
               </div>
             </div>
           ))}
