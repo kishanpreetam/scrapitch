@@ -28,7 +28,7 @@ export default function PricingPage() {
               href="/generator"
               className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-10 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
             >
-              Get Started →
+              Get Started
             </Link>
           </div>
         </section>

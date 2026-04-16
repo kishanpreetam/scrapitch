@@ -63,7 +63,7 @@ export function PricingCardFree() {
         href="/signup"
         className="block w-full text-center rounded-xl border border-white/15 bg-transparent px-6 py-3.5 text-sm font-bold text-[#d4d4d4] hover:border-white/25 hover:text-white transition-colors"
       >
-        Start Free →
+        Start Free
       </Link>
     </div>
   );
@@ -105,7 +105,7 @@ export function PricingCardPro() {
           href="/signup"
           className="block w-full text-center rounded-xl bg-[#7c3aed] px-6 py-3.5 text-sm font-bold text-white hover:bg-[#6d28d9] transition-colors"
         >
-          Start Pro →
+          Start Pro
         </Link>
       </div>
     </div>
@@ -149,7 +149,7 @@ export function PricingCardGrowth() {
         href="/signup"
         className="block w-full text-center rounded-xl border border-white/15 bg-transparent px-6 py-3.5 text-sm font-bold text-[#d4d4d4] hover:border-white/25 hover:text-white transition-colors"
       >
-        Start Growth →
+        Start Growth
       </Link>
     </div>
   );
