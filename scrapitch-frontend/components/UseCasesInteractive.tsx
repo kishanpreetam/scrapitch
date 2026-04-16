@@ -100,12 +100,12 @@ export function UseCaseCard({ uc, accent, isEven }: { uc: UseCase; accent: Accen
 
               <div className="mt-5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-[#6b6b6b]">Reply-rate score</span>
+                  <span className="text-xs text-[#6b6b6b]">Reply rate score</span>
                   <span style={{ borderRadius: "6px", padding: "3px 10px", fontSize: "13px", fontWeight: 600, color: "#16a34a", background: "#f0fdf4", border: "1px solid #bbf7d0" }}>
                     8/10
                   </span>
                 </div>
-                <span className="text-xs text-[#6b6b6b] font-mono">AI-generated</span>
+                <span className="text-xs text-[#6b6b6b] font-mono">AI generated</span>
               </div>
             </div>
           </div>
