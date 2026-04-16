@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
-import { UseCaseCard, SendingToolGrid } from "@/components/UseCasesInteractive";
+import { UseCaseCard } from "@/components/UseCasesInteractive";
 
 export const metadata: Metadata = {
   title: "Use Cases — Scrapitch",
@@ -228,29 +228,24 @@ export default function UseCasesPage() {
                   Works with every sending tool
                 </h2>
                 <p className="text-[#a8a8a8] max-w-xl mx-auto">
-                  Scrapitch generates plain text. Copy subject + body and paste anywhere.
+                  Scrapitch generates plain text emails. Copy the subject and body, then paste into whatever tool you already use.
                 </p>
               </div>
             </Reveal>
 
             <Reveal delay={100}>
-              <SendingToolGrid />
-            </Reveal>
-
-            <Reveal delay={200}>
-              <div className="mt-10 rounded-xl border border-white/8 bg-[#141414] p-6">
-                <div className="flex items-start gap-4">
-                  <div className="shrink-0 rounded-lg bg-white/8 p-2.5">
-                    <svg className="w-5 h-5 text-[#a8a8a8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="font-semibold text-[#f0f0f0] mb-1">No native integration needed</p>
-                    <p className="text-sm text-[#a8a8a8] leading-relaxed">
-                      Scrapitch generates ready to send copy. Hit copy, paste into your tool of choice. Works with Instantly, Lemlist, Apollo, Clay, Smartlead, HubSpot, Outreach, or any CSV based workflow. No Zapier, no API setup.
-                    </p>
-                  </div>
+              <div className="grid sm:grid-cols-3 gap-5">
+                <div className="rounded-2xl border border-white/8 bg-[#141414] p-6">
+                  <p className="font-semibold text-[#f0f0f0] mb-2">Copy and paste</p>
+                  <p className="text-sm text-[#a8a8a8] leading-relaxed">One click copies the subject line and email body. Paste into any email tool, CRM, or inbox.</p>
+                </div>
+                <div className="rounded-2xl border border-white/8 bg-[#141414] p-6">
+                  <p className="font-semibold text-[#f0f0f0] mb-2">No integrations needed</p>
+                  <p className="text-sm text-[#a8a8a8] leading-relaxed">No API keys, no Zapier, no setup. Scrapitch works independently from your sending stack.</p>
+                </div>
+                <div className="rounded-2xl border border-white/8 bg-[#141414] p-6">
+                  <p className="font-semibold text-[#f0f0f0] mb-2">Any workflow</p>
+                  <p className="text-sm text-[#a8a8a8] leading-relaxed">Whether you send one at a time or upload to a CSV based sequence tool, the output works everywhere.</p>
                 </div>
               </div>
             </Reveal>
