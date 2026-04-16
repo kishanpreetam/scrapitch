@@ -61,7 +61,7 @@ export default function HomeLiveDemo() {
   const showResult = phase === "result" || phase === "fade";
 
   return (
-    <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
+    <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0f0f0f" }}>
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">LIVE PREVIEW</p>

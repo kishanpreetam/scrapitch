@@ -9,17 +9,17 @@ import HomeFaqSection from "@/components/HomeFaqSection";
 
 // ── Data ──────────────────────────────────────────────────────────
 
-const comparisonRows = [
-  { feature: "Live website scraping", scrapitch: true, generic: false },
-  { feature: "No LinkedIn / CSV required", scrapitch: true, generic: false },
-  { feature: "Industry auto-detection", scrapitch: true, generic: false },
-  { feature: "Tone matching from site", scrapitch: true, generic: false },
-  { feature: "3 structured email frameworks", scrapitch: true, generic: null },
-  { feature: "3 subject lines per email", scrapitch: true, generic: false },
-  { feature: "Full follow-up sequence (Day 3/7/14)", scrapitch: true, generic: false },
-  { feature: "Reply rate scoring with reasoning", scrapitch: true, generic: null },
-  { feature: "One CTA enforced", scrapitch: true, generic: false },
-  { feature: "Research takes < 10 seconds", scrapitch: true, generic: false },
+const tableRows = [
+  { feature: "Prospect research", traditional: "Manual. Google the company, read their site, take notes.", scrapitch: "Automatic. Paste the URL, AI reads their entire site." },
+  { feature: "Personalization", traditional: "Based on whatever you remember to include.", scrapitch: "Pulled directly from their homepage, about page, and case studies." },
+  { feature: "Industry context", traditional: "You figure out the angle yourself.", scrapitch: "Auto-detected from 12 industry frameworks." },
+  { feature: "Tone of voice", traditional: "One default writing style.", scrapitch: "Matches the prospect's own writing tone." },
+  { feature: "Email structure", traditional: "Unstructured or template-based.", scrapitch: "3 proven frameworks: PAS, Value-First, Curious." },
+  { feature: "Subject lines", traditional: "Write one, hope it works.", scrapitch: "3 options per variant, optimized for opens." },
+  { feature: "Follow-up sequence", traditional: "Write each one manually or skip it.", scrapitch: "Auto-generated Day 3, 7, 14 with fresh angles." },
+  { feature: "Quality check", traditional: "Re-read it yourself, no scoring.", scrapitch: "6-factor reply rate score with reasoning." },
+  { feature: "Time per prospect", traditional: "15 to 30 minutes.", scrapitch: "About 10 seconds." },
+  { feature: "Consistency", traditional: "Depends on your energy and focus that day.", scrapitch: "Same quality every single time." },
 ];
 
 const whoCards = [
@@ -155,14 +155,14 @@ export default function LandingPage() {
         <HomeTabbedShowcase />
 
         {/* ── 6. WHO IT'S FOR ─────────────────────────────────── */}
-        <section className="border-t border-slate-200 py-24 md:py-32" style={{ background: "#f8fafc" }}>
+        <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">USE CASES</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#0f172a" }}>
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
                 Built for anyone doing B2B outreach
               </h2>
-              <p className="mt-4 text-lg" style={{ color: "#475569" }}>
+              <p className="mt-4 text-lg text-[#94a3b8]">
                 If you write cold emails to people who have a website, Scrapitch speeds up your research and makes your copy better.
               </p>
             </div>
@@ -171,15 +171,15 @@ export default function LandingPage() {
               {whoCards.map((card, i) => (
                 <div
                   key={i}
-                  className="rounded-2xl p-7 transition-all duration-200 group"
+                  className="rounded-2xl p-7 transition-all duration-200"
                   style={{
-                    background: "white",
-                    border: "1px solid #e2e8f0",
+                    background: "#111111",
+                    border: "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
                   <div className="flex items-start gap-4">
                     <div
-                      className="flex items-center justify-center rounded-xl shrink-0 transition-all duration-200"
+                      className="flex items-center justify-center rounded-xl shrink-0"
                       style={{
                         width: 44, height: 44,
                         background: "rgba(59,130,246,0.08)",
@@ -190,8 +190,8 @@ export default function LandingPage() {
                       {card.icon}
                     </div>
                     <div>
-                      <p className="text-base font-bold mb-2" style={{ color: "#0f172a" }}>{card.role}</p>
-                      <p className="text-sm leading-relaxed" style={{ color: "#475569" }}>{card.desc}</p>
+                      <p className="text-base font-bold mb-2 text-white">{card.role}</p>
+                      <p className="text-sm leading-relaxed text-[#94a3b8]">{card.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -200,60 +200,48 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ── 7. VS GENERIC AI ────────────────────────────────── */}
-        <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#111111" }}>
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        {/* ── 7. WHY SCRAPITCH TABLE ───────────────────────────── */}
+        <section className="border-t border-slate-200 py-24 md:py-32" style={{ background: "#f8fafc" }}>
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">WHY SCRAPITCH</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
-                Why not just use generic AI?
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#0f172a" }}>
+                The old way vs the Scrapitch way
               </h2>
-              <p className="mt-4 text-lg text-[#94a3b8] max-w-xl mx-auto">
-                Generic AI writes emails. Scrapitch writes emails about{" "}
-                <em className="not-italic text-white font-semibold">your specific prospect</em>. It reads their website, detects their industry, and matches their tone.
+              <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: "#475569" }}>
+                Most cold email workflows involve manual research, copy-paste prompting, and guesswork. Scrapitch automates the entire process.
               </p>
             </div>
 
-            <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+            <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(0,0,0,0.08)", background: "white" }}>
               {/* Header */}
-              <div className="grid grid-cols-3" style={{ background: "#1a1a1a", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
-                <div className="px-5 py-4 text-sm font-semibold text-[#64748b]">Feature</div>
-                <div className="px-5 py-4 text-sm font-bold text-[#3b82f6] text-center" style={{ borderLeft: "1px solid rgba(255,255,255,0.08)" }}>Scrapitch</div>
-                <div className="px-5 py-4 text-sm font-semibold text-[#64748b] text-center" style={{ borderLeft: "1px solid rgba(255,255,255,0.08)" }}>Generic AI</div>
+              <div className="grid grid-cols-3" style={{ background: "#f1f5f9", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
+                <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#94a3b8" }}>Feature</div>
+                <div className="px-5 py-4 text-sm font-semibold text-center" style={{ color: "#64748b", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>Traditional Approach</div>
+                <div className="px-5 py-4 text-sm font-bold text-center" style={{ color: "#3b82f6", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>With Scrapitch</div>
               </div>
-              {comparisonRows.map((row, i) => (
+              {tableRows.map((row, i) => (
                 <div
                   key={i}
                   className="grid grid-cols-3"
                   style={{
-                    borderBottom: i < comparisonRows.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                    background: i % 2 === 0 ? "#111111" : "rgba(255,255,255,0.01)",
+                    borderBottom: i < tableRows.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
+                    background: i % 2 === 0 ? "white" : "rgba(0,0,0,0.015)",
                   }}
                 >
-                  <div className="px-5 py-3.5 text-sm text-[#94a3b8]">{row.feature}</div>
-                  <div className="px-5 py-3.5 text-center flex items-center justify-center" style={{ borderLeft: "1px solid rgba(255,255,255,0.05)" }}>
-                    <span className="text-xl font-black" style={{ color: "#3b82f6" }}>✓</span>
-                  </div>
-                  <div className="px-5 py-3.5 text-center flex items-center justify-center" style={{ borderLeft: "1px solid rgba(255,255,255,0.05)" }}>
-                    {row.generic === null ? (
-                      <span style={{
-                        fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 6,
-                        color: "#f59e0b", background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.25)",
-                      }}>Manual only</span>
-                    ) : (
-                      <span className="text-xl font-bold" style={{ color: "#4a5568" }}>✗</span>
-                    )}
-                  </div>
+                  <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#0f172a" }}>{row.feature}</div>
+                  <div className="px-5 py-4 text-sm" style={{ color: "#64748b", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.traditional}</div>
+                  <div className="px-5 py-4 text-sm font-medium" style={{ color: "#0f172a", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.scrapitch}</div>
                 </div>
               ))}
             </div>
 
             <div className="mt-10 text-center">
               <Link
-                href="/signup"
+                href="/generator"
                 className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Try it now and see the difference
+                Try it now
               </Link>
             </div>
           </div>
