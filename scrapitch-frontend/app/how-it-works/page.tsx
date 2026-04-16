@@ -12,11 +12,11 @@ export const metadata: Metadata = {
 };
 
 const scoringFactors = [
-  { factor: "Personalization depth", weight: "30%", desc: "References specific scraped content, not generic phrases" },
+  { factor: "Personalization depth", weight: "30%", desc: "References specific details from Agent 1's research, not generic phrases" },
   { factor: "Length compliance", weight: "20%", desc: "Respects the word limit for the variant's framework" },
   { factor: "Single CTA", weight: "15%", desc: "Exactly one clear call to action" },
-  { factor: "Problem-first framing", weight: "15%", desc: "Leads with their challenge, not your credentials" },
-  { factor: "Subject line quality", weight: "10%", desc: "Under 6 words, curiosity-inducing" },
+  { factor: "Problem first framing", weight: "15%", desc: "Leads with their challenge, not your credentials" },
+  { factor: "Subject line quality", weight: "10%", desc: "Under 6 words, specific to the prospect" },
   { factor: "No spam phrases", weight: "10%", desc: 'Avoids "I hope this finds you well" and similar clichés' },
 ];
 
@@ -41,7 +41,7 @@ export default function HowItWorksPage() {
             </Reveal>
             <Reveal delay={160}>
               <p className="text-lg sm:text-xl text-[#a8a8a8] max-w-2xl mx-auto leading-relaxed">
-                Four steps. Ten seconds. Here&apos;s exactly what happens
+                Three agents. Ten seconds. Here is exactly what happens
                 between paste and send.
               </p>
             </Reveal>
@@ -82,13 +82,16 @@ export default function HowItWorksPage() {
             <Reveal>
               <div className="text-center mb-14">
                 <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-4">
-                  Reply-rate scoring
+                  Reply rate scoring
                 </p>
                 <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
-                  How reply-rate scores work
+                  How reply rate scores work
                 </h2>
                 <p className="text-[#a8a8a8] max-w-xl mx-auto text-lg leading-relaxed">
-                  Every email is scored 1–10 across 6 weighted factors.
+                  Every email is scored 1 to 10 across 6 weighted factors by an independent Scoring Agent.
+                </p>
+                <p className="text-[#a8a8a8] max-w-xl mx-auto text-base leading-relaxed mt-3">
+                  Agent 3 evaluates each email separately from the writer. Scores are honest, not self graded.
                 </p>
               </div>
             </Reveal>
@@ -127,12 +130,9 @@ export default function HowItWorksPage() {
             <Reveal delay={80}>
               <Link
                 href="/generator"
-                className="inline-flex items-center gap-2.5 rounded-xl bg-[#3b82f6] px-9 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
+                className="inline-flex rounded-xl bg-[#3b82f6] px-9 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
                 Open the generator
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                  <path fillRule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clipRule="evenodd" />
-                </svg>
               </Link>
             </Reveal>
           </div>
