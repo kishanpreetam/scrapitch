@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const tabs = ["Email Variants", "Follow-up Sequence", "Reply Scoring", "Tone Matching"] as const;
+const tabs = ["Email Variants", "Follow-up Sequence", "Reply Scoring"] as const;
 type Tab = typeof tabs[number];
 
 // ── Tab 1: Email Variants ─────────────────────────────────────────
@@ -17,8 +17,8 @@ function EmailVariantsTab() {
       scoreColor: "#22c55e",
       scoreBg: "rgba(34,197,94,0.1)",
       scoreBorder: "rgba(34,197,94,0.25)",
-      subject: "Your pipeline gap",
-      preview: "Most agencies lose 30–40% of inbound leads before conversion. We fix that with AI-written follow-up sequences that reference what each prospect actually cares about.",
+      subject: "Your inbound follow-up gap",
+      preview: "Most agencies lose 40% of inbound leads before the first reply. The window is 5 minutes. Most teams respond in 2 days. We automate the first 3 touches so nothing falls through. Worth a quick conversation?",
     },
     {
       variantId: "B",
@@ -28,8 +28,8 @@ function EmailVariantsTab() {
       scoreColor: "#f59e0b",
       scoreBg: "rgba(245,158,11,0.1)",
       scoreBorder: "rgba(245,158,11,0.25)",
-      subject: "2x reply rate, zero extra work",
-      preview: "Agencies using personalized cold outreach see 2x reply rates vs templates. Scrapitch writes them in 10 seconds per prospect. No LinkedIn needed.",
+      subject: "3x replies, same send volume",
+      preview: "Agencies we work with see 3x reply rates by personalizing one line per prospect. Scrapitch reads their site and writes that line in seconds. Your team sends the same volume. The emails just land differently. Open to comparing notes?",
     },
     {
       variantId: "C",
@@ -39,8 +39,8 @@ function EmailVariantsTab() {
       scoreColor: "#22c55e",
       scoreBg: "rgba(34,197,94,0.1)",
       scoreBorder: "rgba(34,197,94,0.25)",
-      subject: "Noticed your case study",
-      preview: "Just read your SaaS growth case study. Impressive 3x result. Curious whether you're personalizing your outreach yet or still doing it manually.",
+      subject: "Your SaaS growth case study",
+      preview: "Read through your SaaS growth case study. The 3x revenue result in 90 days stood out. Curious whether you're doing that kind of specific, targeted outreach for your own pipeline or still relying on templates. Worth exploring?",
     },
   ];
 
@@ -297,113 +297,15 @@ function ScoringTab() {
   );
 }
 
-// ── Tab 4: Tone Matching ──────────────────────────────────────────
-
-function ToneTab() {
-  return (
-    <div>
-      {/* Detected tone header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 12, color: "#5a5a52", fontWeight: 600, marginRight: 2 }}>Detected tone:</span>
-        <span style={{
-          fontSize: 12, fontWeight: 700, padding: "4px 12px", borderRadius: 999,
-          background: "rgba(59,130,246,0.1)", border: "1px solid rgba(59,130,246,0.35)",
-          color: "#3b82f6",
-        }}>
-          Professional
-        </span>
-        <span style={{
-          fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 999,
-          background: "rgba(0,0,0,0.03)", border: "1px solid rgba(0,0,0,0.08)",
-          color: "#8a8a82",
-        }}>
-          Casual
-        </span>
-        <span style={{
-          fontSize: 12, fontWeight: 500, padding: "4px 12px", borderRadius: 999,
-          background: "rgba(0,0,0,0.03)", border: "1px solid rgba(0,0,0,0.08)",
-          color: "#8a8a82",
-        }}>
-          Bold
-        </span>
-      </div>
-
-      {/* Before / After cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-        {/* Before */}
-        <div style={{
-          background: "white",
-          border: "1px solid rgba(0,0,0,0.07)",
-          borderLeft: "3px solid #e8a87c",
-          borderRadius: 12,
-          padding: 20,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-          display: "flex",
-          flexDirection: "column",
-        }}>
-          <p style={{
-            fontSize: 11, fontWeight: 700, color: "#8a8a82",
-            textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12,
-          }}>
-            Before (no tone matching)
-          </p>
-          <p style={{ fontSize: 13, color: "#5a5a52", lineHeight: 1.7, fontStyle: "italic", marginBottom: 16, flex: 1 }}>
-            &ldquo;Dear Sir/Madam, I am writing to inquire about a potential partnership between our organizations. Our company provides solutions that may be of interest.&rdquo;
-          </p>
-          <span style={{
-            display: "inline-flex", alignItems: "center", alignSelf: "flex-start",
-            fontSize: 11, fontWeight: 600, color: "#c2410c",
-            background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.2)",
-            padding: "3px 10px", borderRadius: 999,
-          }}>
-            Mismatch: formal tone sent to a casual brand
-          </span>
-        </div>
-
-        {/* After */}
-        <div style={{
-          background: "white",
-          border: "1px solid rgba(0,0,0,0.07)",
-          borderLeft: "3px solid #3b82f6",
-          borderRadius: 12,
-          padding: 20,
-          boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-          display: "flex",
-          flexDirection: "column",
-        }}>
-          <p style={{
-            fontSize: 11, fontWeight: 700, color: "#3b82f6",
-            textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12,
-          }}>
-            After (tone matched)
-          </p>
-          <p style={{ fontSize: 13, color: "#5a5a52", lineHeight: 1.7, fontStyle: "italic", marginBottom: 16, flex: 1 }}>
-            &ldquo;Hey, read through your site. You&apos;re helping B2B clients crush their ROI targets. We do something similar for outreach. Worth a quick chat?&rdquo;
-          </p>
-          <span style={{
-            display: "inline-flex", alignItems: "center", alignSelf: "flex-start",
-            fontSize: 11, fontWeight: 600, color: "#15803d",
-            background: "rgba(34,197,94,0.07)", border: "1px solid rgba(34,197,94,0.2)",
-            padding: "3px 10px", borderRadius: 999,
-          }}>
-            Match: casual tone matches their website voice
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Shell ─────────────────────────────────────────────────────────
 
 export default function HomeTabbedShowcase() {
   const [activeTab, setActiveTab] = useState<Tab>("Email Variants");
 
   const content: Record<Tab, React.ReactNode> = {
-    "Email Variants":    <EmailVariantsTab />,
+    "Email Variants":     <EmailVariantsTab />,
     "Follow-up Sequence": <FollowUpTab />,
-    "Reply Scoring":     <ScoringTab />,
-    "Tone Matching":     <ToneTab />,
+    "Reply Scoring":      <ScoringTab />,
   };
 
   return (
