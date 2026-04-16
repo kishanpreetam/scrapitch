@@ -157,6 +157,18 @@ _SENDER_INDUSTRY_MAP = {
 }
 
 
+def cleanup_text(text: str) -> str:
+    """Remove em dashes, double dashes, and arrows from generated text."""
+    text = text.replace(" \u2014 ", ". ")
+    text = text.replace("\u2014 ", ". ")
+    text = text.replace(" \u2014", ".")
+    text = text.replace("\u2014", ". ")
+    text = text.replace(" -- ", ". ")
+    text = text.replace("--", ". ")
+    text = text.replace("\u2192", "")
+    return text
+
+
 def _detect_industry(scraped_data: dict) -> str:
     combined = " ".join([
         scraped_data.get("what_they_do", ""),
@@ -348,6 +360,18 @@ Return ONLY valid JSON in this exact format (no markdown, no explanation):
         model="claude-sonnet-4-6",
         max_tokens=3000,
         system=(
+            "ABSOLUTE FORMATTING RULES (NEVER VIOLATE):\n"
+            "- NEVER use em dashes (\u2014) anywhere. Not in emails, not in subject lines, not in follow-ups, not in score reasoning.\n"
+            "- NEVER use double dashes (--).\n"
+            "- NEVER use arrows (\u2192).\n"
+            "- Use periods or commas to separate thoughts. Write short sentences instead of long dashed sentences.\n"
+            "- BAD: \"Your trade-in offer is compelling \u2014 but most prospects drop off before converting.\"\n"
+            "- GOOD: \"Your trade-in offer is compelling. But most prospects drop off before converting.\"\n"
+            "- Keep emails conversational and human. Write like a smart colleague sending a quick note, not a marketing textbook.\n"
+            "- Variant A body MUST be under 60 words. Count them. Cut if over.\n"
+            "- Variant B body MUST be under 80 words. Count them. Cut if over.\n"
+            "- Variant C body MUST be under 75 words. Count them. Cut if over.\n"
+            "- Shorter is always better.\n\n"
             "You must respond with ONLY valid JSON. "
             "No markdown, no explanation, no code blocks. "
             "Just raw JSON starting with { and ending with }"
@@ -378,5 +402,15 @@ Return ONLY valid JSON in this exact format (no markdown, no explanation):
             f"Keys found: {list(data.keys())}\n"
             f"Raw response was:\n{text_content}"
         )
+
+    # Post-process: strip em dashes, double dashes, and arrows from all output fields
+    for variant in data.get("variants", []):
+        variant["body"] = cleanup_text(variant.get("body", ""))
+        variant["subject_lines"] = [cleanup_text(s) for s in variant.get("subject_lines", [])]
+        variant["score_reasoning"] = cleanup_text(variant.get("score_reasoning", ""))
+
+    for follow_up in data.get("follow_up_sequence", []):
+        follow_up["subject"] = cleanup_text(follow_up.get("subject", ""))
+        follow_up["body"] = cleanup_text(follow_up.get("body", ""))
 
     return data
