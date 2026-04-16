@@ -6,7 +6,7 @@ const steps = [
   {
     num: "01",
     title: "Paste URL",
-    desc: "Drop in any company website. No LinkedIn, no CSV, no manual research needed.",
+    desc: "Drop in any company website. That is all you need to provide.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -15,8 +15,8 @@ const steps = [
   },
   {
     num: "02",
-    title: "AI analyzes",
-    desc: "Scrapitch reads their homepage and about page, extracting industry, tone, pain points, and value prop.",
+    title: "Research Agent",
+    desc: "Agent 1 reads their homepage and about page. It extracts company details, industry, tone, pain points, and specific references worth mentioning in an email.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
@@ -25,8 +25,8 @@ const steps = [
   },
   {
     num: "03",
-    title: "3 emails written",
-    desc: "Direct/PAS, Value-First, and Curious variants, each with 3 subject lines and a reply-rate score.",
+    title: "Writing Agent",
+    desc: "Agent 2 takes the research and writes 3 variants (Direct, Value First, Curious) with industry matched tone, 3 subject lines each, and a Day 3, 7, 14 follow up sequence.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -35,8 +35,8 @@ const steps = [
   },
   {
     num: "04",
-    title: "Follow-ups ready",
-    desc: "Day 3, 7, and 14 follow-up sequence generated automatically. Each under 60 words, single CTA.",
+    title: "Scoring Agent",
+    desc: "Agent 3 independently evaluates each email across 6 factors. Personalization depth, length, CTA quality, problem first framing, subject line, and spam phrases.",
     icon: (
       <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -73,10 +73,10 @@ export default function HomeHowItWorks() {
         <div className="text-center mb-16">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">HOW IT WORKS</p>
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>
-            Four steps.{" "}
+            Three agents.{" "}
             <span style={{ color: "#3b82f6" }}>Ten seconds.</span>
           </h2>
-          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>No research. No templates. No wasted hours.</p>
+          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>One URL in. Three specialized AI agents do the rest.</p>
         </div>
 
         {/* Desktop layout */}
