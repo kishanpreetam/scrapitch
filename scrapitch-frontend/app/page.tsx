@@ -138,9 +138,12 @@ export default function LandingPage() {
                 See how it works
               </Link>
             </div>
-            <p className="text-sm text-[#64748b]">No setup required · completely free</p>
+            <p className="text-sm text-[#64748b]">No setup required</p>
           </div>
         </section>
+
+        {/* Dark → Light transition */}
+        <div aria-hidden="true" style={{ height: 80, background: "linear-gradient(to bottom, #0a0a0a, #faf8f5)" }} />
 
         {/* ── 2. LIVE DEMO ─────────────────────────────────────── */}
         <HomeLiveDemo />
@@ -155,14 +158,14 @@ export default function LandingPage() {
         <HomeTabbedShowcase />
 
         {/* ── 6. WHO IT'S FOR ─────────────────────────────────── */}
-        <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
+        <section className="border-t border-[#e8e4dc] py-24 md:py-32" style={{ background: "#faf8f5" }}>
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">USE CASES</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>
                 Built for anyone doing B2B outreach
               </h2>
-              <p className="mt-4 text-lg text-[#94a3b8]">
+              <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>
                 If you write cold emails to people who have a website, Scrapitch speeds up your research and makes your copy better.
               </p>
             </div>
@@ -173,8 +176,9 @@ export default function LandingPage() {
                   key={i}
                   className="rounded-2xl p-7 transition-all duration-200"
                   style={{
-                    background: "#111111",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "#ffffff",
+                    border: "1px solid rgba(0,0,0,0.06)",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
                   }}
                 >
                   <div className="flex items-start gap-4">
@@ -190,8 +194,8 @@ export default function LandingPage() {
                       {card.icon}
                     </div>
                     <div>
-                      <p className="text-base font-bold mb-2 text-white">{card.role}</p>
-                      <p className="text-sm leading-relaxed text-[#94a3b8]">{card.desc}</p>
+                      <p className="text-base font-bold mb-2" style={{ color: "#1a1a1a" }}>{card.role}</p>
+                      <p className="text-sm leading-relaxed" style={{ color: "#5a5a52" }}>{card.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -201,23 +205,23 @@ export default function LandingPage() {
         </section>
 
         {/* ── 7. WHY SCRAPITCH TABLE ───────────────────────────── */}
-        <section className="border-t border-slate-200 py-24 md:py-32" style={{ background: "#f8fafc" }}>
+        <section className="border-t border-[#e8e4dc] py-24 md:py-32" style={{ background: "#f0ede7" }}>
           <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-14">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">WHY SCRAPITCH</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#0f172a" }}>
+              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>
                 The old way vs the Scrapitch way
               </h2>
-              <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: "#475569" }}>
+              <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: "#5a5a52" }}>
                 Most cold email workflows involve manual research, copy-paste prompting, and guesswork. Scrapitch automates the entire process.
               </p>
             </div>
 
-            <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(0,0,0,0.08)", background: "white" }}>
+            <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(0,0,0,0.08)", background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
               {/* Header */}
-              <div className="grid grid-cols-3" style={{ background: "#f1f5f9", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
-                <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#94a3b8" }}>Feature</div>
-                <div className="px-5 py-4 text-sm font-semibold text-center" style={{ color: "#64748b", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>Traditional Approach</div>
+              <div className="grid grid-cols-3" style={{ background: "#ede9e2", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
+                <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#8a8a82" }}>Feature</div>
+                <div className="px-5 py-4 text-sm font-semibold text-center" style={{ color: "#8a8a82", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>Traditional Approach</div>
                 <div className="px-5 py-4 text-sm font-bold text-center" style={{ color: "#3b82f6", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>With Scrapitch</div>
               </div>
               {tableRows.map((row, i) => (
@@ -229,9 +233,9 @@ export default function LandingPage() {
                     background: i % 2 === 0 ? "white" : "rgba(0,0,0,0.015)",
                   }}
                 >
-                  <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#0f172a" }}>{row.feature}</div>
-                  <div className="px-5 py-4 text-sm" style={{ color: "#64748b", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.traditional}</div>
-                  <div className="px-5 py-4 text-sm font-medium" style={{ color: "#0f172a", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.scrapitch}</div>
+                  <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#1a1a1a" }}>{row.feature}</div>
+                  <div className="px-5 py-4 text-sm" style={{ color: "#8a8a82", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.traditional}</div>
+                  <div className="px-5 py-4 text-sm font-medium" style={{ color: "#1a1a1a", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.scrapitch}</div>
                 </div>
               ))}
             </div>
@@ -250,8 +254,11 @@ export default function LandingPage() {
         {/* ── 8. FAQ ──────────────────────────────────────────── */}
         <HomeFaqSection />
 
+        {/* Light → Dark transition */}
+        <div aria-hidden="true" style={{ height: 80, background: "linear-gradient(to bottom, #faf8f5, #0a0a0a)" }} />
+
         {/* ── 10. FINAL CTA ───────────────────────────────────── */}
-        <section className="border-t border-white/8 py-28 md:py-36" style={{
+        <section className="py-28 md:py-36" style={{
           background: "#0a0a0a",
           backgroundImage: "radial-gradient(ellipse 60% 50% at 50% 100%, rgba(59,130,246,0.12) 0%, transparent 70%)",
         }}>
@@ -276,7 +283,7 @@ export default function LandingPage() {
                 See It In Action
               </Link>
             </div>
-            <p className="text-sm text-[#64748b]">No setup required · completely free</p>
+            <p className="text-sm text-[#64748b]">No setup required</p>
           </div>
         </section>
 

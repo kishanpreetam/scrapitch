@@ -17,10 +17,6 @@ const faqs = [
     a: "Each email is scored 1–10 across six factors: personalization depth (30%), email length (20%), CTA clarity (15%), problem framing (15%), subject line quality (10%), and spam avoidance (10%). The score comes with written reasoning so you understand what to fix.",
   },
   {
-    q: "Is Scrapitch free?",
-    a: "Yes. Scrapitch is completely free. No plans, no credit card, no limits. Create an account and start generating immediately.",
-  },
-  {
     q: "How is this different from other email tools?",
     a: "Most tools require you to do all the research yourself. Scrapitch does the research layer automatically: it scrapes the site, detects the industry, matches the tone, selects the right framework, and returns three ready-to-send emails with scoring. URL to email in 10 seconds, not 20 minutes.",
   },
@@ -34,12 +30,12 @@ export default function HomeFaqSection() {
   const [open, setOpen] = useState<number | null>(null);
 
   return (
-    <section className="border-t border-white/8 py-24 md:py-32" style={{ background: "#0a0a0a" }}>
+    <section className="border-t border-[#e8e4dc] py-24 md:py-32" style={{ background: "#faf8f5" }}>
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">FAQ</p>
-          <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">Common questions</h2>
-          <p className="mt-4 text-lg text-[#94a3b8]">Real answers. No vague marketing speak.</p>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>Common questions</h2>
+          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>Real answers. No vague marketing speak.</p>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -47,10 +43,11 @@ export default function HomeFaqSection() {
             <div
               key={i}
               style={{
-                background: "#111111",
-                border: `1px solid ${open === i ? "rgba(59,130,246,0.25)" : "rgba(255,255,255,0.08)"}`,
+                background: "#ffffff",
+                border: `1px solid ${open === i ? "rgba(59,130,246,0.25)" : "rgba(0,0,0,0.08)"}`,
                 borderRadius: 12,
                 overflow: "hidden",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
                 transition: "all 0.2s ease",
               }}
             >
@@ -62,7 +59,7 @@ export default function HomeFaqSection() {
                   textAlign: "left", cursor: "pointer", background: "transparent", border: "none",
                 }}
               >
-                <span style={{ fontSize: 15, fontWeight: 600, color: "#fafafa", flex: 1, paddingRight: 16 }}>
+                <span style={{ fontSize: 15, fontWeight: 600, color: "#1a1a1a", flex: 1, paddingRight: 16 }}>
                   {faq.q}
                 </span>
                 <span style={{
@@ -78,10 +75,10 @@ export default function HomeFaqSection() {
               {open === i && (
                 <div style={{
                   padding: "0 22px 18px",
-                  borderTop: "1px solid rgba(255,255,255,0.06)",
+                  borderTop: "1px solid rgba(0,0,0,0.06)",
                   paddingTop: 16,
                 }}>
-                  <p style={{ fontSize: 14, color: "#94a3b8", lineHeight: 1.7 }}>{faq.a}</p>
+                  <p style={{ fontSize: 14, color: "#5a5a52", lineHeight: 1.7 }}>{faq.a}</p>
                 </div>
               )}
             </div>
