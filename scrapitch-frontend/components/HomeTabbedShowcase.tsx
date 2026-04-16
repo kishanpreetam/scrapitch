@@ -15,12 +15,12 @@ function EmailVariantsTab() {
     {
       label: "B · Value-First", score: 8, scoreColor: "#f59e0b", scoreBg: "rgba(245,158,11,0.1)", scoreBorder: "rgba(245,158,11,0.25)",
       subject: "2x reply rate, zero extra work",
-      body: "Agencies using personalized cold outreach see 2x reply rates vs templated emails. Scrapitch writes them in 10 seconds per prospect — no LinkedIn needed.",
+      body: "Agencies using personalized cold outreach see 2x reply rates vs templated emails. Scrapitch writes them in 10 seconds per prospect, no LinkedIn needed.",
     },
     {
       label: "C · The Curious", score: 9, scoreColor: "#22c55e", scoreBg: "rgba(34,197,94,0.1)", scoreBorder: "rgba(34,197,94,0.25)",
       subject: "Noticed your case study",
-      body: "Just read your SaaS growth case study — impressive 3x result. Curious whether you're personalizing your outreach yet or still doing it manually.",
+      body: "Just read your SaaS growth case study. Impressive 3x result. Curious whether you're personalizing your outreach yet or still doing it manually.",
     },
   ];
 
@@ -56,7 +56,7 @@ function FollowUpTab() {
       color: "#3b82f6",
       bg: "rgba(59,130,246,0.08)",
       border: "rgba(59,130,246,0.2)",
-      body: "Just wanted to follow up on my last email. Still think there's a fit here — happy to keep it to 15 minutes if that's easier.",
+      body: "Just wanted to follow up on my last email. Still think there's a fit here, happy to keep it to 15 minutes if that's easier.",
     },
     {
       day: "Day 7",
@@ -72,7 +72,7 @@ function FollowUpTab() {
       color: "#94a3b8",
       bg: "rgba(148,163,184,0.08)",
       border: "rgba(148,163,184,0.15)",
-      body: "I'll leave it here — if the timing's off, no worries at all. Feel free to reach out whenever it makes sense. Good luck with the growth work.",
+      body: "I'll leave it here. If the timing's off, no worries at all. Feel free to reach out whenever it makes sense. Good luck with the growth work.",
     },
   ];
 
@@ -154,11 +154,11 @@ function ToneTab() {
   const examples = {
     Professional: {
       before: "I hope this email finds you well. I am reaching out to explore potential synergies between our organizations.",
-      after: "Read through your homepage — you're serving B2B clients who care about ROI. Here's how we can help you book more of them.",
+      after: "Read through your homepage. You're serving B2B clients who care about ROI. Here's how we can help you book more of them.",
     },
     Casual: {
       before: "Hey! Just saw your site and thought it was super cool. Would love to chat sometime if you're free!",
-      after: "Saw you're scaling your agency — we help teams like yours cut outreach time by 80%. Quick call this week?",
+      after: "Saw you're scaling your agency. We help teams like yours cut outreach time by 80%. Quick call this week?",
     },
     Bold: {
       before: "Our revolutionary solution will transform your business and disrupt the market with unprecedented results.",
@@ -220,7 +220,7 @@ export default function HomeTabbedShowcase() {
           <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white">
             Everything you need to close more deals
           </h2>
-          <p className="mt-4 text-lg text-[#94a3b8]">Not a template engine — a research and writing layer that reads, understands, and writes.</p>
+          <p className="mt-4 text-lg text-[#94a3b8]">Not a template engine. A research and writing layer that reads, understands, and writes.</p>
         </div>
 
         {/* Tab bar */}

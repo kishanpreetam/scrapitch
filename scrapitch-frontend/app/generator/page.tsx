@@ -82,7 +82,7 @@ function EmailCard({ variant }: { variant: Variant }) {
         <span
           className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${BADGE[variant.variant] || "bg-zinc-700 text-zinc-300"}`}
         >
-          Variant {variant.variant} — {variant.name}
+          Variant {variant.variant}: {variant.name}
         </span>
         <ScoreBadge score={variant.score} />
       </div>
@@ -302,7 +302,7 @@ export default function GeneratorPage() {
                   Coming soon
                 </span>
                 <span className="text-xs text-zinc-600">
-                  🔗 LinkedIn &amp; Twitter context — for now, Scrapitch scrapes the company website for full personalization.
+                  🔗 LinkedIn &amp; Twitter context. For now, Scrapitch scrapes the company website for full personalization.
                 </span>
               </div>
             </div>
@@ -417,7 +417,7 @@ export default function GeneratorPage() {
               <FollowUpSection sequence={result.follow_up_sequence} />
 
               <p className="text-xs text-zinc-600 text-center">
-                Tip: Edit before sending. The AI gives you a strong start — your voice makes it land.
+                Tip: Edit before sending. The AI gives you a strong start. Your voice makes it land.
               </p>
             </div>
           )}

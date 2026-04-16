@@ -68,7 +68,7 @@ export default function HowItWorksPage() {
                 </h2>
                 <p className="text-[#a8a8a8] max-w-xl mx-auto text-lg leading-relaxed">
                   Different buyers respond to different openers. Scrapitch gives
-                  you all three so you can test — or just pick the one that fits.
+                  you all three so you can test, or just pick the one that fits.
                 </p>
               </div>
             </Reveal>

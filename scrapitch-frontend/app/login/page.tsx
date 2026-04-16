@@ -148,7 +148,7 @@ export default function LoginPage() {
                   Logging in…
                 </span>
               ) : (
-                "Log In →"
+                "Log In"
               )}
             </button>
           </form>

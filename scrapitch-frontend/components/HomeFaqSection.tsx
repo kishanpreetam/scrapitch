@@ -6,7 +6,7 @@ import Link from "next/link";
 const faqs = [
   {
     q: "How does Scrapitch personalize emails without LinkedIn?",
-    a: "It reads the prospect's actual website — homepage hero copy, about page, case studies, and value proposition — and passes that as structured context to our AI. Every email must reference specific details scraped from their site. There's no generic template involved.",
+    a: "It reads the prospect's actual website: homepage hero copy, about page, case studies, and value proposition. It passes that as structured context to our AI. Every email must reference specific details scraped from their site. There's no generic template involved.",
   },
   {
     q: "What industries does it support?",
@@ -18,7 +18,7 @@ const faqs = [
   },
   {
     q: "Is Scrapitch free?",
-    a: "Yes — Scrapitch is completely free. No plans, no credit card, no limits. Create an account and start generating immediately.",
+    a: "Yes. Scrapitch is completely free. No plans, no credit card, no limits. Create an account and start generating immediately.",
   },
   {
     q: "How is this different from ChatGPT?",
@@ -99,7 +99,7 @@ export default function HomeFaqSection() {
             onMouseEnter={(e) => (e.currentTarget.style.color = "#2563eb")}
             onMouseLeave={(e) => (e.currentTarget.style.color = "#3b82f6")}
           >
-            See all questions →
+            See all questions
           </Link>
         </div>
       </div>
