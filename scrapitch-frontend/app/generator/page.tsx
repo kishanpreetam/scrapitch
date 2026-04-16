@@ -204,7 +204,6 @@ export default function GeneratorPage() {
 
   const [url, setUrl] = useState("");
   const [framework, setFramework] = useState("All 3 Variants");
-  const [tone, setTone] = useState("Professional");
   const [industry, setIndustry] = useState("Auto-detect");
 
   const [loading, setLoading] = useState(false);
@@ -239,7 +238,6 @@ export default function GeneratorPage() {
         body: JSON.stringify({
           url: normalised,
           framework,
-          tone,
           industry,
         }),
       });
@@ -297,18 +295,10 @@ export default function GeneratorPage() {
                 placeholder="https://yourprospect.com"
                 className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base"
               />
-              <div className="mt-2.5 flex items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/20 bg-blue-500/6 px-2.5 py-1 text-[11px] font-semibold text-blue-400/80 uppercase tracking-wide">
-                  Coming soon
-                </span>
-                <span className="text-xs text-zinc-600">
-                  🔗 LinkedIn &amp; Twitter context. For now, Scrapitch scrapes the company website for full personalization.
-                </span>
-              </div>
             </div>
 
             {/* Dropdowns */}
-            <div className="grid sm:grid-cols-3 gap-4 mb-8">
+            <div className="grid sm:grid-cols-2 gap-4 mb-8">
               <div>
                 <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
                   Framework
@@ -322,21 +312,6 @@ export default function GeneratorPage() {
                   <option>The Direct (PAS)</option>
                   <option>Value-First</option>
                   <option>The Curious</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                  Tone
-                </label>
-                <select
-                  value={tone}
-                  onChange={(e) => setTone(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
-                >
-                  <option>Professional</option>
-                  <option>Casual</option>
-                  <option>Bold</option>
-                  <option>Friendly</option>
                 </select>
               </div>
               <div>
