@@ -1,551 +1,207 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
-import { JetBrains_Mono, DM_Sans } from "next/font/google";
+import { useState, useEffect, useRef } from "react";
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
-});
+const DEMO_URL = "acmeagency.com";
+type Phase = "typing" | "loading" | "result" | "fade";
 
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-});
-
-const TARGET_URL = "https://www.webfx.com";
-
-const AGENTS = [
-  { label: "Researcher", num: "01" },
-  { label: "Writer", num: "02" },
-  { label: "Scorer", num: "03" },
+const LOADING_STEPS = [
+  "Agent 1: Researching website...",
+  "Agent 2: Writing 3 variants...",
+  "Agent 3: Scoring emails...",
 ];
 
-const EMAIL_CARDS = [
+const cards = [
   {
-    color: "#f97316",
-    bg: "rgba(249,115,22,0.12)",
-    border: "rgba(249,115,22,0.25)",
-    label: "A / PAS",
-    subject: "Clicks vs. revenue",
-    body: "Your team drives $10B+ in client revenue, but most agencies at your scale still rely on generic outreach that lands in spam...",
-    score: 8.2,
+    label: "The Direct, PAS",
+    score: 9,
+    scoreColor: "#22c55e",
+    scoreBg: "rgba(34,197,94,0.1)",
+    scoreBorder: "rgba(34,197,94,0.25)",
+    subject: "Your pipeline gap",
+    body: "Most agencies lose 30 to 40% of inbound leads before they convert. We fix that with AI-written sequences referencing what prospects actually care about. Worth a 15 min call?",
   },
   {
-    color: "#3b82f6",
-    bg: "rgba(59,130,246,0.12)",
-    border: "rgba(59,130,246,0.25)",
-    label: "B / Value-First",
-    subject: "12 meetings in 3 weeks",
-    body: "We helped a similar agency book 12 meetings without changing their offer. Just the outreach copy.",
-    score: 8.5,
+    label: "Value First",
+    score: 8,
+    scoreColor: "#f59e0b",
+    scoreBg: "rgba(245,158,11,0.1)",
+    scoreBorder: "rgba(245,158,11,0.25)",
+    subject: "2x reply rate, zero extra work",
+    body: "Agencies using personalized cold outreach see 2x reply rates vs templates. Scrapitch writes them in 10 seconds per prospect, referencing their actual site. Happy to show you a demo.",
   },
   {
-    color: "#10b981",
-    bg: "rgba(16,185,129,0.12)",
-    border: "rgba(16,185,129,0.25)",
-    label: "C / Curiosity",
-    subject: "Revenue growth partner",
-    body: "Noticed WebFX positions itself as a revenue growth partner for the AI era. Most agencies targeting that angle...",
-    score: 9.1,
+    label: "The Curious",
+    score: 9,
+    scoreColor: "#22c55e",
+    scoreBg: "rgba(34,197,94,0.1)",
+    scoreBorder: "rgba(34,197,94,0.25)",
+    subject: "Noticed your case study",
+    body: "Just read through your SaaS case study. Impressive 3x growth result. Curious whether you are automating cold outreach yet or still doing it manually. Happy to share what is working.",
   },
 ];
-
-// Stagger delays for card reveal (ms)
-const CARD_DELAYS = [200, 500, 800];
 
 export default function HomeLiveDemo() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const hasRun = useRef(false);
-
-  const [typedCount, setTypedCount] = useState(0);
-  // 0 = waiting, 1 = agent1 active, 2 = agent2 active, 3 = agent3 active, 4 = all done
-  const [agentPhase, setAgentPhase] = useState(0);
-  const [cardsVisible, setCardsVisible] = useState(false);
-  const [scoreValues, setScoreValues] = useState([0, 0, 0]);
-
-  const startAnimation = useCallback(() => {
-    // Type URL character by character at 35ms per char
-    let count = 0;
-    const typeInterval = setInterval(() => {
-      count++;
-      setTypedCount(count);
-      if (count >= TARGET_URL.length) {
-        clearInterval(typeInterval);
-        // 400ms pause, then light up agents one by one
-        setTimeout(() => {
-          setAgentPhase(1);
-          setTimeout(() => {
-            setAgentPhase(2);
-            setTimeout(() => {
-              setAgentPhase(3);
-              setTimeout(() => {
-                setAgentPhase(4);
-                setCardsVisible(true);
-                // Count score numbers up from 0.0 to final over 600ms (~30 steps)
-                const targets = EMAIL_CARDS.map((c) => c.score);
-                const totalSteps = 30;
-                const stepMs = 600 / totalSteps;
-                let step = 0;
-                const scoreTimer = setInterval(() => {
-                  step++;
-                  const t = Math.min(step / totalSteps, 1);
-                  setScoreValues(targets.map((v) => parseFloat((v * t).toFixed(1))));
-                  if (step >= totalSteps) {
-                    clearInterval(scoreTimer);
-                    setScoreValues([...targets]);
-                  }
-                }, stepMs);
-              }, 900);
-            }, 900);
-          }, 900);
-        }, 400);
-      }
-    }, 35);
-  }, []);
+  const [phase, setPhase] = useState<Phase>("typing");
+  const [typed, setTyped] = useState("");
+  const [loadingStep, setLoadingStep] = useState(0);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasRun.current) {
-          hasRun.current = true;
-          observer.disconnect();
-          startAnimation();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [startAnimation]);
+    const clear = () => { if (timer.current) clearTimeout(timer.current); };
+    if (phase === "typing") {
+      if (typed.length < DEMO_URL.length) {
+        timer.current = setTimeout(() => setTyped(DEMO_URL.slice(0, typed.length + 1)), 80);
+      } else {
+        timer.current = setTimeout(() => setPhase("loading"), 700);
+      }
+    } else if (phase === "loading") {
+      if (loadingStep < LOADING_STEPS.length) {
+        timer.current = setTimeout(() => setLoadingStep(loadingStep + 1), 600);
+      } else {
+        timer.current = setTimeout(() => { setLoadingStep(0); setPhase("result"); }, 400);
+      }
+    } else if (phase === "result") {
+      timer.current = setTimeout(() => setPhase("fade"), 4500);
+    } else if (phase === "fade") {
+      timer.current = setTimeout(() => { setTyped(""); setLoadingStep(0); setPhase("typing"); }, 700);
+    }
+    return clear;
+  }, [phase, typed, loadingStep]);
 
-  const getAgentState = (index: number): "idle" | "active" | "done" => {
-    if (agentPhase === 0) return "idle";
-    if (agentPhase === index + 1) return "active";
-    if (agentPhase > index + 1) return "done";
-    return "idle";
-  };
-
-  // Show cursor only while URL is still being typed
-  const showCursor = typedCount > 0 && typedCount < TARGET_URL.length;
-
-  const cursorEl = (
-    <span
-      style={{
-        display: "inline-block",
-        width: 7,
-        height: 14,
-        background: "#3b82f6",
-        marginLeft: 1,
-        verticalAlign: "text-bottom",
-        animation: "blink 1s step-end infinite",
-      }}
-    />
-  );
+  const showResult = phase === "result" || phase === "fade";
 
   return (
-    <section
-      ref={sectionRef}
-      className="py-24 md:py-32"
-      style={{
-        // Seamlessly blend with the dark→cream gradient div above by
-        // starting at cream and quickly transitioning to dark
-        background: "linear-gradient(180deg, #faf8f5 0px, #0a0a0a 80px)",
-      }}
-    >
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
-        <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <p
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              color: "#3b82f6",
-              textTransform: "uppercase",
-              marginBottom: 12,
-              fontFamily: jetbrainsMono.style.fontFamily,
-            }}
-          >
-            LIVE PREVIEW
-          </p>
-          <h2
-            style={{
-              fontSize: 40,
-              fontWeight: 900,
-              color: "#ffffff",
-              marginBottom: 12,
-              letterSpacing: "-0.02em",
-              fontFamily: dmSans.style.fontFamily,
-            }}
-          >
-            See it in action
-          </h2>
-          <p
-            style={{
-              fontSize: 16,
-              color: "#94a3b8",
-              fontFamily: dmSans.style.fontFamily,
-            }}
-          >
-            Watch three AI agents turn a URL into 3 scored cold emails.
-          </p>
+    <section className="py-24 md:py-32" style={{ background: "#faf8f5", position: "relative" }}>
+      {/* Subtle dot grid overlay */}
+      <div aria-hidden="true" style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        opacity: 0.04,
+        backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='10' cy='10' r='1' fill='%23000000'/%3E%3C/svg%3E\")",
+      }} />
+      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">LIVE PREVIEW</p>
+          <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>See it in action</h2>
+          <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>Watch three AI agents turn a URL into 3 scored cold emails.</p>
         </div>
 
-        {/* macOS app window */}
         <div
+          className={`rounded-2xl transition-opacity duration-700 ${phase === "fade" ? "opacity-0" : "opacity-100"}`}
           style={{
-            maxWidth: 640,
-            margin: "0 auto",
-            background: "#0d0d0d",
-            borderRadius: 12,
-            border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "0 25px 60px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3)",
-            overflow: "hidden",
+            background: "#ffffff",
+            border: "1px solid rgba(0,0,0,0.07)",
+            padding: "24px",
+            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
           }}
         >
-          {/* Title bar */}
-          <div
-            style={{
-              background: "#161616",
-              borderBottom: "1px solid rgba(255,255,255,0.06)",
-              padding: "10px 14px",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            {/* Traffic light dots */}
-            <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ff5f57" }} />
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#febc2e" }} />
-              <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#28c840" }} />
-            </div>
-
-            {/* Tabs */}
-            <div style={{ display: "flex", gap: 2, marginLeft: 10 }}>
-              {["Generate", "History", "Tones"].map((tab, i) => (
-                <div
-                  key={tab}
-                  style={{
-                    padding: "3px 10px",
-                    borderRadius: 5,
-                    fontSize: 11,
-                    fontFamily: jetbrainsMono.style.fontFamily,
-                    color: i === 0 ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)",
-                    background: i === 0 ? "rgba(255,255,255,0.08)" : "transparent",
-                    cursor: "default",
-                  }}
-                >
-                  {tab}
-                </div>
-              ))}
-            </div>
-
-            {/* Brand name */}
-            <div
-              style={{
-                marginLeft: "auto",
-                fontFamily: jetbrainsMono.style.fontFamily,
-                fontSize: 10,
-                color: "rgba(255,255,255,0.2)",
-                letterSpacing: 1,
-              }}
-            >
-              SCRAPITCH
-            </div>
+          {/* URL input row */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 12,
+            background: "#f5f3ef", border: "1px solid rgba(0,0,0,0.08)",
+            borderRadius: 12, padding: "12px 16px", marginBottom: 16,
+          }}>
+            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#8a8a82" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+            </svg>
+            <span style={{ flex: 1, fontFamily: "monospace", fontSize: 14, color: "#5a5a52" }}>
+              {typed.length > 0
+                ? <>{`https://${typed}`}</>
+                : <span style={{ color: "#8a8a82" }}>https://</span>
+              }
+              {phase === "typing" && <span className="cursor-blink" style={{ color: "#1a1a1a" }}>|</span>}
+            </span>
+            <span style={{
+              fontSize: 12, fontWeight: 700, padding: "4px 14px", borderRadius: 999, flexShrink: 0,
+              background: showResult ? "rgba(34,197,94,0.1)" : "rgba(59,130,246,0.1)",
+              color: showResult ? "#22c55e" : "#3b82f6",
+              border: `1px solid ${showResult ? "rgba(34,197,94,0.3)" : "rgba(59,130,246,0.25)"}`,
+            }}>
+              {phase === "loading" ? "Analyzing…" : showResult ? "Done ✓" : "Analyze"}
+            </span>
           </div>
 
-          {/* Window content */}
-          <div style={{ padding: "16px 14px" }}>
-
-            {/* URL input row */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                borderRadius: 8,
-                padding: "9px 12px",
-                marginBottom: 10,
-              }}
-            >
-              <svg
-                width="12"
-                height="12"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="rgba(255,255,255,0.25)"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"
-                />
-              </svg>
-
-              <span
-                style={{
-                  flex: 1,
-                  fontFamily: jetbrainsMono.style.fontFamily,
-                  fontSize: 12,
-                  color: "rgba(255,255,255,0.7)",
-                }}
-              >
-                {typedCount === 0 ? (
-                  <span style={{ color: "rgba(255,255,255,0.2)" }}>
-                    https://{cursorEl}
-                  </span>
-                ) : (
-                  <>
-                    {TARGET_URL.slice(0, typedCount)}
-                    {showCursor && cursorEl}
-                  </>
-                )}
-              </span>
-
-              {/* Status badge */}
-              <span
-                style={{
-                  fontFamily: jetbrainsMono.style.fontFamily,
-                  fontSize: 11,
-                  fontWeight: 600,
-                  padding: "3px 12px",
-                  borderRadius: 6,
-                  flexShrink: 0,
-                  color:
-                    agentPhase === 4
-                      ? "#10b981"
-                      : agentPhase > 0
-                      ? "#3b82f6"
-                      : "rgba(255,255,255,0.3)",
-                  background:
-                    agentPhase === 4
-                      ? "rgba(16,185,129,0.1)"
-                      : agentPhase > 0
-                      ? "rgba(59,130,246,0.1)"
-                      : "rgba(255,255,255,0.04)",
-                  border: `1px solid ${
-                    agentPhase === 4
-                      ? "rgba(16,185,129,0.25)"
-                      : agentPhase > 0
-                      ? "rgba(59,130,246,0.2)"
-                      : "rgba(255,255,255,0.06)"
-                  }`,
-                  transition: "all 0.3s cubic-bezier(0.4,0,0.2,1)",
-                }}
-              >
-                {agentPhase === 0
-                  ? "Generate"
-                  : agentPhase === 4
-                  ? "Done \u2713"
-                  : "Working..."}
-              </span>
-            </div>
-
-            {/* Agent pipeline strip */}
-            <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
-              {AGENTS.map((agent, i) => {
-                const state = getAgentState(i);
-                return (
-                  <div key={i} style={{ position: "relative", flex: 1 }}>
-                    <div
-                      style={{
-                        borderRadius: 8,
-                        padding: "8px 10px",
-                        textAlign: "center",
-                        background:
-                          state === "active"
-                            ? "rgba(59,130,246,0.08)"
-                            : state === "done"
-                            ? "rgba(16,185,129,0.06)"
-                            : "rgba(255,255,255,0.02)",
-                        border: `1px solid ${
-                          state === "active"
-                            ? "rgba(59,130,246,0.2)"
-                            : state === "done"
-                            ? "rgba(16,185,129,0.15)"
-                            : "rgba(255,255,255,0.06)"
-                        }`,
-                        transition:
-                          "background 0.3s cubic-bezier(0.4,0,0.2,1), border-color 0.3s cubic-bezier(0.4,0,0.2,1)",
-                      }}
-                    >
-                      <div
-                        style={{
-                          fontFamily: jetbrainsMono.style.fontFamily,
-                          fontSize: 9,
-                          fontWeight: 600,
-                          color:
-                            state === "active"
-                              ? "#3b82f6"
-                              : state === "done"
-                              ? "#10b981"
-                              : "rgba(255,255,255,0.25)",
-                          marginBottom: 3,
-                          transition: "color 0.3s cubic-bezier(0.4,0,0.2,1)",
-                        }}
-                      >
-                        {state === "done" ? "\u2713" : agent.num}
-                      </div>
-                      <div
-                        style={{
-                          fontFamily: dmSans.style.fontFamily,
-                          fontSize: 11,
-                          color:
-                            state === "active"
-                              ? "rgba(255,255,255,0.8)"
-                              : state === "done"
-                              ? "rgba(255,255,255,0.6)"
-                              : "rgba(255,255,255,0.25)",
-                          transition: "color 0.3s cubic-bezier(0.4,0,0.2,1)",
-                        }}
-                      >
-                        {agent.label}
-                      </div>
-                    </div>
-
-                    {/* Connector line between agents */}
-                    {i < AGENTS.length - 1 && (
-                      <div
-                        style={{
-                          position: "absolute",
-                          right: -6,
-                          top: "50%",
-                          transform: "translateY(-50%)",
-                          width: 6,
-                          height: 1,
-                          background: "rgba(255,255,255,0.1)",
-                          zIndex: 1,
-                        }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Email cards — 3 columns */}
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 8,
-              }}
-            >
-              {EMAIL_CARDS.map((card, i) => (
+          {/* Loading bar */}
+          {(phase === "loading" || showResult) && (
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{ fontSize: 12, color: "#5a5a52" }}>
+                  {phase === "loading"
+                    ? (loadingStep < LOADING_STEPS.length ? LOADING_STEPS[loadingStep] : "Done. 3 emails ready")
+                    : "Done. 3 emails ready"}
+                </span>
+                <span style={{ fontSize: 12, color: "#8a8a82" }}>{phase === "loading" ? "…" : "100%"}</span>
+              </div>
+              <div style={{ height: 4, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden" }}>
                 <div
-                  key={i}
+                  className={phase === "loading" ? "demo-bar" : ""}
                   style={{
-                    borderRadius: 8,
-                    background: cardsVisible ? card.bg : "rgba(255,255,255,0.02)",
-                    border: `1px solid ${cardsVisible ? card.border : "rgba(255,255,255,0.05)"}`,
-                    overflow: "hidden",
-                    opacity: cardsVisible ? 1 : 0.3,
-                    transform: cardsVisible ? "translateY(0)" : "translateY(8px)",
-                    transition: [
-                      `opacity 0.5s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i]}ms`,
-                      `transform 0.5s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i]}ms`,
-                      `background 0.5s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i]}ms`,
-                      `border-color 0.5s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i]}ms`,
-                    ].join(", "),
+                    height: "100%", borderRadius: 999, background: "#3b82f6",
+                    width: phase !== "loading" ? "100%" : undefined,
                   }}
-                >
-                  {/* 2px accent line at top */}
-                  <div
-                    style={{
-                      height: 2,
-                      background: cardsVisible ? card.color : "rgba(255,255,255,0.05)",
-                      transition: `background 0.5s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i]}ms`,
-                    }}
-                  />
-
-                  <div style={{ padding: "10px 10px 8px" }}>
-                    {/* Variant label */}
-                    <div
-                      style={{
-                        fontFamily: jetbrainsMono.style.fontFamily,
-                        fontSize: 9,
-                        fontWeight: 600,
-                        color: cardsVisible ? card.color : "rgba(255,255,255,0.2)",
-                        marginBottom: 6,
-                        transition: `color 0.5s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i]}ms`,
-                      }}
-                    >
-                      {card.label}
-                    </div>
-
-                    {/* Subject line */}
-                    <div
-                      style={{
-                        fontFamily: dmSans.style.fontFamily,
-                        fontSize: 12,
-                        fontWeight: 700,
-                        color: "rgba(255,255,255,0.85)",
-                        marginBottom: 6,
-                        lineHeight: 1.3,
-                      }}
-                    >
-                      {card.subject}
-                    </div>
-
-                    {/* Body preview */}
-                    <div
-                      style={{
-                        fontFamily: dmSans.style.fontFamily,
-                        fontSize: 10,
-                        color: "rgba(255,255,255,0.3)",
-                        lineHeight: 1.5,
-                        marginBottom: 8,
-                      }}
-                    >
-                      {card.body}
-                    </div>
-
-                    {/* Score bar + number */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div
-                        style={{
-                          flex: 1,
-                          height: 4,
-                          background: "rgba(255,255,255,0.06)",
-                          borderRadius: 2,
-                          overflow: "hidden",
-                        }}
-                      >
-                        <div
-                          style={{
-                            height: "100%",
-                            background: card.color,
-                            borderRadius: 2,
-                            width: cardsVisible ? `${(card.score / 10) * 100}%` : "0%",
-                            transition: `width 0.6s cubic-bezier(0.4,0,0.2,1) ${CARD_DELAYS[i] + 200}ms`,
-                          }}
-                        />
-                      </div>
-                      <span
-                        style={{
-                          fontFamily: jetbrainsMono.style.fontFamily,
-                          fontSize: 11,
-                          fontWeight: 600,
-                          color: "rgba(255,255,255,0.7)",
-                          minWidth: 28,
-                        }}
-                      >
-                        {scoreValues[i].toFixed(1)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                />
+              </div>
             </div>
+          )}
+
+          {/* Email cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+            {showResult
+              ? cards.map((card, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: "#f8f6f2",
+                      border: "1px solid rgba(0,0,0,0.06)",
+                      borderRadius: 12,
+                      padding: 16,
+                      opacity: phase === "result" ? 1 : 0,
+                      transform: phase === "result" ? "translateY(0)" : "translateY(8px)",
+                      transition: `opacity 0.4s ease ${i * 120}ms, transform 0.4s ease ${i * 120}ms`,
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: "#5a5a52" }}>{card.label}</span>
+                      <span style={{
+                        fontSize: 11, fontWeight: 800, padding: "2px 8px", borderRadius: 6,
+                        color: card.scoreColor, background: card.scoreBg, border: `1px solid ${card.scoreBorder}`,
+                      }}>{card.score}/10</span>
+                    </div>
+                    <p style={{ fontSize: 11, color: "#8a8a82", marginBottom: 8, fontStyle: "italic" }}>
+                      &ldquo;{card.subject}&rdquo;
+                    </p>
+                    <p style={{ fontSize: 11, color: "#5a5a52", lineHeight: 1.6 }}>
+                      {card.body.slice(0, 90)}…
+                    </p>
+                  </div>
+                ))
+              : [...Array(3)].map((_, i) => (
+                  <div key={i} style={{
+                    background: "#f8f6f2", border: "1px solid rgba(0,0,0,0.06)",
+                    borderRadius: 12, padding: 16,
+                  }}>
+                    <div style={{ height: 8, background: "rgba(0,0,0,0.06)", borderRadius: 4, width: "65%", marginBottom: 10 }} />
+                    <div style={{ height: 6, background: "rgba(0,0,0,0.04)", borderRadius: 4, width: "80%", marginBottom: 6 }} />
+                    <div style={{ height: 6, background: "rgba(0,0,0,0.04)", borderRadius: 4, width: "65%", marginBottom: 6 }} />
+                    <div style={{ height: 6, background: "rgba(0,0,0,0.04)", borderRadius: 4, width: "50%" }} />
+                  </div>
+                ))
+            }
+          </div>
+
+          {/* Footer row */}
+          <div style={{
+            marginTop: 16, paddingTop: 12,
+            borderTop: "1px solid rgba(0,0,0,0.06)",
+            display: "flex", justifyContent: "space-between", alignItems: "center",
+          }}>
+            <span style={{ fontSize: 11, color: "#8a8a82" }}>Generated in ~9.4s</span>
+            <span style={{ fontSize: 11, color: "#22c55e", fontWeight: 600 }}>Follow up sequence included</span>
           </div>
         </div>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#8a8a82", marginTop: 8 }}>
+          Looping demo · real generation takes ~10 seconds
+        </p>
       </div>
     </section>
   );
