@@ -5,6 +5,48 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import { Briefcase, GraduationCap, Search, Building2, Coffee } from "lucide-react";
+
+// ── Use case cards ───────────────────────────────────────────────
+type UseCaseCard = {
+  icon: React.ReactNode;
+  title: string;
+  desc: string;
+  goal: string;
+};
+
+const useCaseCards: UseCaseCard[] = [
+  {
+    icon: <Briefcase size={24} color="#3b82f6" />,
+    title: "Sales outreach",
+    desc: "Personalized cold emails for B2B sales",
+    goal: "b2b_sales",
+  },
+  {
+    icon: <GraduationCap size={24} color="#3b82f6" />,
+    title: "Grad school applications",
+    desc: "Reach professors with tailored research alignment",
+    goal: "masters_outreach",
+  },
+  {
+    icon: <Search size={24} color="#3b82f6" />,
+    title: "Job hunt",
+    desc: "Cold-email hiring managers with relevant context",
+    goal: "job_hunt",
+  },
+  {
+    icon: <Building2 size={24} color="#3b82f6" />,
+    title: "Executive intros",
+    desc: "Tight, peer-to-peer pitches to busy CEOs",
+    goal: "executive_outreach",
+  },
+  {
+    icon: <Coffee size={24} color="#3b82f6" />,
+    title: "Networking",
+    desc: "Warm, low-pressure asks for advice or coffee",
+    goal: "networking",
+  },
+];
 
 // ── Typing animation config ──────────────────────────────────────
 const SUFFIXES = ["for SDRs", "for agency owners", "for consultants", "for freelancers", "for founders"];
@@ -30,8 +72,8 @@ type BentoCard = {
 type WhoCard = { role: string; problem: string; solution: string; icon: React.ReactNode };
 type PricingFeature = { text: string; soon?: boolean };
 
-// ── Step accent colors (01=purple, 02=orange, 03=green, 04=blue) ──
-const stepColors = ["#7c3aed", "#fb923c", "#34d399", "#60a5fa"];
+// ── Step accent colors (01=blue, 02=orange, 03=green, 04=blue light) ──
+const stepColors = ["#3b82f6", "#fb923c", "#34d399", "#60a5fa"];
 
 // ── Data ─────────────────────────────────────────────────────────
 const steps = [
@@ -110,7 +152,7 @@ const bentoCards: BentoCard[] = [
     span: "lg:col-span-2",
     title: "3 Proven Email Variants",
     subtitle: "PAS · Value-First · Curiosity Gap",
-    subtitleColor: "#7c3aed",
+    subtitleColor: "#3b82f6",
     body: "Every prospect responds differently. Direct/PAS leads with the problem. Value-First opens with an insight or benchmark. Curious creates an open loop the prospect wants to close. You get all three — pick the fit, or A/B test them.",
     tag: "Variants",
     topBorderColor: "#34d399",
@@ -242,7 +284,7 @@ const emailPreviews = [
   {
     variant: "A",
     label: "The Direct / PAS",
-    variantColor: "#7c3aed",
+    variantColor: "#3b82f6",
     subjectLines: ["Your pipeline bottleneck", "Leads leaking post-demo?", "Quick question, [Company]"],
     body: "Most teams at your stage are leaving 30–40% of inbound leads unconverted because follow-up sequences aren't personalized. We fix that with AI-written sequences that reference what your prospects actually care about. Worth a 15-min call?",
     score: 9,
@@ -452,7 +494,7 @@ export default function LandingPage() {
               background:
                 "radial-gradient(ellipse 55% 35% at 75% 25%, rgba(251,146,60,0.14) 0%, transparent 55%), " +
                 "radial-gradient(ellipse 45% 35% at 20% 65%, rgba(96,165,250,0.12) 0%, transparent 55%), " +
-                "radial-gradient(ellipse 65% 50% at 50% -5%, rgba(124,58,237,0.38) 0%, rgba(124,58,237,0.10) 45%, transparent 68%)",
+                "radial-gradient(ellipse 65% 50% at 50% -5%, rgba(59,130,246,0.30) 0%, rgba(59,130,246,0.08) 45%, transparent 68%)",
             }}
           />
           {/* Subtle grid texture — à la Linear/Vercel */}
@@ -487,45 +529,38 @@ export default function LandingPage() {
                 fontWeight: "400",
                 letterSpacing: "0.01em",
               }}>
-                Free to start. No card. No catch. →
+                Free to start. No card. No catch.
               </span>
             </div>
 
             <h1 className="mx-auto max-w-4xl text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[1.02] mb-8">
               <span className="text-white">
-                {["Scrape", "any", "website."].map((word, i) => (
+                {["Write", "the", "email"].map((word, i) => (
                   <span key={i} className="word-reveal" style={{ animationDelay: `${i * 80}ms` }}>{word}{" "}</span>
                 ))}
               </span>
               <br />
               <span className="text-white">
-                <span className="word-reveal" style={{ animationDelay: `${3 * 80}ms` }}>Write{" "}</span>
-                <span className="word-reveal" style={{ animationDelay: `${4 * 80}ms` }}>any{" "}</span>
-                <span className="word-reveal" style={{ animationDelay: `${5 * 80}ms` }}>cold{" "}</span>
-                <span className="word-reveal" style={{ animationDelay: `${6 * 80}ms` }}>email.</span>
+                <span className="word-reveal" style={{ animationDelay: `${3 * 80}ms` }}>they{" "}</span>
+                <span className="word-reveal" style={{ animationDelay: `${4 * 80}ms` }}>will{" "}</span>
+                <span className="word-reveal" style={{ animationDelay: `${5 * 80}ms` }}>actually{" "}</span>
+                <span className="word-reveal" style={{ animationDelay: `${6 * 80}ms` }}>reply{" "}</span>
+                <span className="word-reveal" style={{ animationDelay: `${7 * 80}ms` }}>to.</span>
               </span>
             </h1>
 
-            {/* Typing subtitle */}
-            <p className="mx-auto mt-2 mb-5 text-xl sm:text-2xl text-[#d4d4d4]">
-              Personalized outreach{" "}
-              <span className="text-white font-semibold">
-                {typedSuffix}<span className="cursor-blink text-white">|</span>
-              </span>
-            </p>
-
             {/* Long-form value subheadline */}
             <p className="mx-auto max-w-2xl text-lg text-[#a8a8a8] leading-relaxed mb-12">
-              Paste any prospect&apos;s website URL. Scrapitch reads their homepage, about page, and case studies, extracts their industry, tone, pain points, and value proposition, then writes 3 personalized cold emails using proven frameworks, each with 3 subject line options and a reply-rate score. Plus a full Day 3, 7, 14 follow-up sequence. All in under 10 seconds.
+              Paste their website. Tell us your goal. We read their site in real time and write you 3 emails that sound like you actually did your homework. Free.
             </p>
 
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
               <Link
-                href="/signup"
-                className="rounded-2xl bg-[#7c3aed] px-10 py-4 text-lg font-bold text-white hover:bg-[#6d28d9] transition-colors"
+                href="/generate"
+                className="rounded-2xl bg-[#3b82f6] px-10 py-4 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Start Free — No Card Required →
+                Try it now
               </Link>
               <Link
                 href="/how-it-works"
@@ -546,10 +581,10 @@ export default function LandingPage() {
               ].map((step, i, arr) => (
                 <div key={step.label} className="flex items-center gap-2 sm:gap-3">
                   <div className="flex items-center gap-2.5 rounded-full border border-white/12 bg-[#1c1c1c] px-5 py-2.5">
-                    <span className="text-xs font-black text-[#a855f7] font-mono tracking-widest">{step.num}</span>
+                    <span className="text-xs font-black text-[#3b82f6] font-mono tracking-widest">{step.num}</span>
                     <span className="text-sm font-semibold text-[#d4d4d4] whitespace-nowrap">{step.label}</span>
                   </div>
-                  {i < arr.length - 1 && <span className="text-[#7c3aed] font-bold select-none">→</span>}
+                  {i < arr.length - 1 && <span className="text-[#3b82f6] font-bold select-none">·</span>}
                 </div>
               ))}
             </div>
@@ -559,7 +594,7 @@ export default function LandingPage() {
               <p className="text-xs font-semibold uppercase tracking-widest text-[#6b6b6b] mb-3">Live preview</p>
               <div
                 className={`rounded-2xl p-6 transition-opacity duration-700 ${demoPhase === "fade" ? "opacity-0" : "opacity-100"}`}
-                style={{ background: "#111111", border: "1px solid rgba(124,58,237,0.3)", boxShadow: "0 0 40px rgba(124,58,237,0.08)" }}
+                style={{ background: "#111111", border: "1px solid rgba(59,130,246,0.3)", boxShadow: "0 0 40px rgba(59,130,246,0.08)" }}
               >
                 {/* URL input row */}
                 <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-[#1c1c1c] px-4 py-3 mb-4">
@@ -587,7 +622,7 @@ export default function LandingPage() {
                       <span className="text-xs text-[#6b6b6b]">{demoPhase === "loading" ? "…" : "100%"}</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-white/8 overflow-hidden">
-                      <div className={`h-full rounded-full bg-[#7c3aed] ${demoPhase === "loading" ? "demo-bar" : "w-full"}`} />
+                      <div className={`h-full rounded-full bg-[#3b82f6] ${demoPhase === "loading" ? "demo-bar" : "w-full"}`} />
                     </div>
                   </div>
                 )}
@@ -671,12 +706,48 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── USE CASE CARDS ───────────────────────────────── */}
+        <section className="reveal border-t border-[#e8e4df] bg-[#faf8f5]" style={{ paddingTop: "64px", paddingBottom: "64px" }}>
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <Reveal className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#111827] mb-3">
+                What do you want to send?
+              </h2>
+              <p className="text-[#6b7280] text-lg max-w-xl mx-auto">
+                Pick a goal and we will tailor the email to your situation.
+              </p>
+            </Reveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {useCaseCards.map((card, i) => (
+                <Reveal key={card.goal} delay={i * 60}>
+                  <Link
+                    href={`/generate?goal=${card.goal}`}
+                    className="group block h-full rounded-2xl border border-[#e5e7eb] bg-white p-6 transition-all hover:shadow-lg hover:-translate-y-0.5"
+                    style={{ transition: "all 0.18s ease" }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#eff6ff] text-[#3b82f6]">
+                        {card.icon}
+                      </div>
+                      <div>
+                        <p className="font-semibold text-[#111827] mb-1">{card.title}</p>
+                        <p className="text-sm text-[#6b7280]">{card.desc}</p>
+                      </div>
+                    </div>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── HOW IT WORKS ─────────────────────────────────── */}
         <section className="reveal border-t border-[#e8e4df] bg-[#f7f6f3]" style={{ paddingTop: "80px", paddingBottom: "80px" }}>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">How it works</p>
-              <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Four steps. <span className="text-[#7c3aed]">Ten seconds.</span></h2>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">How it works</p>
+              <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Four steps. <span className="text-[#3b82f6]">Ten seconds.</span></h2>
               <p className="mt-5 text-xl text-[#6b6b6b] max-w-xl mx-auto">No research. No templates. No wasted hours.</p>
             </Reveal>
 
@@ -722,8 +793,8 @@ export default function LandingPage() {
             </div>
 
             <Reveal className="mt-12 text-center">
-              <Link href="/how-it-works" className="text-base text-[#7c3aed] hover:text-[#6d28d9] font-medium transition-colors">
-                Full breakdown →
+              <Link href="/how-it-works" className="text-base text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors">
+                Full breakdown
               </Link>
             </Reveal>
           </div>
@@ -733,7 +804,7 @@ export default function LandingPage() {
         <section className="reveal border-t border-[#e8e4df] py-28 md:py-36 bg-[#f7f6f3]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">Features</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">Features</p>
               <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">
                 Everything you need to close more deals
               </h2>
@@ -788,7 +859,7 @@ export default function LandingPage() {
         <section className="reveal border-t border-[#dde5ff] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-16">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">vs generic AI</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">vs generic AI</p>
               <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Why not just use ChatGPT?</h2>
               <p className="mt-5 text-xl text-[#6b6b6b] max-w-2xl mx-auto">
                 ChatGPT writes emails. Scrapitch writes emails about{" "}
@@ -800,7 +871,7 @@ export default function LandingPage() {
               <div className="rounded-2xl border border-[#dde5ff] bg-white overflow-hidden">
                 <div className="grid grid-cols-3 bg-[#f0f4ff] border-b border-[#dde5ff]">
                   <div className="px-6 py-5 text-base font-semibold text-[#6b6b6b]">Feature</div>
-                  <div className="px-6 py-5 text-base font-bold text-[#7c3aed] text-center border-l border-[#dde5ff]">Scrapitch</div>
+                  <div className="px-6 py-5 text-base font-bold text-[#3b82f6] text-center border-l border-[#dde5ff]">Scrapitch</div>
                   <div className="px-6 py-5 text-base font-semibold text-[#888888] text-center border-l border-[#dde5ff]">Generic AI</div>
                 </div>
                 {comparisonRows.map((row, i) => (
@@ -822,8 +893,8 @@ export default function LandingPage() {
             </Reveal>
 
             <Reveal className="mt-10 text-center">
-              <Link href="/signup" className="inline-flex items-center gap-2 rounded-2xl bg-[#7c3aed] px-8 py-4 text-lg font-bold text-white hover:bg-[#6d28d9] transition-colors">
-                Try it free — see the difference →
+              <Link href="/generate" className="inline-flex items-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors">
+                Try it free
               </Link>
             </Reveal>
           </div>
@@ -833,8 +904,8 @@ export default function LandingPage() {
         <section className="reveal border-t border-[#f0e8df] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">Who it&apos;s for</p>
-              <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Built for anyone doing B2B outreach</h2>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">Who it&apos;s for</p>
+              <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Built for anyone doing outreach</h2>
               <p className="mt-5 text-xl text-[#6b6b6b] max-w-xl mx-auto">If you write cold emails to people who have a website, Scrapitch speeds up your research and makes your copy better.</p>
             </Reveal>
 
@@ -894,7 +965,7 @@ export default function LandingPage() {
         <section className="reveal border-t border-[#d1fae5] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">3 variants, every time</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">3 variants, every time</p>
               <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Real emails. Real scores.</h2>
               <p className="mt-5 text-xl text-[#6b6b6b] max-w-xl mx-auto">This is what Scrapitch generates from a single URL. Three frameworks, three angles, one right fit for your prospect.</p>
             </Reveal>
@@ -938,8 +1009,8 @@ export default function LandingPage() {
             </div>
 
             <Reveal className="mt-12 text-center">
-              <Link href="/signup" className="inline-flex items-center gap-2 rounded-2xl bg-[#7c3aed] px-8 py-4 text-lg font-bold text-white hover:bg-[#6d28d9] transition-colors">
-                Create Free Account →
+              <Link href="/generate" className="inline-flex items-center gap-2 rounded-2xl bg-[#3b82f6] px-8 py-4 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors">
+                Try it free
               </Link>
             </Reveal>
           </div>
@@ -949,7 +1020,7 @@ export default function LandingPage() {
         <section className="reveal border-t border-[#e8e4df] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">Pricing</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">Pricing</p>
               <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Simple, honest pricing.</h2>
               <p className="mt-5 text-xl text-[#6b6b6b] max-w-xl mx-auto">Start with 3 free generations. Unlock unlimited for less than a coffee per week.</p>
             </Reveal>
@@ -957,10 +1028,10 @@ export default function LandingPage() {
             <div className="grid md:grid-cols-2 gap-8 items-start">
               {/* ── PRO CARD ── */}
               <Reveal delay={0}>
-                <div className="relative rounded-xl border border-[#e8e4df] bg-white overflow-hidden" style={{ borderTop: "4px solid #7c3aed", boxShadow: "0 4px 16px rgba(124,58,237,0.1)", transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 16px rgba(124,58,237,0.1)"; }}>
+                <div className="relative rounded-xl border border-[#e8e4df] bg-white overflow-hidden" style={{ borderTop: "4px solid #3b82f6", boxShadow: "0 4px 16px rgba(59,130,246,0.1)", transition: "all 0.2s ease" }} onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-2px)"; e.currentTarget.style.boxShadow = "0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8)"; }} onMouseLeave={e => { e.currentTarget.style.transform = ""; e.currentTarget.style.boxShadow = "0 4px 16px rgba(59,130,246,0.1)"; }}>
                   <div className="p-6 relative">
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <span className="text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap" style={{ borderRadius: "6px", padding: "3px 10px", background: "#7c3aed" }}>
+                      <span className="text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap" style={{ borderRadius: "6px", padding: "3px 10px", background: "#3b82f6" }}>
                         Most Popular
                       </span>
                     </div>
@@ -977,8 +1048,8 @@ export default function LandingPage() {
                         </li>
                       ))}
                     </ul>
-                    <Link href="/signup" className="block w-full text-center rounded-xl bg-[#7c3aed] py-2.5 text-sm font-bold text-white hover:bg-[#6d28d9] transition-colors">
-                      Start Pro →
+                    <Link href="/signup" className="block w-full text-center rounded-xl bg-[#3b82f6] py-2.5 text-sm font-bold text-white hover:bg-[#2563eb] transition-colors">
+                      Start Pro
                     </Link>
                     <p className="text-center text-sm text-[#888888] mt-3">3 free generations to start · no card required</p>
                   </div>
@@ -1016,7 +1087,7 @@ export default function LandingPage() {
                     ))}
                   </ul>
                   <Link href="/signup" className="block w-full text-center rounded-xl border-2 border-[#0f0f0f] py-2.5 text-sm font-bold text-[#0f0f0f] hover:bg-[#0f0f0f] hover:text-white transition-colors">
-                    Start Growth →
+                    Start Growth
                   </Link>
                   <p className="text-center text-sm text-[#888888] mt-3">Lock in early-access pricing now</p>
                 </div>
@@ -1029,7 +1100,7 @@ export default function LandingPage() {
         <section className="reveal border-t border-[#e8e4df] py-28 md:py-32 bg-[#f7f6f3]">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
             <Reveal className="text-center mb-20">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#7c3aed] mb-4">FAQ</p>
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#3b82f6] mb-4">FAQ</p>
               <h2 className="text-5xl sm:text-6xl font-black tracking-tight text-[#0f0f0f]">Everything you want to know</h2>
               <p className="mt-5 text-xl text-[#6b6b6b] max-w-xl mx-auto">Real answers. No vague marketing speak.</p>
             </Reveal>
@@ -1050,7 +1121,7 @@ export default function LandingPage() {
                       className="w-full flex items-center justify-between px-7 py-5 text-left font-medium text-[#0f0f0f] transition-colors text-base"
                     >
                       {faq.q}
-                      <span className={`ml-4 shrink-0 text-[#7c3aed] transition-transform duration-200 text-xl leading-none ${openFaq === i ? "rotate-180" : ""}`}>↓</span>
+                      <span className={`ml-4 shrink-0 text-[#3b82f6] transition-transform duration-200 text-xl leading-none ${openFaq === i ? "rotate-180" : ""}`}>+</span>
                     </button>
                     {openFaq === i && (
                       <div className="px-7 pb-6 pt-1 text-sm text-[#6b6b6b] leading-relaxed border-t border-[#e8e4df]">
@@ -1063,8 +1134,8 @@ export default function LandingPage() {
             </div>
 
             <Reveal className="mt-10 text-center">
-              <Link href="/faq" className="text-base text-[#7c3aed] hover:text-[#6d28d9] font-medium transition-colors">
-                See all questions →
+              <Link href="/faq" className="text-base text-[#3b82f6] hover:text-[#2563eb] font-medium transition-colors">
+                See all questions
               </Link>
             </Reveal>
           </div>
@@ -1077,20 +1148,20 @@ export default function LandingPage() {
               Your next reply is<br />one URL away.
             </h2>
             <p className="text-xl font-medium text-[#a0a0a0] mb-12 max-w-2xl mx-auto">
-              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply-rate scoring, and a full follow-up sequence — in under 10 seconds. Start for free.
+              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply-rate scoring, and a full follow-up sequence. All in under 10 seconds. Start for free.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
               <Link
-                href="/signup"
-                className="rounded-2xl bg-[#7c3aed] px-12 py-5 text-lg font-bold text-white hover:bg-[#6d28d9] transition-colors"
+                href="/generate"
+                className="rounded-2xl bg-[#3b82f6] px-12 py-5 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors"
               >
-                Start Free — No Card Required →
+                Try it now
               </Link>
               <Link
                 href="/how-it-works"
                 className="rounded-2xl border border-white/20 px-12 py-5 text-lg font-bold text-white/70 hover:border-white/30 hover:text-white transition-colors"
               >
-                See It In Action →
+                See how it works
               </Link>
             </div>
             <p className="mt-7 text-sm text-[#6b6b6b]">3 free email generations · cancel anytime · no setup required</p>

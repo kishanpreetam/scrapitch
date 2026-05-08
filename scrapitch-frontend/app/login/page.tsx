@@ -45,7 +45,7 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/generator");
+    router.push("/generate");
   };
 
   const handleGoogle = async () => {

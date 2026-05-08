@@ -131,7 +131,7 @@ export default function HowItWorksPage() {
             </Reveal>
             <Reveal delay={160}>
               <Link
-                href="/generator"
+                href="/generate"
                 className="inline-flex items-center gap-2.5 rounded-xl bg-[#7c3aed] px-9 py-4 text-base font-bold text-white hover:bg-[#6d28d9] transition-colors"
               >
                 Open the generator

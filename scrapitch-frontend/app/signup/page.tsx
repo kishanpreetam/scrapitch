@@ -51,7 +51,7 @@ export default function SignupPage() {
       return;
     }
 
-    router.push("/generator");
+    router.push("/generate");
   };
 
   const handleGoogle = async () => {
