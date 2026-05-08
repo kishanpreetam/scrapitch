@@ -4,7 +4,8 @@ load_dotenv(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), ".env"))
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Literal, Optional
 import os
 
 from scraper import scrape_website
@@ -12,8 +13,8 @@ from email_generator import generate_emails
 
 app = FastAPI(
     title="Scrapitch API",
-    description="AI-powered cold email generator for B2B agency owners",
-    version="1.0.0",
+    description="AI-powered cold email generator — v2",
+    version="2.0.0",
 )
 
 app.add_middleware(
@@ -28,12 +29,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+UseCaseLiteral = Literal[
+    "b2b_sales",
+    "masters_outreach",
+    "job_hunt",
+    "executive_outreach",
+    "networking",
+]
+
+TonePreferenceLiteral = Literal["auto", "formal", "warm", "direct"]
+
 
 class GenerateRequest(BaseModel):
+    # Existing field — unchanged
     url: str
-    framework: str = "All 3 Variants"
-    tone: str = "Professional"
-    industry: str = "Auto-detect"
+
+    # New required fields
+    use_case: UseCaseLiteral
+    about_user: str = Field(..., min_length=50, max_length=1000)
+    user_ask: str = Field(..., min_length=10, max_length=300)
+
+    # New optional fields
+    highlights: Optional[str] = Field(default=None, max_length=500)
+    tone_preference: TonePreferenceLiteral = "auto"
 
 
 class EmailVariant(BaseModel):
@@ -69,17 +87,20 @@ async def generate(request: GenerateRequest):
         url = "https://" + url
 
     # Step 1: Scrape
-    scraped = scrape_website(url)
-    if scraped.get("company_name") in (None, "", "Unknown") and scraped.get("error"):
+    try:
+        scraped = scrape_website(url)
+    except Exception as e:
         raise HTTPException(
             status_code=422,
-            detail=f"Could not scrape website: {scraped['error']}",
+            detail=f"Could not scrape website: {str(e)}",
         )
 
-    # Attach UI context to scraped data for the generator
-    scraped["preferred_framework"] = request.framework
-    scraped["preferred_tone"] = request.tone
-    scraped["sender_industry"] = request.industry
+    # Attach user context to scraped data for the generator
+    scraped["use_case"]        = request.use_case
+    scraped["about_user"]      = request.about_user
+    scraped["user_ask"]        = request.user_ask
+    scraped["highlights"]      = request.highlights
+    scraped["tone_preference"] = request.tone_preference
 
     # Step 2: Generate emails
     try:

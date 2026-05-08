@@ -1,254 +1,115 @@
-import httpx
-from bs4 import BeautifulSoup
-import re
+import os
+import logging
+from scrapegraph_py import Client
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/124.0.0.0 Safari/537.36"
-    ),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Accept-Encoding": "gzip, deflate, br",
-    "Connection": "keep-alive",
-    "Upgrade-Insecure-Requests": "1",
-    "Sec-Fetch-Dest": "document",
-    "Sec-Fetch-Mode": "navigate",
-    "Sec-Fetch-Site": "none",
-    "Sec-Fetch-User": "?1",
-    "Cache-Control": "max-age=0",
+logger = logging.getLogger(__name__)
+
+client = Client(api_key=os.getenv("SCRAPEGRAPH_API_KEY"))
+
+_USER_PROMPT = """
+Extract the following information from this webpage and return ONLY valid JSON
+with exactly these 7 keys (no extra keys, no markdown):
+
+{
+  "company_name": "string — the company or organisation name",
+  "description": "string — one or two sentence summary of what the company does",
+  "services": "string — the main products or services offered",
+  "target_audience": "string — who the company serves or sells to",
+  "value_proposition": "string — the core value proposition or competitive advantage",
+  "tone_of_voice": "string — one word or short phrase describing the website tone (e.g. formal, casual, technical, bold)",
+  "specific_details": [
+    "string — a concrete, specific detail from the page an outreach email could reference",
+    "string — another concrete, specific detail",
+    "string — another concrete, specific detail"
+  ]
 }
 
-TIMEOUT = 30.0
+Rules:
+- specific_details must be a list of 3 to 5 strings. Each string must be a real, concrete fact
+  found on the page (e.g. a named product, a stat, a named customer, a specific feature,
+  a recent announcement). Do NOT include generic marketing fluff.
+- All values must be drawn from actual page content. Do not hallucinate or guess.
+- Return only the JSON object. No explanation, no markdown fences.
+"""
 
 
 def scrape_website(url: str) -> dict:
     """
-    Scrape a prospect's website and extract key business intelligence.
-    Tries the main URL first, then /about as a fallback.
-    If both fail, returns domain-based data so email generation can still proceed.
+    Scrape a prospect's website using the ScrapeGraphAI cloud API and return
+    structured business intelligence.
+
+    Function signature is stable — do not change.
+
+    Returns a dict with keys:
+        company_name, description, services, target_audience,
+        value_proposition, tone_of_voice, specific_details, url
+
+    Raises an exception (with a useful message) on any failure.
+    ScrapeGraphAI handles JS rendering, anti-bot, and proxies server-side.
     """
-    # Try main URL, then /about fallback
-    urls_to_try = [url]
-    base = url.rstrip("/")
-    if not any(seg in base for seg in ["/about", "/about-us"]):
-        urls_to_try.append(base + "/about")
+    logger.info("scrape_website: calling ScrapeGraphAI smartscraper for %s", url)
 
-    last_error = None
-    for attempt_url in urls_to_try:
-        result, error = _try_fetch(attempt_url)
-        if result is not None:
-            return result
-        last_error = error
-        print(f"[scraper] Failed {attempt_url}: {error}")
-
-    # Both URLs failed — build a graceful fallback from the domain
-    print(f"[scraper] All attempts failed. Using domain fallback for {url}")
-    return _domain_fallback(url, last_error)
-
-
-def _try_fetch(url: str) -> tuple[dict | None, str | None]:
-    """
-    Attempt to fetch and parse a single URL.
-    Returns (result_dict, None) on success or (None, error_str) on failure.
-    """
     try:
-        with httpx.Client(timeout=TIMEOUT, follow_redirects=True) as client:
-            response = client.get(url, headers=HEADERS)
-            response.raise_for_status()
-    except httpx.TimeoutException:
-        return None, f"Timed out after {int(TIMEOUT)}s"
-    except httpx.HTTPStatusError as e:
-        code = e.response.status_code
-        # CloudFlare / bot protection typically returns 403 or 503
-        if code in (403, 503):
-            return None, f"Bot protection blocked request (HTTP {code})"
-        return None, f"HTTP {code} error"
-    except httpx.RequestError as e:
-        return None, f"Connection error: {str(e)}"
+        response = client.smartscraper(
+            website_url=url,
+            user_prompt=_USER_PROMPT,
+        )
+    except Exception as exc:
+        logger.error(
+            "scrape_website: ScrapeGraphAI API call failed for %s — %s: %s",
+            url,
+            type(exc).__name__,
+            exc,
+        )
+        raise RuntimeError(
+            f"ScrapeGraphAI failed to scrape {url}. "
+            f"Reason: {type(exc).__name__}: {exc}"
+        ) from exc
 
-    # Detect CloudFlare challenge pages (they return 200 but with a challenge body)
-    if _is_bot_protection(response.text):
-        return None, "CloudFlare/bot protection challenge page detected"
+    # The SDK returns the parsed result directly as a dict (or similar mapping).
+    # Assumption: client.smartscraper() returns the JSON-parsed result dict.
+    # If the SDK wraps it in a top-level key (e.g. {"result": {...}}), unwrap here.
+    result = response
+    if isinstance(result, dict) and "result" in result and isinstance(result["result"], dict):
+        result = result["result"]
 
-    soup = BeautifulSoup(response.text, "html.parser")
-
-    # Remove noise
-    for tag in soup(["script", "style", "nav", "footer", "head", "noscript", "svg", "img"]):
-        tag.decompose()
-
-    company_name = _extract_company_name(soup, url)
-    raw_text = _extract_clean_text(soup)
-    what_they_do = _extract_what_they_do(soup, raw_text)
-    who_they_serve = _extract_who_they_serve(raw_text)
-    value_proposition = _extract_value_proposition(soup, raw_text)
-    tone = _detect_tone(raw_text)
-
-    return {
-        "url": url,
-        "company_name": company_name,
-        "what_they_do": what_they_do,
-        "who_they_serve": who_they_serve,
-        "value_proposition": value_proposition,
-        "tone": tone,
-        "raw_text_snippet": raw_text[:1500],
-        "error": None,
-    }, None
-
-
-def _is_bot_protection(html: str) -> bool:
-    """Detect CloudFlare and similar bot-protection challenge pages."""
-    signals = [
-        "cf-browser-verification",
-        "challenges.cloudflare.com",
-        "Ray ID",
-        "Checking your browser",
-        "DDoS protection by",
-        "Please enable cookies",
-        "cf_chl_opt",
-    ]
-    html_lower = html.lower()
-    return sum(1 for s in signals if s.lower() in html_lower) >= 2
-
-
-def _domain_fallback(url: str, error: str | None) -> dict:
-    """
-    Build a minimal result from the domain name alone so the
-    email generator can still produce something useful.
-    """
-    match = re.search(r"(?:https?://)?(?:www\.)?([^/]+)", url)
-    domain_full = match.group(1) if match else url
-    company_name = domain_full.split(".")[0].capitalize()
-
-    return {
-        "url": url,
-        "company_name": company_name,
-        "what_they_do": f"a company at {domain_full}",
-        "who_they_serve": "businesses and teams",
-        "value_proposition": f"Visit {domain_full} to learn more about their offering",
-        "tone": "professional",
-        "raw_text_snippet": "",
-        "error": error,  # kept for logging but won't block email generation
+    # Validate that we got the 7 required keys
+    required_keys = {
+        "company_name", "description", "services", "target_audience",
+        "value_proposition", "tone_of_voice", "specific_details",
     }
+    missing = required_keys - set(result.keys())
+    if missing:
+        logger.error(
+            "scrape_website: ScrapeGraphAI response missing keys %s for %s",
+            missing,
+            url,
+        )
+        raise RuntimeError(
+            f"ScrapeGraphAI returned incomplete data for {url}. "
+            f"Missing keys: {missing}. Got: {list(result.keys())}"
+        )
 
+    # Ensure specific_details is a list of strings
+    details = result.get("specific_details", [])
+    if not isinstance(details, list):
+        details = [str(details)]
+    details = [str(d) for d in details]
+    if len(details) < 3:
+        logger.error(
+            "scrape_website: specific_details has fewer than 3 items for %s",
+            url,
+        )
+        raise RuntimeError(
+            f"ScrapeGraphAI returned fewer than 3 specific_details for {url}. Got: {details}"
+        )
 
-def _extract_company_name(soup: BeautifulSoup, url: str) -> str:
-    # Try og:site_name first
-    og_site = soup.find("meta", property="og:site_name")
-    if og_site and og_site.get("content"):
-        return og_site["content"].strip()
+    result["specific_details"] = details[:5]  # cap at 5
+    result["url"] = url
 
-    # Try title tag
-    title = soup.find("title")
-    if title and title.text:
-        name = title.text.strip()
-        # Clean common suffixes
-        for sep in [" | ", " - ", " – ", " — ", " :: "]:
-            if sep in name:
-                name = name.split(sep)[0].strip()
-        if name:
-            return name
-
-    # Fall back to domain name
-    match = re.search(r"(?:https?://)?(?:www\.)?([^/]+)", url)
-    if match:
-        domain = match.group(1).split(".")[0]
-        return domain.capitalize()
-
-    return "Unknown Company"
-
-
-def _extract_clean_text(soup: BeautifulSoup) -> str:
-    texts = []
-    for tag in soup.find_all(["h1", "h2", "h3", "h4", "p", "li", "span", "div"]):
-        text = tag.get_text(separator=" ", strip=True)
-        if len(text) > 20:
-            texts.append(text)
-    combined = " ".join(texts)
-    # Collapse whitespace
-    combined = re.sub(r"\s+", " ", combined).strip()
-    return combined
-
-
-def _extract_what_they_do(soup: BeautifulSoup, text: str) -> str:
-    # Hero h1 is usually the clearest signal
-    h1 = soup.find("h1")
-    if h1:
-        h1_text = h1.get_text(strip=True)
-        if len(h1_text) > 10:
-            return h1_text[:300]
-
-    # Fall back to meta description
-    meta_desc = soup.find("meta", attrs={"name": "description"})
-    if meta_desc and meta_desc.get("content"):
-        return meta_desc["content"].strip()[:300]
-
-    # Fall back to first substantial paragraph
-    for p in soup.find_all("p"):
-        p_text = p.get_text(strip=True)
-        if len(p_text) > 50:
-            return p_text[:300]
-
-    return text[:300] if text else "Could not extract business description"
-
-
-def _extract_who_they_serve(text: str) -> str:
-    patterns = [
-        r"(?:for|serving|built for|designed for|trusted by|used by|helping)\s+([\w\s,&]+?)(?:\.|,|\n|to )",
-        r"(?:our clients|our customers|we help|we serve)\s+([\w\s,&]+?)(?:\.|,|\n)",
-        r"((?:small businesses?|enterprises?|startups?|agencies?|b2b|saas|e-commerce|healthcare|finance|marketing teams?|sales teams?)[^.]*)",
-    ]
-    text_lower = text.lower()
-    for pattern in patterns:
-        match = re.search(pattern, text_lower)
-        if match:
-            result = match.group(1).strip()
-            if len(result) > 5:
-                return result[:200].capitalize()
-
-    return "B2B companies and businesses"
-
-
-def _extract_value_proposition(soup: BeautifulSoup, text: str) -> str:
-    # Look for og:description or meta description
-    og_desc = soup.find("meta", property="og:description")
-    if og_desc and og_desc.get("content"):
-        return og_desc["content"].strip()[:400]
-
-    meta_desc = soup.find("meta", attrs={"name": "description"})
-    if meta_desc and meta_desc.get("content"):
-        return meta_desc["content"].strip()[:400]
-
-    # Look for hero subheading (h2 near top)
-    h2 = soup.find("h2")
-    if h2:
-        h2_text = h2.get_text(strip=True)
-        if len(h2_text) > 15:
-            return h2_text[:400]
-
-    return text[300:700] if len(text) > 300 else text[:400]
-
-
-def _detect_tone(text: str) -> str:
-    text_lower = text.lower()
-
-    formal_words = ["enterprise", "solutions", "compliance", "governance", "infrastructure", "procurement"]
-    casual_words = ["awesome", "cool", "hey", "love", "fun", "amazing", "super", "wow"]
-    technical_words = ["api", "sdk", "integration", "developer", "stack", "deploy", "pipeline", "algorithm"]
-    bold_words = ["disrupting", "revolutionary", "game-changer", "fastest", "#1", "best-in-class", "dominate"]
-
-    scores = {
-        "formal": sum(1 for w in formal_words if w in text_lower),
-        "casual": sum(1 for w in casual_words if w in text_lower),
-        "technical": sum(1 for w in technical_words if w in text_lower),
-        "bold": sum(1 for w in bold_words if w in text_lower),
-    }
-
-    dominant = max(scores, key=scores.get)
-    if scores[dominant] == 0:
-        dominant = "professional"
-
-    return dominant
-
-
+    logger.info(
+        "scrape_website: success for %s — company=%s",
+        url,
+        result.get("company_name"),
+    )
+    return result
