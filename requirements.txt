@@ -8,3 +8,4 @@ python-dotenv>=1.0.0
 pydantic>=2.0.0
 requests>=2.32.0
 lxml>=5.0.0
+scrapegraph-py>=1.0.0
