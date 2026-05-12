@@ -2,13 +2,18 @@ from dotenv import load_dotenv
 import os as _os
 load_dotenv(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), ".env"))
 
+import logging
+import os
+from typing import Literal
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-import os
+from pydantic import BaseModel, Field, HttpUrl
 
 from scraper import scrape_website
 from email_generator import generate_emails
+
+log = logging.getLogger(__name__)
 
 app = FastAPI(
     title="Scrapitch API",
@@ -30,10 +35,12 @@ app.add_middleware(
 
 
 class GenerateRequest(BaseModel):
-    url: str
-    framework: str = "All 3 Variants"
-    tone: str = "Professional"
-    industry: str = "Auto-detect"
+    url: HttpUrl
+    use_case: Literal["b2b_sales", "masters_outreach", "job_hunt", "executive_outreach", "networking"]
+    about_user: str = Field(..., min_length=1, max_length=2000)
+    user_ask: str = Field(..., min_length=1, max_length=1000)
+    highlights: str = Field(default="", max_length=2000)
+    tone_preference: Literal["auto", "formal", "warm", "direct"] = "auto"
 
 
 class EmailVariant(BaseModel):
@@ -63,31 +70,34 @@ async def generate(request: GenerateRequest):
     if not os.getenv("ANTHROPIC_API_KEY"):
         raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
 
-    # Ensure URL has a scheme
-    url = request.url.strip()
-    if not url.startswith(("http://", "https://")):
-        url = "https://" + url
+    url = str(request.url)
 
-    # Step 1: Scrape
-    scraped = scrape_website(url)
-    if scraped.get("company_name") in (None, "", "Unknown") and scraped.get("error"):
+    try:
+        scraped = scrape_website(url)
+    except RuntimeError as exc:
+        log.error("scrape failure for %s: %s", url, exc)
         raise HTTPException(
             status_code=422,
-            detail=f"Could not scrape website: {scraped['error']}",
-        )
+            detail=f"Could not scrape website: {exc}",
+        ) from exc
 
-    # Attach UI context to scraped data for the generator
-    scraped["preferred_framework"] = request.framework
-    scraped["sender_industry"] = request.industry
+    payload = {
+        **scraped,
+        "use_case": request.use_case,
+        "about_user": request.about_user,
+        "user_ask": request.user_ask,
+        "highlights": request.highlights,
+        "tone_preference": request.tone_preference,
+    }
 
-    # Step 2: Generate emails
     try:
-        result = generate_emails(scraped)
-    except Exception as e:
+        result = generate_emails(payload)
+    except ValueError as exc:
+        log.error("email generation failure for %s: %s", url, exc)
         raise HTTPException(
             status_code=500,
-            detail=f"Email generation failed: {str(e)}",
-        )
+            detail=f"Email generation failed: {exc}",
+        ) from exc
 
     return GenerateResponse(
         url=url,
