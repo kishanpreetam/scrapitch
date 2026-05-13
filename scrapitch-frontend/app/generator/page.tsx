@@ -2,12 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://web-production-f17a7.up.railway.app";
+
+type UseCase =
+  | "b2b_sales"
+  | "masters_outreach"
+  | "job_hunt"
+  | "executive_outreach"
+  | "networking";
+
+type TonePreference = "auto" | "formal" | "warm" | "direct";
 
 type FollowUp = {
   day: number;
@@ -203,8 +211,11 @@ export default function GeneratorPage() {
   }, [router]);
 
   const [url, setUrl] = useState("");
-  const [framework, setFramework] = useState("All 3 Variants");
-  const [industry, setIndustry] = useState("Auto-detect");
+  const [useCase, setUseCase] = useState<UseCase>("b2b_sales");
+  const [aboutUser, setAboutUser] = useState("");
+  const [userAsk, setUserAsk] = useState("");
+  const [highlights, setHighlights] = useState("");
+  const [tonePreference, setTonePreference] = useState<TonePreference>("auto");
 
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState("");
@@ -213,23 +224,33 @@ export default function GeneratorPage() {
   const [hasAttempted, setHasAttempted] = useState(false);
 
   const handleGenerate = async () => {
-    if (!url.trim()) {
-      setHasAttempted(true);
-      setError("Please enter a URL first.");
+    setHasAttempted(true);
+
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl) {
+      setError("Please enter a URL.");
       return;
     }
-    setHasAttempted(true);
+    if (!aboutUser.trim()) {
+      setError("Please tell us a bit about you.");
+      return;
+    }
+    if (!userAsk.trim()) {
+      setError("Please describe what you're asking for.");
+      return;
+    }
+
     setError(null);
     setResult(null);
     setLoading(true);
     setLoadingStage("Analyzing website...");
 
     const normalised =
-      url.startsWith("http://") || url.startsWith("https://")
-        ? url.trim()
-        : `https://${url.trim()}`;
+      trimmedUrl.startsWith("http://") || trimmedUrl.startsWith("https://")
+        ? trimmedUrl
+        : `https://${trimmedUrl}`;
 
-    const stageTimer = setTimeout(() => setLoadingStage("Generating emails…"), 4000);
+    const stageTimer = setTimeout(() => setLoadingStage("Generating emails..."), 4000);
 
     try {
       const res = await fetch(`${API_BASE}/generate`, {
@@ -237,8 +258,11 @@ export default function GeneratorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url: normalised,
-          framework,
-          industry,
+          use_case: useCase,
+          about_user: aboutUser,
+          user_ask: userAsk,
+          highlights: highlights,
+          tone_preference: tonePreference,
         }),
       });
 
@@ -284,61 +308,120 @@ export default function GeneratorPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 space-y-8">
           {/* Input card */}
           <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-8">
-            {/* URL input */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                Prospect website URL
-              </label>
-              <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleGenerate()}
-                placeholder="https://yourprospect.com"
-                className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base"
-              />
-            </div>
-
-            {/* Dropdowns */}
-            <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            <div className="space-y-6">
+              {/* Field 1: Prospect URL */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                  Framework
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">
+                  Prospect URL
                 </label>
-                <select
-                  value={framework}
-                  onChange={(e) => setFramework(e.target.value)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
-                >
-                  <option>All 3 Variants</option>
-                  <option>The Direct (PAS)</option>
-                  <option>Value-First</option>
-                  <option>The Curious</option>
-                </select>
+                <input
+                  type="url"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="https://example.com"
+                  required
+                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base"
+                />
+                <p className="mt-1.5 text-xs text-zinc-500">
+                  The website of the company, lab, person, or program you&apos;re reaching out to
+                </p>
               </div>
+
+              {/* Field 2: Outreach type */}
               <div>
-                <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">
-                  Your Industry
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">
+                  Outreach type
                 </label>
                 <select
-                  value={industry}
-                  onChange={(e) => setIndustry(e.target.value)}
+                  value={useCase}
+                  onChange={(e) => setUseCase(e.target.value as UseCase)}
                   className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
                 >
-                  <option>Auto-detect</option>
-                  <option>B2B SaaS</option>
-                  <option>Marketing &amp; Creative Agency</option>
-                  <option>Sales &amp; Revenue Consulting</option>
-                  <option>IT Services &amp; MSP</option>
-                  <option>Recruiting &amp; Staffing</option>
-                  <option>Legal Services</option>
-                  <option>Financial Services &amp; Fintech</option>
-                  <option>Real Estate</option>
-                  <option>Healthcare &amp; MedTech</option>
-                  <option>Manufacturing &amp; Industrial</option>
-                  <option>Ecommerce &amp; DTC</option>
-                  <option>Freelancer / Solo Consultant</option>
+                  <option value="b2b_sales">B2B Sales - pitch a product or service</option>
+                  <option value="masters_outreach">Master&apos;s / PhD outreach - reach out to a lab or program</option>
+                  <option value="job_hunt">Job hunt - reach out about a role</option>
+                  <option value="executive_outreach">Executive outreach - peer-to-peer to a C-suite contact</option>
+                  <option value="networking">Networking - start a real connection</option>
                 </select>
+                <p className="mt-1.5 text-xs text-zinc-500">
+                  We tailor the email style, length, and tone to the type of outreach
+                </p>
+              </div>
+
+              {/* Field 3: About you */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">
+                  About you
+                </label>
+                <textarea
+                  value={aboutUser}
+                  onChange={(e) => setAboutUser(e.target.value)}
+                  placeholder="Founder of a B2B SaaS that helps logistics teams reduce delivery delays. Previously led ops at Coupang."
+                  rows={3}
+                  maxLength={2000}
+                  required
+                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
+                />
+                <p className="mt-1.5 text-xs text-zinc-500">
+                  One or two sentences. Who you are, what you do, what&apos;s relevant to this outreach.
+                </p>
+              </div>
+
+              {/* Field 4: Your ask */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">
+                  What are you asking for?
+                </label>
+                <textarea
+                  value={userAsk}
+                  onChange={(e) => setUserAsk(e.target.value)}
+                  placeholder="A 15-minute call next week to share how we cut delivery SLA breaches by 40 percent for similar mid-market shippers."
+                  rows={2}
+                  maxLength={1000}
+                  required
+                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
+                />
+                <p className="mt-1.5 text-xs text-zinc-500">
+                  Be specific. The clearer the ask, the better the email.
+                </p>
+              </div>
+
+              {/* Field 5: Highlights (optional) */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">
+                  Highlights (optional)
+                </label>
+                <textarea
+                  value={highlights}
+                  onChange={(e) => setHighlights(e.target.value)}
+                  placeholder="Recent 12 million Series A. Customers include FastShip and DeliverNow. Built by ex-Coupang ops team."
+                  rows={2}
+                  maxLength={2000}
+                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
+                />
+                <p className="mt-1.5 text-xs text-zinc-500">
+                  Numbers, customer names, recent wins. The model weaves these in naturally.
+                </p>
+              </div>
+
+              {/* Field 6: Tone */}
+              <div>
+                <label className="block text-sm font-semibold text-zinc-300 mb-2">
+                  Tone
+                </label>
+                <select
+                  value={tonePreference}
+                  onChange={(e) => setTonePreference(e.target.value as TonePreference)}
+                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
+                >
+                  <option value="auto">Auto - match the outreach type</option>
+                  <option value="formal">Formal - polished, no contractions</option>
+                  <option value="warm">Warm - friendly, peer-to-peer</option>
+                  <option value="direct">Direct - short sentences, no fluff</option>
+                </select>
+                <p className="mt-1.5 text-xs text-zinc-500">
+                  Override the default tone for this outreach type
+                </p>
               </div>
             </div>
 
@@ -346,7 +429,7 @@ export default function GeneratorPage() {
             <button
               onClick={handleGenerate}
               disabled={loading}
-              className="w-full rounded-xl bg-[#3b82f6] py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="mt-8 w-full rounded-xl bg-[#3b82f6] py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-3">
@@ -354,7 +437,7 @@ export default function GeneratorPage() {
                   <span className="animate-pulse">{loadingStage || "Generating..."}</span>
                 </span>
               ) : (
-                "Generate Cold Emails"
+                "Generate emails"
               )}
             </button>
           </div>
