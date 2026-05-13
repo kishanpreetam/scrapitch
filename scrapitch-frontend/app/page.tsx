@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomeLiveDemo from "@/components/HomeLiveDemo";
+import HomeUseCases from "@/components/HomeUseCases";
 import HomeComparison from "@/components/HomeComparison";
 import HomeHowItWorks from "@/components/HomeHowItWorks";
 import HomeTabbedShowcase from "@/components/HomeTabbedShowcase";
@@ -155,7 +156,10 @@ export default function LandingPage() {
         {/* ── 2. LIVE DEMO ─────────────────────────────────────── */}
         <HomeLiveDemo />
 
-        {/* ── 3. COMPARISON ───────────────────────────────────── */}
+        {/* ── 3. USE CASES ─────────────────────────────────────── */}
+        <HomeUseCases />
+
+        {/* ── 4. COMPARISON ───────────────────────────────────── */}
         <HomeComparison />
 
         {/* ── 4. HOW IT WORKS ─────────────────────────────────── */}
