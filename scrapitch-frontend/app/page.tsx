@@ -29,7 +29,7 @@ const USE_CASES: UseCase[] = [
     },
     subhead: "Outreach that sounds like you read the homepage. Because it did.",
     caption: "for founders, account execs, and SDRs",
-    subject: "Idea for Stripe's Q2 pipeline",
+    subject: "Idea for Scrapitch's outreach engine",
     cta: "Try it for sales",
   },
   {
