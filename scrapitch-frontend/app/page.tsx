@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomeHero from "@/components/HomeHero";
 
@@ -708,6 +709,7 @@ function FinalCtaSection() {
 export default function LandingPage() {
   return (
     <>
+      <Navbar />
       <main className="overflow-x-hidden">
         <HomeHero />
         {USE_CASES.map((uc) => (
