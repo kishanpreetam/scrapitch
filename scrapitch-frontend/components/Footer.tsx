@@ -1,24 +1,26 @@
 import Link from "next/link";
 
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
 const footerLinks = {
   Product: [
-    { href: "/how-it-works", label: "How It Works" },
-    { href: "/use-cases",    label: "Use Cases" },
-    { href: "/generator",    label: "Generator" },
+    { href: "/how-it-works", label: "How it works" },
+    { href: "/use-cases", label: "Use cases" },
+    { href: "/generator", label: "Generator" },
   ],
   Company: [
-    { href: "/faq",     label: "FAQ" },
+    { href: "/faq", label: "FAQ" },
   ],
   Legal: [
-    { href: "#", label: "Privacy Policy" },
-    { href: "#", label: "Terms of Service" },
-    { href: "#", label: "GDPR Policy" },
+    { href: "#", label: "Privacy policy" },
+    { href: "#", label: "Terms of service" },
+    { href: "#", label: "GDPR policy" },
   ],
 };
 
 export default function Footer() {
   return (
-    <footer className="relative z-10 border-t border-white/8 bg-[#0a0a0a] mt-auto">
+    <footer className="relative z-10 mt-auto" style={{ background: "#0a0a0a", borderTop: "1px solid #2c241c" }}>
       <div className="w-full px-10 lg:px-16 py-10">
 
         {/* 4-column grid — brand wider on the left */}
@@ -26,29 +28,52 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-1.5 mb-3">
-              <span className="text-sm font-black tracking-tight">
-                <span className="text-white">Scrap</span><span className="text-[#3b82f6]">itch</span>
+            <Link href="/" className="flex items-center mb-3">
+              <span style={{ fontWeight: 500, fontSize: 18, letterSpacing: "-0.01em" }}>
+                <span style={{ color: "#f5f5f0" }}>Scrap</span>
+                <span
+                  style={{
+                    fontFamily: SERIF_STACK,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: "#c9b896",
+                  }}
+                >
+                  itch
+                </span>
               </span>
             </Link>
-            <p className="text-sm text-[#6b6b6b] leading-relaxed">
-              AI cold email from any URL. 3 scored variants in seconds.
+            <p style={{ fontSize: 14, color: "#8a8a85", lineHeight: 1.55 }}>
+              AI cold outreach from any URL. Three scored drafts in ten seconds.
             </p>
-            <p className="mt-3 text-xs text-[#6b6b6b]">AI cold email from any URL.</p>
           </div>
 
           {/* Link columns */}
           {Object.entries(footerLinks).map(([group, items]) => (
             <div key={group}>
-              <p className="text-xs font-bold uppercase tracking-widest text-[#6b6b6b] mb-3">
+              <p
+                className="font-mono"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 400,
+                  color: "#c9b896",
+                  letterSpacing: "0.04em",
+                  marginBottom: 14,
+                }}
+              >
                 {group}
               </p>
-              <ul className="space-y-3">
+              <ul style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {items.map(({ href, label }) => (
                   <li key={label}>
                     <Link
                       href={href}
-                      className="text-sm text-[#a8a8a8] hover:text-white transition-colors"
+                      className="transition-colors hover:text-[#f5f5f0]"
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 400,
+                        color: "#8a8a85",
+                      }}
                     >
                       {label}
                     </Link>
@@ -60,12 +85,28 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-8 py-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#6b6b6b]">
-          <p>© {new Date().getFullYear()} Scrapitch. All rights reserved.</p>
-          <p className="text-center text-[#6b6b6b] max-w-md">
+        <div
+          className="mt-8 py-6 flex flex-col sm:flex-row items-center justify-between"
+          style={{ borderTop: "1px solid #2c241c", gap: 12 }}
+        >
+          <p
+            className="font-mono"
+            style={{ fontSize: 12, color: "#6e6657", letterSpacing: "0.02em" }}
+          >
+            © {new Date().getFullYear()} Scrapitch · Solo founder, Boston
+          </p>
+          <p
+            className="font-mono text-center"
+            style={{
+              fontSize: 12,
+              color: "#6e6657",
+              letterSpacing: "0.02em",
+              maxWidth: 520,
+              lineHeight: 1.5,
+            }}
+          >
             AI-generated emails are suggestions only. Users are responsible for compliance with CAN-SPAM, GDPR, and CASL.
           </p>
-          <p>Built for agency owners, SDRs &amp; freelancers.</p>
         </div>
       </div>
     </footer>
