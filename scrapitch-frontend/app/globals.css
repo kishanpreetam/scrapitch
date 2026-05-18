@@ -93,6 +93,15 @@ input[type="password"]::-webkit-textfield-decoration-container {
   100% { opacity: 1; }
 }
 
+/* Pipeline pill active dot */
+@keyframes scrapitch-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.55; }
+}
+.scrapitch-pulse {
+  animation: scrapitch-pulse 1.2s ease-in-out infinite;
+}
+
 /* Reduced motion overrides */
 @media (prefers-reduced-motion: reduce) {
   .cursor-blink { animation: none; opacity: 1; }

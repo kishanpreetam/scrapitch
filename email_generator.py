@@ -231,6 +231,14 @@ _AGENT2_OUTPUT_SHAPE = (
     "Return ONLY valid JSON. No markdown, no backticks, no explanation."
 )
 
+_AGENT2_ANTI_FABRICATION = (
+    "CRITICAL — DO NOT FABRICATE:\n"
+    "Only use information that was explicitly provided in about_user, user_ask, and highlights.\n"
+    "Do NOT invent credentials, metrics, outcomes, project names, company names, or bridging context that was not given.\n"
+    "If the input fields are sparse, write a shorter and vaguer email — do not fill gaps with invented details.\n"
+    "A shorter honest email is always better than a longer fabricated one."
+)
+
 _TONE_LINES = {
     "auto":   "",
     "formal": "TONE OVERRIDE: Use a formal, polished register. Full sentences. No contractions. No slang.",
@@ -270,7 +278,8 @@ def _agent2_b2b_sales(tone_preference: str) -> str:
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'Hope this finds you well', 'I wanted to reach out'.\n\n"
         + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_ANTI_FABRICATION
     )
 
 
@@ -309,7 +318,8 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         "FORBIDDEN ADDITIONS: 'Your work is amazing', generic name-dropping, 'I am very "
         "interested in your research'.\n\n"
         + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_ANTI_FABRICATION
     )
 
 
@@ -346,7 +356,8 @@ def _agent2_job_hunt(tone_preference: str) -> str:
         + "FORBIDDEN ADDITIONS: 'I am passionate about', 'I would love the opportunity', "
         "'It would be a dream to work at', 'I am writing to express my interest'.\n\n"
         + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_ANTI_FABRICATION
     )
 
 
@@ -378,7 +389,8 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         + "FORBIDDEN ADDITIONS: 'I have been following your work', 'I admire what you do', "
         "'I am a huge fan', 'It would be an honor'.\n\n"
         + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_ANTI_FABRICATION
     )
 
 
@@ -412,7 +424,8 @@ def _agent2_networking(tone_preference: str) -> str:
         + "FORBIDDEN ADDITIONS: 'Pick your brain', 'Quick question', 'Can I get on your "
         "calendar', 'I would love to connect'.\n\n"
         + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_ANTI_FABRICATION
     )
 
 

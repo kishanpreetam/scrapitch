@@ -39,6 +39,47 @@ type GenerateResponse = {
   follow_up_sequence: FollowUp[];
 };
 
+const PLACEHOLDER_MAP: Record<"about_user" | "user_ask" | "highlights", Record<UseCase, string>> = {
+  about_user: {
+    b2b_sales: "e.g. I run a 3-person agency doing performance creative for DTC brands. We specialize in Meta ads.",
+    masters_outreach: "e.g. Final-year CS undergrad at BITS Pilani, 3.8 GPA. Strong in ML/NLP, interned at a quant firm.",
+    job_hunt: "e.g. Data engineer with 3 years at Amazon. Built Spark pipelines serving 200M+ users.",
+    executive_outreach: "e.g. Solo founder of Scrapitch, an AI outreach tool with 200 early signups.",
+    networking: "e.g. ECE master's student at Northeastern graduating May 2026. Interested in ML infrastructure.",
+  },
+  user_ask: {
+    b2b_sales: "e.g. 15-minute call to see if there's a fit for your team",
+    masters_outreach: "e.g. 20-minute call to ask about your research lab and the program's culture",
+    job_hunt: "e.g. 20-minute chat to learn about your team and how you evaluate senior engineers",
+    executive_outreach: "e.g. 30-minute conversation to get your perspective on early-stage go-to-market",
+    networking: "e.g. 15-minute virtual coffee to hear about your path into this field",
+  },
+  highlights: {
+    b2b_sales: "e.g. Helped a similar agency 3x their reply rate in 6 weeks (optional but helps)",
+    masters_outreach: "e.g. Co-authored a paper on transformer pruning accepted at an ACL workshop (optional)",
+    job_hunt: "e.g. Led Spark migration that cut compute costs 40%, adopted by 3 downstream teams (optional)",
+    executive_outreach: "e.g. 200 signups in first week, covered in two AI newsletters (optional)",
+    networking: "e.g. Building a multi-agent crisis response system, presented at Khoury symposium (optional)",
+  },
+};
+
+const HELPER_TEXT_MAP: Record<"about_user" | "user_ask", Record<UseCase, string>> = {
+  about_user: {
+    b2b_sales: "Who you are and what you sell. More specifics = better personalization.",
+    masters_outreach: "Your background, GPA, research interests, and target programs.",
+    job_hunt: "Your current role, years of experience, key projects, and what you're looking for.",
+    executive_outreach: "Your venture or role, stage, and why you're reaching out to this type of person.",
+    networking: "Your program, graduation timeline, and what area you want to break into.",
+  },
+  user_ask: {
+    b2b_sales: "One specific, low-friction ask. Avoid 'let me know if interested.'",
+    masters_outreach: "Ask for their time, not a favor. Keep it under 20 minutes.",
+    job_hunt: "A conversation, not a job. Ask to learn — not to be referred.",
+    executive_outreach: "Ask for their perspective, not their endorsement.",
+    networking: "Keep it short and easy to say yes to.",
+  },
+};
+
 const BADGE = {
   A: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
   B: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
@@ -353,10 +394,13 @@ export default function GeneratorPage() {
                 <label className="block text-sm font-semibold text-zinc-300 mb-2">
                   About you
                 </label>
+                <p className="text-sm text-zinc-400 mb-2">
+                  {HELPER_TEXT_MAP.about_user[useCase]}
+                </p>
                 <textarea
                   value={aboutUser}
                   onChange={(e) => setAboutUser(e.target.value)}
-                  placeholder="Founder of a B2B SaaS that helps logistics teams reduce delivery delays. Previously led ops at Coupang."
+                  placeholder={PLACEHOLDER_MAP.about_user[useCase]}
                   rows={3}
                   maxLength={2000}
                   required
@@ -372,10 +416,13 @@ export default function GeneratorPage() {
                 <label className="block text-sm font-semibold text-zinc-300 mb-2">
                   What are you asking for?
                 </label>
+                <p className="text-sm text-zinc-400 mb-2">
+                  {HELPER_TEXT_MAP.user_ask[useCase]}
+                </p>
                 <textarea
                   value={userAsk}
                   onChange={(e) => setUserAsk(e.target.value)}
-                  placeholder="A 15-minute call next week to share how we cut delivery SLA breaches by 40 percent for similar mid-market shippers."
+                  placeholder={PLACEHOLDER_MAP.user_ask[useCase]}
                   rows={2}
                   maxLength={1000}
                   required
@@ -394,7 +441,7 @@ export default function GeneratorPage() {
                 <textarea
                   value={highlights}
                   onChange={(e) => setHighlights(e.target.value)}
-                  placeholder="Recent 12 million Series A. Customers include FastShip and DeliverNow. Built by ex-Coupang ops team."
+                  placeholder={PLACEHOLDER_MAP.highlights[useCase]}
                   rows={2}
                   maxLength={2000}
                   className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
