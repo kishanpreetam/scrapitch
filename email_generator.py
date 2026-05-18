@@ -239,6 +239,20 @@ _AGENT2_ANTI_FABRICATION = (
     "A shorter honest email is always better than a longer fabricated one."
 )
 
+_AGENT2_RESUME_RULES = (
+    "RESUME INTEGRATION (only applies when 'resume_data' is provided in the user content):\n"
+    "- Use ONE accomplishment from the resume that best fits the prospect's context.\n"
+    "- Include the portfolio or GitHub link in the signature if one is available.\n"
+    "- Match the sender's actual experience level. Do not inflate.\n"
+    "- Do not list multiple accomplishments. Pick one that connects to the prospect.\n"
+    "- Do not invent metrics. Only use metrics that appear in resume_data.\n"
+)
+
+_AGENT2_RESUME_PUBS_GRAD = (
+    "If resume_data.publications is non-empty, reference one publication in the body ONLY IF it "
+    "relates to the professor's work. Otherwise omit publications entirely.\n"
+)
+
 _TONE_LINES = {
     "auto":   "",
     "formal": "TONE OVERRIDE: Use a formal, polished register. Full sentences. No contractions. No slang.",
@@ -317,6 +331,8 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         "extracted research. Generic 'your work is amazing' is forbidden.\n\n"
         "FORBIDDEN ADDITIONS: 'Your work is amazing', generic name-dropping, 'I am very "
         "interested in your research'.\n\n"
+        + _AGENT2_RESUME_RULES + "\n"
+        + _AGENT2_RESUME_PUBS_GRAD + "\n"
         + _AGENT2_FOLLOW_UPS + "\n"
         + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
@@ -355,6 +371,7 @@ def _agent2_job_hunt(tone_preference: str) -> str:
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'I am passionate about', 'I would love the opportunity', "
         "'It would be a dream to work at', 'I am writing to express my interest'.\n\n"
+        + _AGENT2_RESUME_RULES + "\n"
         + _AGENT2_FOLLOW_UPS + "\n"
         + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
@@ -388,6 +405,7 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'I have been following your work', 'I admire what you do', "
         "'I am a huge fan', 'It would be an honor'.\n\n"
+        + _AGENT2_RESUME_RULES + "\n"
         + _AGENT2_FOLLOW_UPS + "\n"
         + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
@@ -543,14 +561,25 @@ def generate_emails(scraped_data: dict) -> dict:
                 raise ValueError(f"Research agent returned invalid JSON: {e}")
 
     # ── AGENT 2: Email Writer ─────────────────────────────────────────────
-    agent2_user = json.dumps({
+    agent2_user_dict: dict = {
         "research": research,
         "about_user": about_user,
         "user_ask": user_ask,
         "highlights": highlights,
         "tone_preference": tone_preference,
         "specific_details": scraped_data.get("specific_details", []),
-    })
+    }
+    if scraped_data.get("resume_data"):
+        agent2_user_dict["resume_data"] = scraped_data["resume_data"]
+    for f in (
+        "target_role", "portfolio_link", "accomplishment",
+        "current_school_year", "paper_or_topic", "program_term",
+        "company_stage", "traction_metric",
+    ):
+        v = scraped_data.get(f)
+        if v:
+            agent2_user_dict[f] = v
+    agent2_user = json.dumps(agent2_user_dict)
 
     agent2_system = build_agent2_system(use_case, tone_preference)
     emails = None
