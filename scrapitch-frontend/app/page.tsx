@@ -2,299 +2,346 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import HomeHero from "@/components/HomeHero";
 
-const useCaseSections = [
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
+type Bg = "dark" | "light";
+
+type UseCase = {
+  n: string;
+  eyebrow: string;
+  bg: Bg;
+  headline: { before: string; italic: string; after: string };
+  subhead: string;
+  caption: string;
+  subject: string;
+  cta: string;
+};
+
+const USE_CASES: UseCase[] = [
   {
-    id: "sales",
-    bg: "dark" as const,
-    eyebrow: "For sales",
-    headline: "Quote their case studies. Not your features.",
-    subhead:
-      "Scrapitch reads their site and writes outreach that sounds like you've actually done the homework.",
-    sampleSubject: "Idea for [Company]'s Q2 pipeline",
-    samplePreview: [
-      "Saw the case study with your enterprise customer.",
-      "There is a similar pattern in your mid market segment that...",
-    ],
+    n: "01",
+    eyebrow: "for sales",
+    bg: "dark",
+    headline: {
+      before: "Quote ",
+      italic: "their",
+      after: " case studies. Not your features.",
+    },
+    subhead: "Outreach that sounds like you read the homepage. Because it did.",
+    caption: "for founders, account execs, and SDRs",
+    subject: "Idea for Stripe's Q2 pipeline",
     cta: "Try it for sales",
-    href: "/generator",
   },
   {
-    id: "jobs",
-    bg: "light" as const,
-    eyebrow: "For job seekers",
-    headline: "Cold emails recruiters actually open.",
+    n: "02",
+    eyebrow: "for job seekers",
+    bg: "light",
+    headline: {
+      before: "Cold emails recruiters ",
+      italic: "actually",
+      after: " open.",
+    },
     subhead:
-      "Mention the team's real work, the actual product, the exact challenge. In your voice, not a template's.",
-    sampleSubject: "Saw your team's recent launch",
-    samplePreview: [
-      "Noticed your team shipped the new ingest pipeline.",
-      "I built something similar at my last role and...",
-    ],
+      "Mention the team's real work, the actual product, the exact problem.",
+    caption: "for engineers, designers, and analysts",
+    subject: "Saw your team's launch this week",
     cta: "Try it for job hunting",
-    href: "/generator",
   },
   {
-    id: "masters",
-    bg: "dark" as const,
-    eyebrow: "For master's outreach",
-    headline: "Email professors about their research. Not a generic ask.",
+    n: "03",
+    eyebrow: "for graduate outreach",
+    bg: "dark",
+    headline: {
+      before: "Email professors about ",
+      italic: "their",
+      after: " research.",
+    },
     subhead:
-      "Scrapitch reads their lab page and shapes your email around the work they actually publish.",
-    sampleSubject: "Question about your CRISPR delivery paper",
-    samplePreview: [
-      "Read your 2025 paper on lipid nanoparticle targeting.",
-      "I am curious about the tradeoff between specificity and...",
-    ],
-    cta: "Try it for master's outreach",
-    href: "/generator",
+      "Scrapitch reads their lab page and shapes your email around what they actually publish.",
+    caption: "for master's and PhD applicants",
+    subject: "Question about your CRISPR paper",
+    cta: "Try it for grad outreach",
   },
   {
-    id: "founders",
-    bg: "light" as const,
-    eyebrow: "For founders",
-    headline: "Reach the operator. Skip the assistant.",
+    n: "04",
+    eyebrow: "for founders",
+    bg: "light",
+    headline: {
+      before: "Reach the ",
+      italic: "operator",
+      after: ". Skip the assistant.",
+    },
     subhead:
-      "Personalized outreach to execs and investors built on what they care about, pulled from what they ship.",
-    sampleSubject: "Noticed your latest portfolio bet",
-    samplePreview: [
-      "Saw your check into the developer tools company last month.",
-      "We are building in an adjacent space and would love your...",
-    ],
+      "Personalized outreach to execs and investors, grounded in what they ship.",
+    caption: "for early stage founders and angels",
+    subject: "Noticed your latest portfolio bet",
     cta: "Try it for executive outreach",
-    href: "/generator",
   },
   {
-    id: "networking",
-    bg: "dark" as const,
-    eyebrow: "For networking",
-    headline: "Sound like a person. Not a pitch.",
-    subhead:
-      "Coffee chats, alumni intros, conference followups. Personalized enough to deserve a reply.",
-    sampleSubject: "Coffee chat after your talk",
-    samplePreview: [
-      "Your point about agent evaluation in the keynote stuck with me.",
-      "I would love to hear more about how your team is thinking about...",
-    ],
+    n: "05",
+    eyebrow: "for networking",
+    bg: "dark",
+    headline: {
+      before: "Sound like a ",
+      italic: "person",
+      after: ". Not a pitch.",
+    },
+    subhead: "Coffee chats, alumni intros, conference follow ups.",
+    caption: "for warm intros and reconnections",
+    subject: "Coffee chat after your talk",
     cta: "Try it for networking",
-    href: "/generator",
   },
 ];
 
-const pipelineCards = [
-  {
-    number: "01",
-    title: "Research Analyst",
-    body: "Scrapes the prospect's site and pulls structured signal: what they do, who they serve, what they ship.",
-  },
-  {
-    number: "02",
-    title: "Email Writer",
-    body: "Drafts three variants using proven frameworks. Strict word ceilings. Zero fabricated details.",
-  },
-  {
-    number: "03",
-    title: "Scoring Judge",
-    body: "Grades each email on six factors: personalization, length, single ask, problem framing, subject line, spam signals.",
-  },
-];
-
-const comparisonRows = [
-  {
-    label: "Source of personalization",
-    others: "A CSV column",
-    scrapitch: "The prospect's live website",
-  },
-  {
-    label: "Research time",
-    others: "You do it",
-    scrapitch: "Ten seconds, automated",
-  },
-  {
-    label: "Variants per prospect",
-    others: "One",
-    scrapitch: "Three, each a different framework",
-  },
-  {
-    label: "Quality check",
-    others: "Re-read it yourself",
-    scrapitch: "Six-factor scoring with reasoning",
-  },
-  {
-    label: "Use cases",
-    others: "B2B sales",
-    scrapitch: "Sales, jobs, grad school, founders, networking",
-  },
-  {
-    label: "Cost",
-    others: "Subscription",
-    scrapitch: "Free",
-  },
-];
-
-function UseCaseSection({
-  section,
-}: {
-  section: (typeof useCaseSections)[number];
-}) {
-  const isDark = section.bg === "dark";
+function UseCasePanel({ uc }: { uc: UseCase }) {
+  const isDark = uc.bg === "dark";
   const bg = isDark ? "#0a0a0a" : "#faf8f5";
-  const headingColor = isDark ? "#ffffff" : "#0a0a0a";
-  const eyebrowColor = isDark ? "#9ca3af" : "#6b7280";
-  const subheadColor = isDark ? "#9ca3af" : "#525252";
+  const text = isDark ? "#f5f5f0" : "#1a1612";
+  const muted = isDark ? "#8a8a85" : "#6e6657";
+  const line = isDark ? "#2c241c" : "#d8d0bd";
+  const italicColor = isDark ? "#c9b896" : "#b89968";
+  const captionColor = "#8a7d63";
   const cardBg = isDark ? "#111111" : "#ffffff";
-  const cardBorder = isDark ? "#1f2937" : "rgba(0,0,0,0.08)";
-  const cardSubject = isDark ? "#ffffff" : "#0a0a0a";
-  const cardBody = isDark ? "#9ca3af" : "#525252";
+  const cardBorder = isDark ? "#1c1c1c" : "#e8e0cd";
+  const cardSubject = isDark ? "#f5f5f0" : "#1a1612";
+  const cardLabel = isDark ? "#6e6657" : "#8a8a85";
 
   return (
     <section
       style={{
         background: bg,
-        minHeight: "80vh",
+        minHeight: "70vh",
         display: "flex",
         alignItems: "center",
-        paddingTop: 120,
-        paddingBottom: 120,
+        paddingTop: 96,
+        paddingBottom: 96,
       }}
     >
       <div
         className="w-full mx-auto px-6 text-center"
-        style={{ maxWidth: 900 }}
+        style={{ maxWidth: 720 }}
       >
         <p
+          className="font-mono"
           style={{
-            fontSize: 13,
-            fontWeight: 500,
-            letterSpacing: "0.06em",
-            textTransform: "uppercase",
-            color: eyebrowColor,
-            marginBottom: 20,
+            fontSize: 11,
+            color: muted,
+            letterSpacing: "0.04em",
+            marginBottom: 18,
           }}
         >
-          {section.eyebrow}
-        </p>
-        <h2
-          style={{
-            fontSize: "clamp(34px, 5vw, 56px)",
-            fontWeight: 600,
-            lineHeight: 1.1,
-            letterSpacing: "-0.02em",
-            color: headingColor,
-            marginBottom: 20,
-          }}
-        >
-          {section.headline}
-        </h2>
-        <p
-          style={{
-            fontSize: 18,
-            color: subheadColor,
-            lineHeight: 1.55,
-            maxWidth: 640,
-            margin: "0 auto 40px",
-          }}
-        >
-          {section.subhead}
+          {uc.n} · {uc.eyebrow}
         </p>
 
-        {/* Sample email card */}
+        <div
+          style={{
+            height: 1,
+            background: line,
+            width: 64,
+            margin: "0 auto 40px",
+          }}
+        />
+
+        <h2
+          style={{
+            fontSize: "clamp(36px, 4.5vw, 52px)",
+            fontWeight: 500,
+            lineHeight: 1.1,
+            letterSpacing: "-0.025em",
+            color: text,
+            marginBottom: 20,
+          }}
+        >
+          {uc.headline.before}
+          <em
+            style={{
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: italicColor,
+            }}
+          >
+            {uc.headline.italic}
+          </em>
+          {uc.headline.after}
+        </h2>
+
+        <p
+          style={{
+            fontSize: 17,
+            lineHeight: 1.5,
+            color: muted,
+            maxWidth: 480,
+            margin: "0 auto 24px",
+          }}
+        >
+          {uc.subhead}
+        </p>
+
+        <p
+          style={{
+            fontFamily: SERIF_STACK,
+            fontStyle: "italic",
+            fontWeight: 400,
+            fontSize: 14,
+            color: captionColor,
+            letterSpacing: "0.01em",
+            marginBottom: 36,
+          }}
+        >
+          {uc.caption}
+        </p>
+
         <div
           className="mx-auto text-left"
           style={{
-            maxWidth: 520,
+            maxWidth: 420,
             background: cardBg,
             border: `1px solid ${cardBorder}`,
-            borderRadius: 16,
-            padding: 24,
-            marginBottom: 32,
+            borderRadius: 4,
+            padding: 16,
+            marginBottom: 36,
           }}
         >
           <p
+            className="font-mono"
             style={{
-              fontSize: 11,
-              fontWeight: 500,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              color: isDark ? "#6b7280" : "#9ca3af",
-              marginBottom: 10,
+              fontSize: 10,
+              color: cardLabel,
+              letterSpacing: "0.04em",
+              marginBottom: 8,
             }}
           >
-            Sample subject
+            subject
           </p>
           <p
             style={{
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: 500,
               color: cardSubject,
-              marginBottom: 14,
               lineHeight: 1.4,
             }}
           >
-            {section.sampleSubject}
+            {uc.subject}
           </p>
-          <div
-            style={{
-              borderTop: `1px solid ${cardBorder}`,
-              paddingTop: 14,
-            }}
-          >
-            {section.samplePreview.map((line, i) => (
-              <p
-                key={i}
-                style={{
-                  fontSize: 14,
-                  color: cardBody,
-                  lineHeight: 1.6,
-                  marginBottom: i === section.samplePreview.length - 1 ? 0 : 6,
-                }}
-              >
-                {line}
-              </p>
-            ))}
-          </div>
         </div>
 
-        <Link
-          href={section.href}
-          className="hover:underline"
+        <div className="flex items-center justify-center" style={{ gap: 8 }}>
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-block",
+              width: 4,
+              height: 4,
+              borderRadius: "50%",
+              background: "#3b82f6",
+            }}
+          />
+          <Link
+            href="/generator"
+            className="hover:underline"
+            style={{
+              color: "#3b82f6",
+              fontWeight: 500,
+              fontSize: 15,
+              textDecoration: "none",
+            }}
+          >
+            {uc.cta}
+          </Link>
+        </div>
+
+        <div
           style={{
-            color: "#3b82f6",
-            fontWeight: 500,
-            fontSize: 17,
-            textDecoration: "none",
+            height: 1,
+            background: line,
+            width: 64,
+            margin: "40px auto 0",
           }}
-        >
-          {section.cta}
-        </Link>
+        />
       </div>
     </section>
   );
 }
 
+type PipelineCard = {
+  n: string;
+  title: { before: string; italic: string };
+  body: string;
+};
+
+const PIPELINE_CARDS: PipelineCard[] = [
+  {
+    n: "01",
+    title: { before: "Research ", italic: "Analyst" },
+    body: "Scrapes the prospect's site and pulls structured signal: what they do, who they serve, what they ship.",
+  },
+  {
+    n: "02",
+    title: { before: "Email ", italic: "Writer" },
+    body: "Drafts three variants using proven frameworks. Strict word ceilings. Zero fabricated details.",
+  },
+  {
+    n: "03",
+    title: { before: "Scoring ", italic: "Judge" },
+    body: "Grades each email on six factors: personalization, length, single ask, problem framing, subject line, spam signals.",
+  },
+];
+
 function PipelineSection() {
   return (
-    <section style={{ background: "#0a0a0a", paddingTop: 120, paddingBottom: 120 }}>
+    <section
+      style={{
+        background: "#0a0a0a",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
       <div className="w-full mx-auto px-6" style={{ maxWidth: 1100 }}>
+        <div style={{ height: 1, background: "#2c241c", marginBottom: 56 }} />
+
         <div className="text-center" style={{ marginBottom: 64 }}>
+          <p
+            className="font-mono"
+            style={{
+              fontSize: 11,
+              color: "#8a8a85",
+              letterSpacing: "0.04em",
+              marginBottom: 24,
+            }}
+          >
+            the pipeline
+          </p>
           <h2
             style={{
-              fontSize: "clamp(34px, 5vw, 56px)",
-              fontWeight: 600,
+              fontSize: "clamp(40px, 5.5vw, 56px)",
+              fontWeight: 500,
               lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              color: "#ffffff",
+              letterSpacing: "-0.025em",
+              color: "#f5f5f0",
               marginBottom: 20,
             }}
           >
-            One URL in. Three emails out.
+            One URL in.{" "}
+            <em
+              style={{
+                fontFamily: SERIF_STACK,
+                fontStyle: "italic",
+                fontWeight: 400,
+                color: "#c9b896",
+              }}
+            >
+              Three
+            </em>{" "}
+            drafts out.
           </h2>
           <p
             style={{
-              fontSize: 18,
-              color: "#9ca3af",
-              maxWidth: 600,
+              fontSize: 17,
+              color: "#8a8a85",
+              maxWidth: 520,
               margin: "0 auto",
-              lineHeight: 1.55,
+              lineHeight: 1.5,
             }}
           >
             Three specialist agents do the work. You read the result.
@@ -302,180 +349,235 @@ function PipelineSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {pipelineCards.map((card) => (
+          {PIPELINE_CARDS.map((c) => (
             <div
-              key={card.number}
+              key={c.n}
               style={{
-                background: "#111111",
-                border: "1px solid #1f2937",
-                borderRadius: 16,
+                background: "#0f0d0a",
+                border: "1px solid #1c1812",
+                borderRadius: 8,
                 padding: 32,
               }}
             >
               <p
+                className="font-mono"
                 style={{
-                  fontSize: 14,
-                  fontWeight: 500,
-                  color: "#3b82f6",
+                  fontSize: 12,
+                  color: "#c9b896",
+                  letterSpacing: "0.04em",
                   marginBottom: 24,
-                  letterSpacing: "0.02em",
                 }}
               >
-                {card.number}
+                {c.n}
               </p>
               <h3
                 style={{
-                  fontSize: 22,
+                  fontSize: 20,
                   fontWeight: 500,
-                  color: "#ffffff",
+                  color: "#f5f5f0",
                   marginBottom: 12,
                   letterSpacing: "-0.01em",
                 }}
               >
-                {card.title}
+                {c.title.before}
+                <em
+                  style={{
+                    fontFamily: SERIF_STACK,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: "#c9b896",
+                  }}
+                >
+                  {c.title.italic}
+                </em>
               </h3>
-              <p style={{ fontSize: 15, color: "#9ca3af", lineHeight: 1.6 }}>
-                {card.body}
+              <p style={{ fontSize: 15, color: "#9a9a92", lineHeight: 1.6 }}>
+                {c.body}
               </p>
             </div>
           ))}
         </div>
+
+        <div style={{ height: 1, background: "#2c241c", marginTop: 80 }} />
       </div>
     </section>
   );
 }
 
+type ComparisonRow = {
+  label: string;
+  other: string;
+  scrapitch: string;
+};
+
+const COMPARISON_ROWS: ComparisonRow[] = [
+  {
+    label: "Source of personalization",
+    other: "A CSV column",
+    scrapitch: "The prospect's live site",
+  },
+  {
+    label: "Research time",
+    other: "You do it",
+    scrapitch: "Ten seconds, automated",
+  },
+  {
+    label: "Variants per prospect",
+    other: "One",
+    scrapitch: "Three, each a different framework",
+  },
+  {
+    label: "Quality check",
+    other: "Re-read it yourself",
+    scrapitch: "Six-factor scoring",
+  },
+  {
+    label: "Use cases",
+    other: "B2B sales",
+    scrapitch: "Sales, jobs, grad school, founders, networking",
+  },
+  {
+    label: "Cost",
+    other: "Subscription",
+    scrapitch: "Free",
+  },
+];
+
 function ComparisonSection() {
   return (
-    <section style={{ background: "#faf8f5", paddingTop: 120, paddingBottom: 120 }}>
-      <div className="w-full mx-auto px-6" style={{ maxWidth: 1000 }}>
+    <section
+      style={{
+        background: "#faf8f5",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div className="w-full mx-auto px-6" style={{ maxWidth: 900 }}>
+        <div style={{ height: 1, background: "#d8d0bd", marginBottom: 56 }} />
+
         <div className="text-center" style={{ marginBottom: 56 }}>
+          <p
+            className="font-mono"
+            style={{
+              fontSize: 11,
+              color: "#6e6657",
+              letterSpacing: "0.04em",
+              marginBottom: 24,
+            }}
+          >
+            the difference
+          </p>
           <h2
             style={{
-              fontSize: "clamp(34px, 5vw, 56px)",
-              fontWeight: 600,
+              fontSize: "clamp(40px, 5.5vw, 56px)",
+              fontWeight: 500,
               lineHeight: 1.1,
-              letterSpacing: "-0.02em",
-              color: "#0a0a0a",
+              letterSpacing: "-0.025em",
+              color: "#1a1612",
               marginBottom: 20,
             }}
           >
-            Personalized from their website. Not your spreadsheet.
+            Personalized from{" "}
+            <em
+              style={{
+                fontFamily: SERIF_STACK,
+                fontStyle: "italic",
+                fontWeight: 400,
+                color: "#b89968",
+              }}
+            >
+              their
+            </em>{" "}
+            site. Not your spreadsheet.
           </h2>
           <p
             style={{
-              fontSize: 18,
-              color: "#525252",
-              maxWidth: 640,
+              fontSize: 17,
+              color: "#6e6657",
+              maxWidth: 580,
               margin: "0 auto",
-              lineHeight: 1.55,
+              lineHeight: 1.5,
             }}
           >
-            Every other AI email tool fills a template with name and company. Scrapitch reads the actual site.
+            Other AI tools fill a template with name and company. Scrapitch
+            reads the actual site.
           </p>
         </div>
 
-        <div
-          style={{
-            background: "#ffffff",
-            border: "1px solid rgba(0,0,0,0.08)",
-            borderRadius: 16,
-            overflow: "hidden",
-          }}
-        >
-          {/* Header */}
+        <div>
           <div
             className="grid grid-cols-1 md:grid-cols-3"
             style={{
-              background: "#f5f1ea",
-              borderBottom: "1px solid rgba(0,0,0,0.08)",
+              paddingTop: 16,
+              paddingBottom: 16,
+              borderBottom: "1px solid #d8d0bd",
+              gap: 16,
             }}
           >
+            <div></div>
             <div
+              className="font-mono"
               style={{
-                padding: "18px 24px",
-                fontSize: 13,
-                fontWeight: 500,
-                color: "#6b7280",
+                fontSize: 14,
+                color: "#6e6657",
                 letterSpacing: "0.04em",
-                textTransform: "uppercase",
-              }}
-            >
-              Feature
-            </div>
-            <div
-              style={{
-                padding: "18px 24px",
-                fontSize: 13,
-                fontWeight: 500,
-                color: "#6b7280",
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-                borderLeft: "1px solid rgba(0,0,0,0.06)",
               }}
             >
               Other AI tools
             </div>
             <div
+              className="font-mono flex items-center"
               style={{
-                padding: "18px 24px",
-                fontSize: 13,
-                fontWeight: 500,
-                color: "#0a0a0a",
+                gap: 8,
+                fontSize: 14,
+                color: "#1a1612",
                 letterSpacing: "0.04em",
-                textTransform: "uppercase",
-                borderLeft: "1px solid rgba(0,0,0,0.06)",
               }}
             >
-              Scrapitch
+              <span
+                aria-hidden="true"
+                style={{
+                  display: "inline-block",
+                  width: 5,
+                  height: 5,
+                  borderRadius: "50%",
+                  background: "#b89968",
+                }}
+              />
+              <span>Scrapitch</span>
             </div>
           </div>
 
-          {comparisonRows.map((row, i) => (
+          {COMPARISON_ROWS.map((row, i) => (
             <div
               key={row.label}
               className="grid grid-cols-1 md:grid-cols-3"
               style={{
+                paddingTop: 20,
+                paddingBottom: 20,
+                gap: 16,
                 borderBottom:
-                  i < comparisonRows.length - 1
-                    ? "1px solid rgba(0,0,0,0.05)"
+                  i < COMPARISON_ROWS.length - 1
+                    ? "1px solid #d8d0bd"
                     : "none",
               }}
             >
               <div
-                style={{
-                  padding: "18px 24px",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: "#0a0a0a",
-                }}
+                style={{ fontSize: 16, fontWeight: 500, color: "#1a1612" }}
               >
                 {row.label}
               </div>
+              <div style={{ fontSize: 16, color: "#6e6657" }}>{row.other}</div>
               <div
-                style={{
-                  padding: "18px 24px",
-                  fontSize: 15,
-                  color: "#6b7280",
-                  borderLeft: "1px solid rgba(0,0,0,0.04)",
-                }}
-              >
-                {row.others}
-              </div>
-              <div
-                style={{
-                  padding: "18px 24px",
-                  fontSize: 15,
-                  fontWeight: 500,
-                  color: "#0a0a0a",
-                  borderLeft: "1px solid rgba(0,0,0,0.04)",
-                }}
+                style={{ fontSize: 16, fontWeight: 500, color: "#1a1612" }}
               >
                 {row.scrapitch}
               </div>
             </div>
           ))}
         </div>
+
+        <div style={{ height: 1, background: "#d8d0bd", marginTop: 56 }} />
       </div>
     </section>
   );
@@ -490,29 +592,67 @@ function FinalCtaSection() {
         paddingBottom: 120,
       }}
     >
-      <div className="w-full mx-auto px-6 text-center" style={{ maxWidth: 800 }}>
+      <div
+        className="w-full mx-auto px-6 text-center"
+        style={{ maxWidth: 720 }}
+      >
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto 56px",
+          }}
+        />
+
         <h2
           style={{
-            fontSize: "clamp(40px, 6vw, 64px)",
-            fontWeight: 600,
-            lineHeight: 1.1,
-            letterSpacing: "-0.02em",
-            color: "#ffffff",
+            fontSize: "clamp(44px, 5vw, 60px)",
+            fontWeight: 500,
+            lineHeight: 1.08,
+            letterSpacing: "-0.025em",
+            color: "#f5f5f0",
             marginBottom: 24,
           }}
         >
-          Stop writing cold emails alone.
+          Stop writing cold emails{" "}
+          <em
+            style={{
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: "#c9b896",
+            }}
+          >
+            alone
+          </em>
+          .
         </h2>
+
         <p
           style={{
-            fontSize: 20,
-            color: "#9ca3af",
+            fontSize: 17,
+            color: "#8a8a85",
             lineHeight: 1.5,
-            maxWidth: 560,
-            margin: "0 auto 40px",
+            maxWidth: 420,
+            margin: "0 auto 20px",
           }}
         >
-          Paste a URL. Get three emails. Send the best one.
+          Paste a URL. Get three drafts. Send the best one.
+        </p>
+
+        <p
+          style={{
+            fontFamily: SERIF_STACK,
+            fontStyle: "italic",
+            fontWeight: 400,
+            fontSize: 14,
+            color: "#8a7d63",
+            letterSpacing: "0.01em",
+            marginBottom: 36,
+          }}
+        >
+          no card, no setup, no catch
         </p>
 
         <div className="flex items-center justify-center">
@@ -533,8 +673,8 @@ function FinalCtaSection() {
             style={{
               display: "inline-block",
               width: 1,
-              height: 20,
-              background: "#374151",
+              height: 12,
+              background: "#3a3328",
               margin: "0 20px",
             }}
           />
@@ -542,7 +682,7 @@ function FinalCtaSection() {
             href="/how-it-works"
             className="hover:text-[#3b82f6] transition-colors"
             style={{
-              color: "#ffffff",
+              color: "#f5f5f0",
               fontWeight: 500,
               fontSize: 17,
               textDecoration: "none",
@@ -552,15 +692,14 @@ function FinalCtaSection() {
           </Link>
         </div>
 
-        <p
+        <div
           style={{
-            fontSize: 13,
-            color: "#6b7280",
-            marginTop: 40,
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "56px auto 0",
           }}
-        >
-          Free. No card required. Works on any website with a homepage.
-        </p>
+        />
       </div>
     </section>
   );
@@ -571,8 +710,8 @@ export default function LandingPage() {
     <>
       <main className="overflow-x-hidden">
         <HomeHero />
-        {useCaseSections.map((section) => (
-          <UseCaseSection key={section.id} section={section} />
+        {USE_CASES.map((uc) => (
+          <UseCasePanel key={uc.n} uc={uc} />
         ))}
         <PipelineSection />
         <ComparisonSection />
