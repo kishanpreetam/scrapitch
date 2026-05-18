@@ -7,12 +7,33 @@ import { ChevronDown, Zap, Settings, LogOut } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/lib/supabase";
 
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
 const navLinks = [
-  { href: "/",             label: "Home" },
-  { href: "/how-it-works", label: "How It Works" },
-  { href: "/use-cases",    label: "Use Cases" },
-  { href: "/faq",          label: "FAQ" },
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/use-cases", label: "Use cases" },
+  { href: "/faq", label: "FAQ" },
 ];
+
+function Logo() {
+  return (
+    <Link href="/" className="flex items-center shrink-0 z-10">
+      <span style={{ fontWeight: 500, fontSize: 18, letterSpacing: "-0.01em" }}>
+        <span style={{ color: "#f5f5f0" }}>Scrap</span>
+        <span
+          style={{
+            fontFamily: SERIF_STACK,
+            fontStyle: "italic",
+            fontWeight: 400,
+            color: "#c9b896",
+          }}
+        >
+          itch
+        </span>
+      </span>
+    </Link>
+  );
+}
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -39,106 +60,169 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
 
-  useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
+  const displayName =
+    (user?.user_metadata?.name as string | undefined) ||
+    user?.email?.split("@")[0] ||
+    "Account";
+  const firstName = displayName.split(" ")[0];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#0a0a0a]/95 backdrop-blur-md border-white/8"
-          : "bg-transparent border-transparent"
+          ? "bg-[#0a0a0a]/95 backdrop-blur-md border-b border-[#2c241c]"
+          : "bg-transparent border-b border-transparent"
       }`}
     >
       <div className="w-full px-6 lg:px-10">
-        <div className="relative flex items-center justify-between h-14">
+        <div className="relative flex items-center justify-between" style={{ height: 56 }}>
+          <Logo />
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center shrink-0 z-10">
-            <span className="text-xl font-bold tracking-tight">
-              <span className="text-white">Scrap</span><span className="text-[#3b82f6]">itch</span>
-            </span>
-          </Link>
-
-          {/* Nav links — centered */}
-          <nav className="hidden md:flex items-center gap-7 absolute left-1/2 -translate-x-1/2">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={`text-sm font-medium transition-colors ${
-                  pathname === href
-                    ? "text-[#3b82f6]"
-                    : "text-[#888888] hover:text-white"
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+          {/* Centered nav links */}
+          <nav className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2" style={{ gap: 28 }}>
+            {navLinks.map(({ href, label }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={`transition-colors ${
+                    isActive
+                      ? "text-[#f5f5f0]"
+                      : "text-[#9ca3af] hover:text-[#f5f5f0]"
+                  }`}
+                  style={{
+                    fontWeight: 500,
+                    fontSize: 14,
+                    paddingBottom: 4,
+                    borderBottom: `1px solid ${isActive ? "#c9b896" : "transparent"}`,
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center gap-3 shrink-0 z-10">
+          <div className="hidden md:flex items-center shrink-0 z-10" style={{ gap: 16 }}>
             {user ? (
               <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 rounded-full bg-white/6 border border-white/10 px-4 py-1.5 hover:bg-white/10 hover:border-white/15 transition-all"
+                  className="flex items-center hover:bg-white/5 transition-colors"
+                  style={{
+                    border: "1px solid #374151",
+                    padding: "8px 14px",
+                    borderRadius: 8,
+                    color: "#f5f5f0",
+                    fontWeight: 500,
+                    fontSize: 14,
+                    gap: 8,
+                  }}
                   aria-label="Account menu"
                 >
-                  <span className="text-sm font-medium text-white">
-                    {((user.user_metadata?.name || user.email?.split("@")[0] || "Account") as string).split(" ")[0]}
-                  </span>
-                  <ChevronDown className={`w-3.5 h-3.5 text-[#888888] transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`} />
+                  <span>{firstName}</span>
+                  <ChevronDown
+                    className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                    style={{ width: 14, height: 14, color: "#9ca3af" }}
+                  />
                 </button>
 
-                {/* Dropdown */}
                 <div
-                  className={`absolute right-0 mt-2 w-64 rounded-xl border border-white/8 bg-[#141414] shadow-xl overflow-hidden transition-all duration-150 origin-top-right ${
+                  className={`absolute right-0 mt-2 overflow-hidden transition-all duration-150 origin-top-right ${
                     dropdownOpen
                       ? "opacity-100 scale-100 pointer-events-auto"
                       : "opacity-0 scale-95 pointer-events-none"
                   }`}
+                  style={{
+                    width: 256,
+                    background: "#111111",
+                    border: "1px solid #1c1c1c",
+                    borderRadius: 12,
+                    boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
+                  }}
                 >
-                  <div className="px-4 py-4 border-b border-white/6">
-                    <p className="text-sm font-semibold text-white truncate">
-                      {user.user_metadata?.name || user.email?.split("@")[0]}
+                  <div style={{ padding: "16px 18px", borderBottom: "1px solid #1c1c1c" }}>
+                    <p
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 500,
+                        color: "#f5f5f0",
+                        marginBottom: 2,
+                      }}
+                    >
+                      {displayName}
                     </p>
-                    <p className="text-xs text-[#666666] truncate mt-0.5">{user.email}</p>
+                    <p
+                      style={{
+                        fontSize: 12,
+                        color: "#6e6657",
+                      }}
+                    >
+                      {user.email}
+                    </p>
                   </div>
 
-                  <div className="p-1.5">
+                  <div style={{ padding: 6 }}>
                     <Link
                       href="/generator"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a8a8a8] hover:text-white hover:bg-white/5 transition-all"
+                      className="flex items-center hover:bg-white/5 transition-colors"
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: 8,
+                        fontSize: 14,
+                        color: "#9ca3af",
+                        gap: 12,
+                      }}
                     >
-                      <Zap className="w-4 h-4 shrink-0" />
+                      <Zap style={{ width: 16, height: 16 }} />
                       Generator
                     </Link>
                     <Link
                       href="/account"
                       onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#a8a8a8] hover:text-white hover:bg-white/5 transition-all"
+                      className="flex items-center hover:bg-white/5 transition-colors"
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: 8,
+                        fontSize: 14,
+                        color: "#9ca3af",
+                        gap: 12,
+                      }}
                     >
-                      <Settings className="w-4 h-4 shrink-0" />
-                      Account Settings
+                      <Settings style={{ width: 16, height: 16 }} />
+                      Account settings
                     </Link>
                   </div>
 
-                  <div className="border-t border-white/6 p-1.5">
+                  <div style={{ borderTop: "1px solid #1c1c1c", padding: 6 }}>
                     <button
-                      onClick={() => { setDropdownOpen(false); handleSignOut(); }}
-                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#666666] hover:text-red-400 hover:bg-red-500/8 transition-all"
+                      onClick={() => {
+                        setDropdownOpen(false);
+                        handleSignOut();
+                      }}
+                      className="w-full flex items-center hover:bg-white/5 transition-colors"
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: 8,
+                        fontSize: 14,
+                        color: "#9ca3af",
+                        gap: 12,
+                      }}
                     >
-                      <LogOut className="w-4 h-4 shrink-0" />
-                      Sign Out
+                      <LogOut style={{ width: 16, height: 16 }} />
+                      Sign out
                     </button>
                   </div>
                 </div>
@@ -147,15 +231,28 @@ export default function Navbar() {
               <>
                 <Link
                   href="/login"
-                  className="text-sm font-medium text-[#888888] hover:text-white transition-colors"
+                  className="hover:text-[#f5f5f0] transition-colors"
+                  style={{
+                    color: "#9ca3af",
+                    fontWeight: 500,
+                    fontSize: 14,
+                  }}
                 >
-                  Log in
+                  Sign in
                 </Link>
                 <Link
                   href="/signup"
-                  className="rounded-lg bg-[#3b82f6] px-4 py-2 text-sm font-semibold text-white hover:bg-[#2563eb] transition-colors"
+                  className="hover:bg-white/5 transition-colors"
+                  style={{
+                    border: "1px solid #374151",
+                    padding: "8px 16px",
+                    borderRadius: 8,
+                    color: "#f5f5f0",
+                    fontWeight: 500,
+                    fontSize: 14,
+                  }}
                 >
-                  Sign Up
+                  Sign up
                 </Link>
               </>
             )}
@@ -163,45 +260,90 @@ export default function Navbar() {
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden flex flex-col justify-center items-center w-8 h-8 gap-1.5 text-[#888888] hover:text-white transition-colors"
+            className="md:hidden flex flex-col justify-center items-center transition-colors"
+            style={{
+              width: 32,
+              height: 32,
+              gap: 4,
+              color: "#9ca3af",
+            }}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
-            <span className={`block w-5 h-0.5 bg-current rounded-full transition-all duration-200 origin-center ${mobileOpen ? "rotate-45 translate-y-2" : ""}`} />
-            <span className={`block w-5 h-0.5 bg-current rounded-full transition-all duration-200 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`} />
-            <span className={`block w-5 h-0.5 bg-current rounded-full transition-all duration-200 origin-center ${mobileOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+            <span
+              className={`block transition-all duration-200 origin-center ${mobileOpen ? "rotate-45 translate-y-1.5" : ""}`}
+              style={{ width: 20, height: 1.5, background: "currentColor", borderRadius: 2 }}
+            />
+            <span
+              className={`block transition-all duration-200 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`}
+              style={{ width: 20, height: 1.5, background: "currentColor", borderRadius: 2 }}
+            />
+            <span
+              className={`block transition-all duration-200 origin-center ${mobileOpen ? "-rotate-45 -translate-y-1.5" : ""}`}
+              style={{ width: 20, height: 1.5, background: "currentColor", borderRadius: 2 }}
+            />
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-white/6 bg-[#0a0a0a] px-4 py-4">
-          <nav className="flex flex-col gap-1 mb-4">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMobileOpen(false)}
-                className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === href
-                    ? "text-white bg-white/6"
-                    : "text-[#888888] hover:text-white hover:bg-white/4"
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
+        <div
+          className="md:hidden"
+          style={{
+            borderTop: "1px solid #2c241c",
+            background: "#0a0a0a",
+            padding: "16px",
+          }}
+        >
+          <nav className="flex flex-col" style={{ gap: 4, marginBottom: 16 }}>
+            {navLinks.map(({ href, label }) => {
+              const isActive = pathname === href;
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: isActive ? "#f5f5f0" : "#9ca3af",
+                    borderLeft: `2px solid ${isActive ? "#c9b896" : "transparent"}`,
+                  }}
+                >
+                  {label}
+                </Link>
+              );
+            })}
           </nav>
-          <div className="border-t border-white/6 pt-4 flex flex-col gap-2">
+          <div
+            style={{
+              borderTop: "1px solid #2c241c",
+              paddingTop: 16,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
             {user ? (
               <>
-                <span className="text-xs text-[#666666] px-3 truncate">{user.email}</span>
+                <p style={{ fontSize: 12, color: "#6e6657", padding: "0 12px" }}>{user.email}</p>
                 <button
                   onClick={handleSignOut}
-                  className="w-full text-center rounded-lg border border-white/8 px-4 py-2.5 text-sm font-medium text-[#a8a8a8] hover:text-white hover:border-white/15 transition-colors"
+                  className="hover:bg-white/5 transition-colors"
+                  style={{
+                    border: "1px solid #374151",
+                    padding: "10px 16px",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#f5f5f0",
+                    textAlign: "center",
+                  }}
                 >
-                  Sign Out
+                  Sign out
                 </button>
               </>
             ) : (
@@ -209,16 +351,31 @@ export default function Navbar() {
                 <Link
                   href="/signup"
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2563eb] transition-colors"
+                  className="hover:bg-white/5 transition-colors"
+                  style={{
+                    border: "1px solid #374151",
+                    padding: "10px 16px",
+                    borderRadius: 8,
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#f5f5f0",
+                    textAlign: "center",
+                  }}
                 >
-                  Sign Up
+                  Sign up
                 </Link>
                 <Link
                   href="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="block text-center rounded-lg border border-white/8 px-4 py-2.5 text-sm font-medium text-[#a8a8a8] hover:text-white hover:border-white/15 transition-colors"
+                  style={{
+                    padding: "10px 16px",
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#9ca3af",
+                    textAlign: "center",
+                  }}
                 >
-                  Log in
+                  Sign in
                 </Link>
               </>
             )}
