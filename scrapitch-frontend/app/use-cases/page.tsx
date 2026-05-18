@@ -2,280 +2,657 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Reveal from "@/components/Reveal";
-import { UseCaseCard } from "@/components/UseCasesInteractive";
 
 export const metadata: Metadata = {
-  title: "Use Cases — Scrapitch",
+  title: "Use cases — Scrapitch",
   description:
-    "How SDRs, agency owners, freelancers, recruiters, and founders use Scrapitch to book more meetings.",
+    "Five ways to use Scrapitch: sales, jobs, graduate outreach, founder fundraising, and networking. One engine, five framings.",
 };
 
-const useCases = [
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
+type Bg = "dark" | "light";
+
+type UseCaseData = {
+  n: string;
+  eyebrow: string;
+  bg: Bg;
+  title: { before: string; italic: string; after: string };
+  caption: string;
+  problems: [string, string, string];
+  solutions: [string, string, string];
+  email: { subject: string; body: string; signature: string };
+  emailMeta: string;
+  cta: string;
+};
+
+const USE_CASES: UseCaseData[] = [
   {
-    id: "sdr",
-    audience: "SDR at a SaaS company",
-    headline: "Hit your meeting quota without burning 4 hours on research",
-    problem:
-      "You're supposed to be selling. Instead you're reading LinkedIn profiles, Googling company news, and copying homepage copy into AI tools. The math of 80 touches a week doesn't work at 30 minutes of research per account.",
-    solution:
-      "Scrapitch's Research Agent compresses prospect research from 30 minutes to 10 seconds. The Writing Agent generates personalized copy. The Scoring Agent tells you which variant to send first.",
-    outcomes: [
-      "Research 50 accounts in the time it used to take to prep 5",
-      "Emails that reference the prospect's actual language, not a template",
-      "An independent Scoring Agent tells you which variant to send first",
-    ],
-    snippet: {
-      subject: "Your onboarding flow question",
-      body: "Noticed [Company] recently expanded into enterprise accounts based on your updated pricing page. Most teams at that stage hit friction around onboarding time to value. We cut that by 40% for similar SaaS teams. Worth a quick call?",
+    n: "01",
+    eyebrow: "for sales",
+    bg: "dark",
+    title: {
+      before: "Quote ",
+      italic: "their",
+      after: " case studies. Not your features.",
     },
-    cta: "Try it for SDRs",
-    accentColor: "blue",
+    caption: "for SDRs, account execs, and founder led sales",
+    problems: [
+      "Generic outreach gets ignored. Prospects can spot a templated email in two seconds. Mail merge personalization is over.",
+      "You don't have time to read every prospect's site, but skipping it means your email sounds like everyone else's.",
+      "Your reply rate sits at 1 to 2 percent. Most prospects never even open.",
+    ],
+    solutions: [
+      "Reads the prospect's homepage, about page, and any product or pricing pages it finds.",
+      "Pulls out what they actually ship, who they serve, and their positioning in their own words.",
+      "Writes three variants that quote their context, not your pitch deck.",
+    ],
+    email: {
+      subject: "Idea for Stripe's Q2 pipeline",
+      body: "Hi Patrick, noticed Stripe Atlas just expanded into three new markets this quarter. The pattern I've seen with similar geo expansions: founders need help with local payment ops they didn't know they needed. We helped two YC companies set this up last quarter, both with similar Atlas customer profiles. Worth fifteen minutes to compare notes?",
+      signature: "Maya · Operator at Bridgewise",
+    },
+    emailMeta: "generated in 9 seconds · scored 8.7",
+    cta: "Try it for sales",
   },
   {
-    id: "agency",
-    audience: "Marketing & Creative Agency Owner",
-    headline: "Fill your pipeline without hiring an SDR team",
-    problem:
-      "You're great at delivery. You're not great at consistent outbound. The pipeline runs dry between referrals, templates feel generic, and you don't have time to personally research every prospect.",
-    solution:
-      "Three agents do the research. Paste your prospect's URL. Agent 1 reads their site. Agent 2 writes 3 emails that reference exactly what they do and who they serve. Agent 3 scores each one.",
-    outcomes: [
-      "20+ personalized emails per hour without a researcher",
-      "Emails reference the prospect's real value prop and tone",
-      "Test 3 frameworks without writing 3 emails from scratch",
-    ],
-    snippet: {
-      subject: "Your ecommerce client results",
-      body: "Just read through your case study on the DTC brand. Impressive 3x revenue result. Curious whether you're personalizing your own outreach or using templates. Happy to show what's working for similar agencies.",
+    n: "02",
+    eyebrow: "for job seekers",
+    bg: "light",
+    title: {
+      before: "Cold emails recruiters ",
+      italic: "actually",
+      after: " open.",
     },
-    cta: "Try it for Agency Owners",
-    accentColor: "emerald",
+    caption: "for engineers, designers, analysts, and PMs",
+    problems: [
+      "LinkedIn easy apply has a 1 percent response rate. Cold emails to recruiters or hiring managers are 5x better, when written well.",
+      "But every job seeker copies the same template. Recruiters get hundreds. Yours needs to feel specific in ten seconds.",
+      "You can't write a custom email for every company. You're applying to twenty.",
+    ],
+    solutions: [
+      "Reads the company's careers page, engineering blog, and product pages.",
+      "Pulls out the team's actual work, recent launches, and stated challenges.",
+      "Writes a short email referencing their work, framing your fit in their language.",
+    ],
+    email: {
+      subject: "Saw your team's recent vector store launch",
+      body: "Hi Anjali, your blog post on rebuilding the vector search layer at Notion caught me. The hybrid approach with metadata filtering matches what I shipped at my last role on a smaller scale. I'm exploring infra leaning ML roles. If your team is hiring or about to, I'd love fifteen minutes to learn what you're building next.",
+      signature: "Kishan · github.com/kishanpreetam",
+    },
+    emailMeta: "generated in 9 seconds · scored 8.7",
+    cta: "Try it for job hunting",
   },
   {
-    id: "freelance",
-    audience: "Freelance Consultant",
-    headline: "Get clients without a sales team or big budget",
-    problem:
-      "You're skilled at your craft but not at selling. Cold email feels cringe, every template sounds the same, and you don't have time to research each prospect from scratch.",
-    solution:
-      "Scrapitch levels the playing field. You get the same quality personalized outreach that big agencies use, without hiring an SDR or spending hours on manual research.",
-    outcomes: [
-      "Outreach that sounds like you've studied the prospect's business",
-      "Takes less time than writing one email manually",
-      "The Curious variant is built for solo practitioners. Feels human.",
-    ],
-    snippet: {
-      subject: "Noticed your positioning shift",
-      body: "Saw you recently repositioned from 'brand strategy' to 'revenue led brand building'. That's a sharp move for the current market. I help consultants with exactly that kind of messaging clarity. Open to a 15 minute conversation?",
+    n: "03",
+    eyebrow: "for graduate outreach",
+    bg: "dark",
+    title: {
+      before: "Email professors about ",
+      italic: "their",
+      after: " actual research.",
     },
-    cta: "Try it for Freelancers",
-    accentColor: "purple",
+    caption: "for master's and PhD applicants reaching out to labs",
+    problems: [
+      "Generic 'I'm interested in your research' emails get deleted. Professors can tell when you haven't read their work.",
+      "Reading every faculty page for every program you're applying to is unrealistic. You have a list of fifteen.",
+      "Your application is competing with hundreds of others. A real connection with a professor moves you up the stack.",
+    ],
+    solutions: [
+      "Reads the professor's lab page, faculty bio, and any recent publication abstracts it finds linked.",
+      "Pulls out their actual research focus and recent paper themes.",
+      "Writes an email that engages with one specific paper or project, with a clear ask.",
+    ],
+    email: {
+      subject: "Question about your CRISPR delivery paper",
+      body: "Dear Professor Chen, your 2025 paper on lipid nanoparticle delivery for in vivo gene editing answered something I've been thinking about since my undergrad capstone on CRISPR off target effects. The endosomal escape problem you raised at the end resonated. I'm applying to your program for fall 2026 and would value fifteen minutes to discuss whether my background fits your current lab directions.",
+      signature: "Kishan · Northeastern '25",
+    },
+    emailMeta: "generated in 9 seconds · scored 8.7",
+    cta: "Try it for grad outreach",
   },
   {
-    id: "recruiter",
-    audience: "Recruiter reaching out to companies",
-    headline: "Reach hiring managers with emails they actually read",
-    problem:
-      '"We specialize in placing [role] candidates" lands in the trash. Hiring managers delete 90% of recruiter emails before the second sentence. You need to sound like you\'ve done homework, not like a mass blast.',
-    solution:
-      "Scrapitch's Research Agent reads the company's website to understand their tech stack, culture language, team positioning, and growth signals. The Writing Agent crafts outreach that references what they actually care about.",
-    outcomes: [
-      'Emails that pass the "did they actually research us?" test',
-      "Reference the company's real hiring context and positioning",
-      "Industry specific angle: detect tech, SaaS, manufacturing, or legal automatically",
-    ],
-    snippet: {
-      subject: "Your eng team growth signal",
-      body: "Saw [Company] launched two new product lines and your engineering job board jumped from 3 to 11 open roles last month. We place senior engineers in exactly that growth stage. Worth a 10 minute call this week?",
+    n: "04",
+    eyebrow: "for founders",
+    bg: "light",
+    title: {
+      before: "Reach the ",
+      italic: "operator",
+      after: ". Skip the assistant.",
     },
-    cta: "Try it for Recruiters",
-    accentColor: "purple",
+    caption: "for early stage founders pitching investors, partners, hires",
+    problems: [
+      "Investors get hundreds of cold emails a week. Generic pitches don't make it past their EA.",
+      "You can't pay a research firm to brief you on every fund partner. You have a list of forty.",
+      "A specific reference to their thesis or recent investment shows you did the work and respect their time.",
+    ],
+    solutions: [
+      "Reads the fund's website, the partner's bio page, and any portfolio or thesis content it finds.",
+      "Pulls out their stated focus areas, recent bets, and stated check size.",
+      "Writes a short email referencing their thesis, framed around your traction.",
+    ],
+    email: {
+      subject: "Noticed your bet on developer infrastructure",
+      body: "Hi Sarah, your portfolio's leaned heavily into developer tools for AI native workflows. We're seeing the same gap your thesis hints at: existing platforms don't handle the agent to agent handoff well. We've shipped a working version with 200 paying teams in six months. Would you have fifteen minutes to look at where we're heading?",
+      signature: "Kishan · founder, Scrapitch",
+    },
+    emailMeta: "generated in 9 seconds · scored 8.7",
+    cta: "Try it for executive outreach",
   },
   {
-    id: "founder",
-    audience: "Founder doing their own outreach",
-    headline: "Outbound that doesn't take your whole morning",
-    problem:
-      "You're doing everything: product, hiring, customer success, and now outbound. You know cold email works but you can't spend 45 minutes crafting a personalized pitch to one prospect.",
-    solution:
-      "Scrapitch gives you a founder grade cold email in 10 seconds. Paste the URL, copy the best variant, and send. The whole sequence, initial email plus 3 follow ups, is ready before your next meeting.",
-    outcomes: [
-      "Full outreach sequence (email plus follow ups) ready in under 2 minutes",
-      "Sounds like you wrote it after reading their site carefully",
-      "Handles research so you can spend your time on strategy, not writing",
-    ],
-    snippet: {
-      subject: "Your API pricing page",
-      body: "Read through your developer docs and noticed you switched to usage based pricing last quarter. Smart move for PLG. We help early stage SaaS teams with exactly that kind of growth infrastructure. Have 15 minutes this week?",
+    n: "05",
+    eyebrow: "for networking",
+    bg: "dark",
+    title: {
+      before: "Sound like a ",
+      italic: "person",
+      after: ". Not a pitch.",
     },
-    cta: "Try it for Founders",
-    accentColor: "amber",
+    caption: "for coffee chats, alumni intros, conference follow ups",
+    problems: [
+      "Most networking emails read like sales pitches. The asker wants something. The reader can tell.",
+      "You met someone at a conference, exchanged cards, and now you're staring at a blank email a week later.",
+      "The line between asking for time and feeling presumptuous is thinner than people admit.",
+    ],
+    solutions: [
+      "Reads their personal site, company page, or any publicly visible LinkedIn profile.",
+      "Pulls out what they're working on right now and any recent talks or posts.",
+      "Writes a short, warm email that references something specific and asks for a small, defined thing.",
+    ],
+    email: {
+      subject: "Coffee chat after your talk at Lattice",
+      body: "Hi Diego, your talk on rebuilding the perf review system landed. The line about replacing rubrics with stories stuck with me. I'm rebuilding something similar at my org and would love fifteen minutes whenever it works. Coffee on me, or just a video call if easier.",
+      signature: "Kishan · north end, boston",
+    },
+    emailMeta: "generated in 9 seconds · scored 8.7",
+    cta: "Try it for networking",
   },
 ];
 
-type AccentKey = "blue" | "emerald" | "purple" | "pink" | "amber";
+function palette(bg: Bg) {
+  const isDark = bg === "dark";
+  return {
+    isDark,
+    bg: isDark ? "#0a0a0a" : "#faf8f5",
+    text: isDark ? "#f5f5f0" : "#1a1612",
+    muted: isDark ? "#8a8a85" : "#6e6657",
+    mutedSoft: isDark ? "#9a9a92" : "#6e6657",
+    line: isDark ? "#2c241c" : "#d8d0bd",
+    italic: isDark ? "#c9b896" : "#b89968",
+    caption: "#8a7d63",
+    cardBg: isDark ? "#111111" : "#ffffff",
+    cardBorder: isDark ? "#1c1c1c" : "#e8e0cd",
+    cardSig: isDark ? "#8a8a85" : "#6e6657",
+  };
+}
 
-const accentMap: Record<
-  AccentKey,
-  { border: string; bg: string; badge: string; check: string; snippetBorder: string }
-> = {
-  blue: {
-    border: "border-blue-500/30",
-    bg: "bg-blue-500/5",
-    badge: "text-blue-300 bg-blue-500/20",
-    check: "text-blue-400",
-    snippetBorder: "border-blue-500/20",
-  },
-  emerald: {
-    border: "border-emerald-500/30",
-    bg: "bg-emerald-500/5",
-    badge: "text-emerald-300 bg-emerald-500/20",
-    check: "text-emerald-400",
-    snippetBorder: "border-emerald-500/20",
-  },
-  purple: {
-    border: "border-blue-500/30",
-    bg: "bg-blue-500/5",
-    badge: "text-blue-300 bg-blue-500/20",
-    check: "text-blue-400",
-    snippetBorder: "border-blue-500/20",
-  },
-  pink: {
-    border: "border-blue-500/30",
-    bg: "bg-blue-500/5",
-    badge: "text-blue-300 bg-blue-500/20",
-    check: "text-blue-400",
-    snippetBorder: "border-blue-500/20",
-  },
-  amber: {
-    border: "border-amber-500/30",
-    bg: "bg-amber-500/5",
-    badge: "text-amber-300 bg-amber-500/20",
-    check: "text-amber-400",
-    snippetBorder: "border-amber-500/20",
-  },
-};
+function UseCaseSection({ uc }: { uc: UseCaseData }) {
+  const c = palette(uc.bg);
+
+  return (
+    <section
+      style={{
+        background: c.bg,
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div className="w-full mx-auto px-6" style={{ maxWidth: 900 }}>
+        <div style={{ height: 1, background: c.line, marginBottom: 48 }} />
+
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: c.muted,
+            letterSpacing: "0.04em",
+            marginBottom: 24,
+          }}
+        >
+          {uc.n} · {uc.eyebrow}
+        </p>
+
+        <h2
+          style={{
+            fontSize: "clamp(40px, 5vw, 56px)",
+            fontWeight: 500,
+            lineHeight: 1.1,
+            letterSpacing: "-0.025em",
+            color: c.text,
+            marginBottom: 18,
+            maxWidth: 760,
+          }}
+        >
+          {uc.title.before}
+          <em
+            style={{
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: c.italic,
+            }}
+          >
+            {uc.title.italic}
+          </em>
+          {uc.title.after}
+        </h2>
+
+        <p
+          style={{
+            fontFamily: SERIF_STACK,
+            fontStyle: "italic",
+            fontWeight: 400,
+            fontSize: 16,
+            color: c.caption,
+            letterSpacing: "0.01em",
+            marginBottom: 64,
+          }}
+        >
+          {uc.caption}
+        </p>
+
+        <div
+          className="grid grid-cols-1 md:grid-cols-2"
+          style={{ gap: 56 }}
+        >
+          {/* LEFT: problem + solution */}
+          <div>
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                color: c.muted,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                marginBottom: 16,
+              }}
+            >
+              the problem
+            </p>
+            <div style={{ marginBottom: 40 }}>
+              {uc.problems.map((p, i) => (
+                <p
+                  key={i}
+                  style={{
+                    fontSize: 16,
+                    color: c.mutedSoft,
+                    lineHeight: 1.6,
+                    marginBottom: i < uc.problems.length - 1 ? 16 : 0,
+                  }}
+                >
+                  {p}
+                </p>
+              ))}
+            </div>
+
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                color: c.muted,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                marginBottom: 0,
+              }}
+            >
+              what scrapitch does
+            </p>
+            <div>
+              {uc.solutions.map((s, i) => (
+                <div key={i}>
+                  <div
+                    style={{
+                      height: 1,
+                      background: c.line,
+                      marginTop: 16,
+                      marginBottom: 16,
+                    }}
+                  />
+                  <p
+                    style={{
+                      fontSize: 16,
+                      color: c.text,
+                      lineHeight: 1.55,
+                      fontWeight: 400,
+                    }}
+                  >
+                    {s}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT: email mockup */}
+          <div>
+            <div
+              style={{
+                background: c.cardBg,
+                border: `1px solid ${c.cardBorder}`,
+                borderRadius: 8,
+                padding: 24,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: c.text,
+                  lineHeight: 1.4,
+                  marginBottom: 14,
+                }}
+              >
+                {uc.email.subject}
+              </p>
+              <div
+                style={{
+                  borderTop: `1px solid ${c.cardBorder}`,
+                  paddingTop: 14,
+                  marginBottom: 14,
+                }}
+              />
+              <p
+                style={{
+                  fontSize: 14,
+                  color: c.text,
+                  lineHeight: 1.6,
+                  marginBottom: 16,
+                }}
+              >
+                {uc.email.body}
+              </p>
+              <p
+                style={{
+                  fontSize: 13,
+                  color: c.cardSig,
+                  lineHeight: 1.5,
+                }}
+              >
+                {uc.email.signature}
+              </p>
+            </div>
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                color: c.muted,
+                letterSpacing: "0.04em",
+                marginTop: 14,
+              }}
+            >
+              {uc.emailMeta}
+            </p>
+          </div>
+        </div>
+
+        {/* CTA row */}
+        <div
+          className="flex flex-wrap items-center"
+          style={{ gap: 20, marginTop: 64, marginBottom: 48 }}
+        >
+          <div className="flex items-center" style={{ gap: 8 }}>
+            <span
+              aria-hidden="true"
+              style={{
+                display: "inline-block",
+                width: 4,
+                height: 4,
+                borderRadius: "50%",
+                background: "#3b82f6",
+              }}
+            />
+            <Link
+              href="/generator"
+              className="hover:underline"
+              style={{
+                color: "#3b82f6",
+                fontWeight: 500,
+                fontSize: 15,
+                textDecoration: "none",
+              }}
+            >
+              {uc.cta}
+            </Link>
+          </div>
+          <span
+            style={{
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontWeight: 400,
+              fontSize: 14,
+              color: c.caption,
+              letterSpacing: "0.01em",
+            }}
+          >
+            see a longer example
+          </span>
+        </div>
+
+        <div style={{ height: 1, background: c.line }} />
+      </div>
+    </section>
+  );
+}
+
+function HeaderSection() {
+  return (
+    <section
+      style={{
+        background: "#0a0a0a",
+        minHeight: "60vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 160,
+        paddingBottom: 80,
+      }}
+    >
+      <div
+        className="w-full mx-auto px-6 text-center"
+        style={{ maxWidth: 720 }}
+      >
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: "#8a8a85",
+            letterSpacing: "0.04em",
+            marginBottom: 24,
+          }}
+        >
+          five ways to use scrapitch
+        </p>
+
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto 40px",
+          }}
+        />
+
+        <h1
+          style={{
+            fontSize: "clamp(44px, 5.5vw, 64px)",
+            fontWeight: 500,
+            lineHeight: 1.08,
+            letterSpacing: "-0.028em",
+            color: "#f5f5f0",
+            marginBottom: 20,
+          }}
+        >
+          One tool.{" "}
+          <em
+            style={{
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: "#c9b896",
+            }}
+          >
+            Five
+          </em>{" "}
+          kinds of email.
+        </h1>
+
+        <p
+          style={{
+            fontSize: 17,
+            color: "#8a8a85",
+            lineHeight: 1.5,
+            maxWidth: 480,
+            margin: "0 auto 40px",
+          }}
+        >
+          Same engine, different framing per use case. Pick yours.
+        </p>
+
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto",
+          }}
+        />
+      </div>
+    </section>
+  );
+}
+
+function FooterCtaSection() {
+  return (
+    <section
+      style={{
+        background: "#0a0a0a",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div
+        className="w-full mx-auto px-6 text-center"
+        style={{ maxWidth: 720 }}
+      >
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto 48px",
+          }}
+        />
+
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: "#8a8a85",
+            letterSpacing: "0.04em",
+            marginBottom: 24,
+          }}
+        >
+          pick yours
+        </p>
+
+        <h2
+          style={{
+            fontSize: "clamp(40px, 5vw, 56px)",
+            fontWeight: 500,
+            lineHeight: 1.1,
+            letterSpacing: "-0.025em",
+            color: "#f5f5f0",
+            marginBottom: 20,
+          }}
+        >
+          Five flavors. One{" "}
+          <em
+            style={{
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontWeight: 400,
+              color: "#c9b896",
+            }}
+          >
+            ten second
+          </em>{" "}
+          flow.
+        </h2>
+
+        <p
+          style={{
+            fontSize: 17,
+            color: "#8a8a85",
+            lineHeight: 1.5,
+            maxWidth: 460,
+            margin: "0 auto 36px",
+          }}
+        >
+          Paste a URL. Pick a use case. Send the email.
+        </p>
+
+        <div className="flex items-center justify-center">
+          <Link
+            href="/generator"
+            className="hover:underline"
+            style={{
+              color: "#3b82f6",
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: "none",
+            }}
+          >
+            Try it free
+          </Link>
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-block",
+              width: 1,
+              height: 12,
+              background: "#3a3328",
+              margin: "0 20px",
+            }}
+          />
+          <Link
+            href="/how-it-works"
+            className="hover:text-[#3b82f6] transition-colors"
+            style={{
+              color: "#f5f5f0",
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: "none",
+            }}
+          >
+            See how it works
+          </Link>
+        </div>
+
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "48px auto 0",
+          }}
+        />
+      </div>
+    </section>
+  );
+}
 
 export default function UseCasesPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-20">
-
-        {/* ── HERO ── */}
-        <section className="border-b border-white/6 bg-section-alt">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-28 text-center">
-            <Reveal>
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#6b6b6b] mb-4">
-                Who it&apos;s for
-              </p>
-            </Reveal>
-            <Reveal delay={80}>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.05] mb-6">
-                Built for everyone who <span style={{ color: "#3b82f6" }}>does outbound.</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={160}>
-              <p className="text-xl text-[#a8a8a8] max-w-2xl mx-auto leading-relaxed">
-                Whether you carry a quota, run an agency, or do your own outreach. Scrapitch handles the research and writing.
-              </p>
-            </Reveal>
-            <Reveal delay={240}>
-              <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
-                {useCases.map((uc) => (
-                  <a
-                    key={uc.id}
-                    href={`#${uc.id}`}
-                    className="rounded-full border border-white/12 bg-[#1c1c1c] px-4 py-1.5 text-sm font-medium text-[#d4d4d4] hover:border-white/25 hover:text-white transition-colors"
-                  >
-                    {uc.audience}
-                  </a>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── USE CASE CARDS ── */}
-        <section className="py-24 md:py-32">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="space-y-24">
-              {useCases.map((uc, i) => {
-                const accent = accentMap[uc.accentColor as AccentKey];
-                const isEven = i % 2 === 0;
-                return (
-                  <div key={uc.id} id={uc.id} className="scroll-mt-24">
-                    <Reveal>
-                      <UseCaseCard uc={uc} accent={accent} isEven={isEven} />
-                    </Reveal>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        {/* ── INTEGRATIONS ── */}
-        <section className="border-t border-white/6 py-24 md:py-32 bg-section-alt">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <Reveal>
-              <div className="text-center mb-14">
-                <p className="text-sm font-semibold uppercase tracking-widest text-[#6b6b6b] mb-3">
-                  Works everywhere
-                </p>
-                <h2 className="text-4xl font-black tracking-tight text-white mb-4">
-                  Works with every sending tool
-                </h2>
-                <p className="text-[#a8a8a8] max-w-xl mx-auto">
-                  Scrapitch generates plain text emails. Copy the subject and body, then paste into whatever tool you already use.
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal delay={100}>
-              <div className="grid sm:grid-cols-3 gap-5">
-                <div className="rounded-2xl border border-white/8 bg-[#141414] p-6">
-                  <p className="font-semibold text-[#f0f0f0] mb-2">Copy and paste</p>
-                  <p className="text-sm text-[#a8a8a8] leading-relaxed">One click copies the subject line and email body. Paste into any email tool, CRM, or inbox.</p>
-                </div>
-                <div className="rounded-2xl border border-white/8 bg-[#141414] p-6">
-                  <p className="font-semibold text-[#f0f0f0] mb-2">No integrations needed</p>
-                  <p className="text-sm text-[#a8a8a8] leading-relaxed">No API keys, no Zapier, no setup. Scrapitch works independently from your sending stack.</p>
-                </div>
-                <div className="rounded-2xl border border-white/8 bg-[#141414] p-6">
-                  <p className="font-semibold text-[#f0f0f0] mb-2">Any workflow</p>
-                  <p className="text-sm text-[#a8a8a8] leading-relaxed">Whether you send one at a time or upload to a CSV based sequence tool, the output works everywhere.</p>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── FINAL CTA ── */}
-        <section className="border-t border-white/8 py-24 md:py-32 bg-[#111111]">
-          <div className="mx-auto max-w-2xl px-4 text-center">
-            <Reveal>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-5">
-                Which one are you?
-              </h2>
-            </Reveal>
-            <Reveal delay={80}>
-              <p className="text-lg text-[#a8a8a8] mb-10 leading-relaxed">
-                Doesn&apos;t matter. Scrapitch works for all of them. Completely free, no setup required.
-              </p>
-            </Reveal>
-            <Reveal delay={160}>
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-10 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
-              >
-                Get Started
-              </Link>
-            </Reveal>
-          </div>
-        </section>
-
+      <main className="overflow-x-hidden">
+        <HeaderSection />
+        {USE_CASES.map((uc) => (
+          <UseCaseSection key={uc.n} uc={uc} />
+        ))}
+        <FooterCtaSection />
       </main>
       <Footer />
     </>
