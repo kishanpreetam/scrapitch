@@ -9,6 +9,8 @@ const STEP_MS = 600;
 const PIPELINE_DELAY_MS = 300;
 const LOOP_MS = 6000;
 
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
 const PILLS = ["Researching", "Writing", "Scoring"] as const;
 
 const EMAIL_CARDS = [
@@ -83,7 +85,7 @@ function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualPro
   const typingDone = typedChars >= TARGET_URL.length;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="flex flex-col md:flex-row md:items-stretch gap-4">
       {/* Stage 1: browser bar with URL typing */}
       <Stage>
         <div className="flex items-center gap-2 mb-4">
@@ -201,12 +203,12 @@ function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualPro
 function Stage({ children }: { children: React.ReactNode }) {
   return (
     <div
+      className="flex-1"
       style={{
         background: "#111111",
         border: "1px solid #1f2937",
         borderRadius: 16,
-        padding: 20,
-        minHeight: 220,
+        padding: 18,
       }}
     >
       {children}
@@ -282,58 +284,61 @@ export default function HomeHero() {
     >
       <HomeNavbar />
 
+      {/* Top metadata bar */}
+      <div className="flex justify-between items-center w-full max-w-[1100px] mx-auto px-6 mb-14" style={{ paddingTop: 96 }}>
+        <div className="flex items-center gap-2 text-[11px] text-[#6e6e6e] font-mono">
+          <span className="w-[5px] h-[5px] rounded-full bg-[#3b82f6]"></span>
+          <span>scrapitch</span>
+        </div>
+        <div className="text-[11px] text-[#4a4a48] font-mono tracking-wider">v2 · may &apos;26</div>
+      </div>
+
+      {/* Top hairline */}
+      <div className="h-px bg-[#1a1a1a] w-full max-w-[1100px] mx-auto mb-16"></div>
+
+      {/* Main content */}
       <div
         className="flex-1 flex flex-col items-center w-full mx-auto px-6"
-        style={{
-          maxWidth: 1100,
-          paddingTop: 144,
-          paddingBottom: 80,
-        }}
+        style={{ maxWidth: 1100 }}
       >
-        {/* Eyebrow */}
-        <p
-          style={{
-            fontSize: 14,
-            fontWeight: 500,
-            color: "#9ca3af",
-            letterSpacing: "0.02em",
-            marginBottom: 24,
-            textAlign: "center",
-          }}
-        >
-          Scrapitch
-        </p>
-
         {/* Headline */}
         <h1
           style={{
-            fontSize: "clamp(48px, 7vw, 96px)",
-            fontWeight: 600,
-            lineHeight: 1.05,
-            letterSpacing: "-0.03em",
-            color: "#ffffff",
+            fontSize: "clamp(40px, 5.5vw, 56px)",
+            fontWeight: 500,
+            lineHeight: 1.08,
+            letterSpacing: "-0.028em",
+            color: "#f5f5f0",
             marginBottom: 24,
             textAlign: "center",
+            maxWidth: 720,
           }}
         >
-          Their site, read.
+          Read{" "}
+          <em
+            className="font-serif italic font-normal text-[#f5f5f0]"
+            style={{ fontFamily: SERIF_STACK }}
+          >
+            their
+          </em>{" "}
+          site.
           <br />
-          <span style={{ color: "#3b82f6" }}>Your email, written.</span>
+          Write the email.
         </h1>
 
         {/* Subhead */}
         <p
           style={{
-            fontSize: "clamp(18px, 2vw, 22px)",
+            fontSize: 17,
             fontWeight: 400,
-            color: "#9ca3af",
-            maxWidth: 560,
+            color: "#8a8a85",
+            maxWidth: 420,
             marginBottom: 40,
             textAlign: "center",
             lineHeight: 1.5,
           }}
         >
-          Three personalized emails. From any URL. In ten seconds.
+          Three personalized drafts. From a single URL. In ten seconds.
         </p>
 
         {/* CTA row */}
@@ -375,25 +380,22 @@ export default function HomeHero() {
         </div>
 
         {/* Product visual */}
-        <div style={{ marginTop: 80, width: "100%" }}>
+        <div style={{ marginTop: 56, width: "100%" }}>
           <ProductVisual
             typedChars={typedChars}
             pillIndex={pillIndex}
             visibleCards={visibleCards}
           />
         </div>
+      </div>
 
-        {/* Trust line */}
-        <p
-          style={{
-            fontSize: 13,
-            color: "#6b7280",
-            marginTop: 48,
-            textAlign: "center",
-          }}
-        >
-          No setup. No card. Works with any website.
-        </p>
+      {/* Bottom hairline */}
+      <div className="h-px bg-[#1a1a1a] w-full max-w-[1100px] mx-auto mt-16 mb-3"></div>
+
+      {/* Bottom metadata bar */}
+      <div className="flex justify-between items-center w-full max-w-[1100px] mx-auto px-6 mb-10 text-[11px] text-[#4a4a48] font-mono tracking-wider">
+        <span>free · no card</span>
+        <span>any url</span>
       </div>
     </section>
   );
