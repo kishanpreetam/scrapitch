@@ -1,10 +1,71 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
+
+type ParsedResumeLinks = {
+  linkedin: string | null;
+  github: string | null;
+  portfolio: string | null;
+  other: string[];
+};
+
+type ParsedResumeWork = {
+  title: string;
+  company: string;
+  duration: string;
+  bullets: string[];
+  metrics: string[];
+};
+
+type ParsedResumeProject = {
+  name: string;
+  description: string;
+  metrics: string[];
+};
+
+type ParsedResumePublication = {
+  title: string;
+  venue: string | null;
+  year: string | null;
+};
+
+type ParsedResume = {
+  name: string;
+  email: string | null;
+  phone: string | null;
+  location: string | null;
+  links: ParsedResumeLinks;
+  current_status: string;
+  school_year: string | null;
+  education: Array<{ school: string; degree: string; year: string; gpa: string | null }>;
+  work_experience: ParsedResumeWork[];
+  skills: string[];
+  projects: ParsedResumeProject[];
+  publications: ParsedResumePublication[];
+  research_interests: string[];
+  summary_one_line: string;
+};
+
+function pickTopMetric(resume: ParsedResume): string {
+  for (const w of resume.work_experience) {
+    if (w.metrics && w.metrics.length > 0) return w.metrics[0];
+  }
+  for (const p of resume.projects) {
+    if (p.metrics && p.metrics.length > 0) return p.metrics[0];
+  }
+  for (const w of resume.work_experience) {
+    if (w.bullets && w.bullets.length > 0) return w.bullets[0];
+  }
+  return "";
+}
+
+function pickPortfolioLink(resume: ParsedResume): string {
+  return resume.links.portfolio || resume.links.github || resume.links.linkedin || "";
+}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://web-production-f17a7.up.railway.app";
 
@@ -242,6 +303,101 @@ export default function GeneratorPage() {
   const [error, setError] = useState<string | null>(null);
   const [hasAttempted, setHasAttempted] = useState(false);
 
+  // Resume state
+  const [resumeData, setResumeData] = useState<ParsedResume | null>(null);
+  const [resumeFileName, setResumeFileName] = useState<string>("");
+  const [resumeParsing, setResumeParsing] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Conditional fields (job_hunt)
+  const [targetRole, setTargetRole] = useState("");
+  const [portfolioLink, setPortfolioLink] = useState("");
+  const [accomplishment, setAccomplishment] = useState("");
+
+  // Conditional fields (masters_outreach)
+  const [currentSchoolYear, setCurrentSchoolYear] = useState("");
+  const [paperOrTopic, setPaperOrTopic] = useState("");
+  const [programTerm, setProgramTerm] = useState("");
+
+  // Conditional fields (executive_outreach)
+  const [companyStage, setCompanyStage] = useState("");
+  const [tractionMetric, setTractionMetric] = useState("");
+
+  const showResumeBlock =
+    useCase === "job_hunt" || useCase === "masters_outreach" || useCase === "executive_outreach";
+
+  const applyResumeAutofill = (parsed: ParsedResume) => {
+    const topMetric = pickTopMetric(parsed);
+    setAccomplishment(topMetric);
+    setPortfolioLink(pickPortfolioLink(parsed));
+    setCurrentSchoolYear(parsed.school_year || "");
+    setCompanyStage(parsed.current_status || "");
+    if (!aboutUser.trim() && parsed.summary_one_line) {
+      setAboutUser(parsed.summary_one_line);
+    }
+  };
+
+  const handleResumeFile = async (file: File) => {
+    setResumeError(null);
+    setResumeParsing(true);
+    setResumeFileName(file.name);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_BASE}/parse-resume`, {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(data.detail || `Error ${res.status}`);
+      }
+      const parsed: ParsedResume = await res.json();
+      setResumeData(parsed);
+      applyResumeAutofill(parsed);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unexpected error.";
+      setResumeError(
+        `Couldn't read this resume. ${message}. Try a cleaner PDF or fill the fields manually.`
+      );
+      setResumeData(null);
+      setResumeFileName("");
+    } finally {
+      setResumeParsing(false);
+    }
+  };
+
+  const handleResumeRemove = () => {
+    setResumeData(null);
+    setResumeFileName("");
+    setResumeError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleResumeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleResumeFile(file);
+  };
+
+  const handleResumeDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleResumeFile(file);
+  };
+
+  const updateResumeField = <K extends "name" | "current_status" | "summary_one_line">(
+    key: K,
+    value: string
+  ) => {
+    setResumeData((prev) => (prev ? { ...prev, [key]: value } : prev));
+  };
+
   const handleGenerate = async () => {
     setHasAttempted(true);
 
@@ -272,17 +428,32 @@ export default function GeneratorPage() {
     const stageTimer = setTimeout(() => setLoadingStage("Generating emails..."), 4000);
 
     try {
+      const body: Record<string, unknown> = {
+        url: normalised,
+        use_case: useCase,
+        about_user: aboutUser,
+        user_ask: userAsk,
+        highlights: highlights,
+        tone_preference: tonePreference,
+      };
+      if (resumeData) body.resume_data = resumeData;
+      if (useCase === "job_hunt") {
+        if (targetRole.trim()) body.target_role = targetRole.trim();
+        if (portfolioLink.trim()) body.portfolio_link = portfolioLink.trim();
+        if (accomplishment.trim()) body.accomplishment = accomplishment.trim();
+      } else if (useCase === "masters_outreach") {
+        if (currentSchoolYear.trim()) body.current_school_year = currentSchoolYear.trim();
+        if (paperOrTopic.trim()) body.paper_or_topic = paperOrTopic.trim();
+        if (programTerm.trim()) body.program_term = programTerm.trim();
+      } else if (useCase === "executive_outreach") {
+        if (companyStage.trim()) body.company_stage = companyStage.trim();
+        if (tractionMetric.trim()) body.traction_metric = tractionMetric.trim();
+      }
+
       const res = await fetch(`${API_BASE}/generate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          url: normalised,
-          use_case: useCase,
-          about_user: aboutUser,
-          user_ask: userAsk,
-          highlights: highlights,
-          tone_preference: tonePreference,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -457,6 +628,448 @@ export default function GeneratorPage() {
                   We tailor email length, framing, and ask to your use case.
                 </p>
               </div>
+
+              {/* Resume upload (conditional: jobs, grad, founders) */}
+              {showResumeBlock && (
+                <div>
+                  <p
+                    className="font-mono"
+                    style={{
+                      fontSize: 11,
+                      color: "#c9b896",
+                      letterSpacing: "0.04em",
+                      marginBottom: 10,
+                    }}
+                  >
+                    resume (optional)
+                  </p>
+
+                  {!resumeData && !resumeParsing && (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={handleResumeDrop}
+                      role="button"
+                      tabIndex={0}
+                      className="hover:border-[#c9b896] transition-colors group cursor-pointer"
+                      style={{
+                        background: isDragging ? "#0d0c0a" : "#0a0a0a",
+                        border: `1px ${isDragging ? "solid" : "dashed"} ${isDragging ? "#c9b896" : "#2c241c"}`,
+                        borderRadius: 4,
+                        padding: "20px 16px",
+                        minHeight: 80,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      <p
+                        className="group-hover:text-[#f5f5f0] transition-colors"
+                        style={{ fontSize: 14, color: "#8a8a85", marginBottom: 4 }}
+                      >
+                        Drop your resume here, or click to upload
+                      </p>
+                      <p
+                        className="font-mono"
+                        style={{
+                          fontSize: 11,
+                          color: "#6e6657",
+                          letterSpacing: "0.04em",
+                        }}
+                      >
+                        PDF or DOCX, up to 10MB
+                      </p>
+                    </div>
+                  )}
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={handleResumeInput}
+                    style={{ display: "none" }}
+                  />
+
+                  {resumeParsing && (
+                    <div
+                      style={{
+                        background: "#0a0a0a",
+                        border: "1px solid #2c241c",
+                        borderRadius: 4,
+                        padding: "20px 16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 10,
+                      }}
+                    >
+                      <span
+                        className="rounded-full animate-spin"
+                        style={{
+                          width: 12,
+                          height: 12,
+                          border: "2px solid rgba(201,184,150,0.25)",
+                          borderTopColor: "#c9b896",
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontFamily: SERIF_STACK,
+                          fontStyle: "italic",
+                          fontSize: 14,
+                          color: "#8a7d63",
+                        }}
+                      >
+                        reading your resume...
+                      </span>
+                    </div>
+                  )}
+
+                  {resumeData && !resumeParsing && (
+                    <div
+                      style={{
+                        background: "#0d0c0a",
+                        border: "1px solid #2c241c",
+                        borderRadius: 4,
+                        padding: 20,
+                      }}
+                    >
+                      <div
+                        className="flex items-baseline justify-between"
+                        style={{ marginBottom: 6, gap: 12 }}
+                      >
+                        <p
+                          style={{
+                            fontSize: 14,
+                            fontWeight: 500,
+                            color: "#f5f5f0",
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          {resumeFileName || "Parsed resume"}
+                        </p>
+                        <button
+                          onClick={handleResumeRemove}
+                          className="hover:text-[#f5f5f0] transition-colors shrink-0"
+                          style={{
+                            fontSize: 12,
+                            color: "#c9b896",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                          }}
+                        >
+                          remove
+                        </button>
+                      </div>
+                      <p
+                        style={{
+                          fontFamily: SERIF_STACK,
+                          fontStyle: "italic",
+                          fontSize: 14,
+                          color: "#8a7d63",
+                          marginBottom: 20,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        looks like {resumeData.summary_one_line || "someone interesting"}
+                      </p>
+
+                      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                        <div>
+                          <p
+                            className="font-mono"
+                            style={{
+                              fontSize: 10,
+                              color: "#c9b896",
+                              letterSpacing: "0.04em",
+                              marginBottom: 6,
+                            }}
+                          >
+                            name
+                          </p>
+                          <input
+                            type="text"
+                            value={resumeData.name}
+                            onChange={(e) => updateResumeField("name", e.target.value)}
+                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-[14px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                          />
+                        </div>
+                        <div>
+                          <p
+                            className="font-mono"
+                            style={{
+                              fontSize: 10,
+                              color: "#c9b896",
+                              letterSpacing: "0.04em",
+                              marginBottom: 6,
+                            }}
+                          >
+                            current status
+                          </p>
+                          <input
+                            type="text"
+                            value={resumeData.current_status}
+                            onChange={(e) => updateResumeField("current_status", e.target.value)}
+                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-[14px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                          />
+                        </div>
+                        <div>
+                          <p
+                            className="font-mono"
+                            style={{
+                              fontSize: 10,
+                              color: "#c9b896",
+                              letterSpacing: "0.04em",
+                              marginBottom: 6,
+                            }}
+                          >
+                            top accomplishment to lead with
+                          </p>
+                          <textarea
+                            value={accomplishment}
+                            onChange={(e) => setAccomplishment(e.target.value)}
+                            rows={2}
+                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-[14px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {resumeError && (
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: "#d4a4a4",
+                        lineHeight: 1.5,
+                        marginTop: 8,
+                      }}
+                    >
+                      {resumeError}
+                    </p>
+                  )}
+
+                  <p
+                    className="font-mono"
+                    style={{
+                      fontSize: 12,
+                      color: "#6e6657",
+                      letterSpacing: "0.02em",
+                      lineHeight: 1.5,
+                      marginTop: 8,
+                    }}
+                  >
+                    Your resume is parsed once and used only for this generation. It isn&apos;t saved anywhere.
+                  </p>
+                </div>
+              )}
+
+              {/* Conditional fields per use case */}
+              {useCase === "job_hunt" && (
+                <>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      target role
+                    </p>
+                    <input
+                      type="text"
+                      value={targetRole}
+                      onChange={(e) => setTargetRole(e.target.value)}
+                      placeholder="e.g. Senior ML Engineer, inference team"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      The specific role or team you&apos;re reaching out about.
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      portfolio or github link
+                    </p>
+                    <input
+                      type="text"
+                      value={portfolioLink}
+                      onChange={(e) => setPortfolioLink(e.target.value)}
+                      placeholder="https://github.com/yourname"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      Goes in the signature so recruiters can see your work.
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      one accomplishment to lead with
+                    </p>
+                    <textarea
+                      value={accomplishment}
+                      onChange={(e) => setAccomplishment(e.target.value)}
+                      placeholder="e.g. Shipped a Spark migration that cut compute 40 percent."
+                      rows={2}
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      One metric or win. The writer will use just this one.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {useCase === "masters_outreach" && (
+                <>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      your current school or year
+                    </p>
+                    <input
+                      type="text"
+                      value={currentSchoolYear}
+                      onChange={(e) => setCurrentSchoolYear(e.target.value)}
+                      placeholder="e.g. Northeastern, MS Analytics, graduating 2026"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      Where you study now and your expected graduation.
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      paper or topic to reference
+                    </p>
+                    <input
+                      type="text"
+                      value={paperOrTopic}
+                      onChange={(e) => setPaperOrTopic(e.target.value)}
+                      placeholder="e.g. Their 2025 paper on lipid nanoparticle delivery"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      A specific paper, project, or research area the professor publishes on.
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      program term you&apos;re applying for
+                    </p>
+                    <input
+                      type="text"
+                      value={programTerm}
+                      onChange={(e) => setProgramTerm(e.target.value)}
+                      placeholder="e.g. Fall 2026"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      The intake you&apos;re aiming for.
+                    </p>
+                  </div>
+                </>
+              )}
+
+              {useCase === "executive_outreach" && (
+                <>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      your company stage
+                    </p>
+                    <input
+                      type="text"
+                      value={companyStage}
+                      onChange={(e) => setCompanyStage(e.target.value)}
+                      placeholder="e.g. Pre-seed AI tools, two founders, six months in"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      Stage, team size, time in. Helps the writer set the frame.
+                    </p>
+                  </div>
+                  <div>
+                    <p
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#c9b896",
+                        letterSpacing: "0.04em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      strongest traction metric
+                    </p>
+                    <input
+                      type="text"
+                      value={tractionMetric}
+                      onChange={(e) => setTractionMetric(e.target.value)}
+                      placeholder="e.g. 200 paying teams in six months"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                    />
+                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                      One quantified signal. Revenue, retention, signups, anything real.
+                    </p>
+                  </div>
+                </>
+              )}
 
               {/* Field 3: About you */}
               <div>
