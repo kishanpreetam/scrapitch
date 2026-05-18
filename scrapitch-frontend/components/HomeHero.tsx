@@ -77,7 +77,7 @@ function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualPro
   const typed = TARGET_URL.slice(0, typedChars);
 
   return (
-    <div className="flex flex-col md:flex-row md:items-stretch gap-4">
+    <div className="flex flex-col md:flex-row md:items-start gap-4">
       {/* Stage 1: browser bar with URL typing */}
       <Stage>
         <div className="flex items-center gap-2 mb-4">
@@ -197,7 +197,7 @@ function Stage({ children }: { children: React.ReactNode }) {
         background: "#111111",
         border: "1px solid #1f2937",
         borderRadius: 16,
-        padding: "14px 18px",
+        padding: "24px 18px",
       }}
     >
       {children}
@@ -321,7 +321,7 @@ export default function HomeHero() {
             fontSize: 17,
             fontWeight: 400,
             color: "#8a8a85",
-            maxWidth: 460,
+            maxWidth: 380,
             marginBottom: 40,
             textAlign: "center",
             lineHeight: 1.5,
@@ -370,7 +370,7 @@ export default function HomeHero() {
 
         {/* Product visual */}
         <div style={{ marginTop: 120, width: "100%" }}>
-          <div className="h-px bg-[#1a1a1a] w-16 mx-auto mb-16"></div>
+          <div className="h-px bg-[#2a2a2a] w-12 mx-auto mb-16"></div>
           <ProductVisual
             typedChars={typedChars}
             pillIndex={pillIndex}
