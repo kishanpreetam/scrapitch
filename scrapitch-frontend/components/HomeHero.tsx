@@ -30,50 +30,12 @@ const EMAIL_CARDS = [
   },
 ];
 
-function HomeNavbar() {
-  return (
-    <nav className="absolute top-0 left-0 right-0 z-20 px-6 lg:px-10 py-5 flex items-center justify-between">
-      <Link
-        href="/"
-        className="text-white"
-        style={{ fontWeight: 500, fontSize: 18, letterSpacing: "-0.01em" }}
-      >
-        Scrapitch
-      </Link>
-      <div className="hidden md:flex items-center" style={{ gap: 28, fontWeight: 500, fontSize: 14 }}>
-        <Link href="/how-it-works" className="transition-colors" style={{ color: "#9ca3af" }}>
-          <span className="hover:text-white transition-colors">How it works</span>
-        </Link>
-        <Link href="/use-cases" className="transition-colors" style={{ color: "#9ca3af" }}>
-          <span className="hover:text-white transition-colors">Use cases</span>
-        </Link>
-        <Link href="/login" className="transition-colors" style={{ color: "#9ca3af" }}>
-          <span className="hover:text-white transition-colors">Sign in</span>
-        </Link>
-        <Link
-          href="/signup"
-          className="text-white hover:bg-white/5 transition-colors"
-          style={{
-            border: "1px solid #374151",
-            padding: "8px 16px",
-            borderRadius: 8,
-            fontWeight: 500,
-          }}
-        >
-          Sign up
-        </Link>
-      </div>
-    </nav>
-  );
-}
-
 type ProductVisualProps = {
   typedChars: number;
   pillIndex: number;
-  visibleCards: number;
 };
 
-function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualProps) {
+function ProductVisual({ typedChars, pillIndex }: ProductVisualProps) {
   const typed = TARGET_URL.slice(0, typedChars);
 
   return (
@@ -158,31 +120,25 @@ function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualPro
       {/* Stage 3: email preview cards */}
       <Stage>
         <div className="flex flex-col gap-2.5">
-          {EMAIL_CARDS.map((card, i) => {
-            const shown = visibleCards > i;
-            return (
-              <div
-                key={i}
-                style={{
-                  background: "#ffffff",
-                  borderRadius: 12,
-                  padding: 16,
-                  opacity: shown ? 1 : 0,
-                  transform: shown ? "translateY(0)" : "translateY(8px)",
-                  transition: "opacity 400ms ease, transform 400ms ease",
-                }}
-              >
-                <p style={{ fontSize: 13, fontWeight: 500, color: "#0a0a0a", marginBottom: 6, lineHeight: 1.3 }}>
-                  {card.subject}
+          {EMAIL_CARDS.map((card, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#ffffff",
+                borderRadius: 12,
+                padding: 16,
+              }}
+            >
+              <p style={{ fontSize: 13, fontWeight: 500, color: "#0a0a0a", marginBottom: 6, lineHeight: 1.3 }}>
+                {card.subject}
+              </p>
+              {card.preview.map((line, j) => (
+                <p key={j} style={{ fontSize: 12, color: "#374151", lineHeight: 1.5 }}>
+                  {line}
                 </p>
-                {card.preview.map((line, j) => (
-                  <p key={j} style={{ fontSize: 12, color: "#374151", lineHeight: 1.5 }}>
-                    {line}
-                  </p>
-                ))}
-              </div>
-            );
-          })}
+              ))}
+            </div>
+          ))}
         </div>
       </Stage>
     </div>
@@ -218,7 +174,6 @@ function dotStyle(color: string): React.CSSProperties {
 export default function HomeHero() {
   const [typedChars, setTypedChars] = useState(0);
   const [pillIndex, setPillIndex] = useState(-1);
-  const [visibleCards, setVisibleCards] = useState(0);
 
   useEffect(() => {
     let timers: ReturnType<typeof setTimeout>[] = [];
@@ -233,7 +188,6 @@ export default function HomeHero() {
       if (cancelled) return;
       setTypedChars(0);
       setPillIndex(-1);
-      setVisibleCards(0);
 
       const charDuration = TYPING_MS / TARGET_URL.length;
       for (let i = 1; i <= TARGET_URL.length; i++) {
@@ -243,15 +197,8 @@ export default function HomeHero() {
 
       const pipelineStart = TYPING_MS + PIPELINE_DELAY_MS;
       timers.push(setTimeout(() => setPillIndex(0), pipelineStart));
-      timers.push(setTimeout(() => {
-        setPillIndex(1);
-        setVisibleCards(1);
-      }, pipelineStart + STEP_MS));
-      timers.push(setTimeout(() => {
-        setPillIndex(2);
-        setVisibleCards(2);
-      }, pipelineStart + STEP_MS * 2));
-      timers.push(setTimeout(() => setVisibleCards(3), pipelineStart + STEP_MS * 3));
+      timers.push(setTimeout(() => setPillIndex(1), pipelineStart + STEP_MS));
+      timers.push(setTimeout(() => setPillIndex(2), pipelineStart + STEP_MS * 2));
       timers.push(setTimeout(() => {
         clearAll();
         start();
@@ -271,8 +218,6 @@ export default function HomeHero() {
       className="relative flex flex-col"
       style={{ background: "#0a0a0a", minHeight: "100vh" }}
     >
-      <HomeNavbar />
-
       {/* Top metadata bar */}
       <div className="flex justify-between items-center w-full max-w-[1100px] mx-auto px-6 mb-14" style={{ paddingTop: 96 }}>
         <div className="flex items-center gap-2 text-[11px] text-[#6e6e6e] font-mono">
@@ -392,7 +337,6 @@ export default function HomeHero() {
           <ProductVisual
             typedChars={typedChars}
             pillIndex={pillIndex}
-            visibleCards={visibleCards}
           />
         </div>
       </div>
