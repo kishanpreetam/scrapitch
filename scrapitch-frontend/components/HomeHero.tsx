@@ -283,7 +283,7 @@ export default function HomeHero() {
       </div>
 
       {/* Top hairline */}
-      <div className="h-px bg-[#1a1a1a] w-full max-w-[1100px] mx-auto mb-16"></div>
+      <div className="h-px bg-[#2c241c] w-full max-w-[1100px] mx-auto mb-16"></div>
 
       {/* Main content */}
       <div
@@ -305,8 +305,8 @@ export default function HomeHero() {
         >
           Read{" "}
           <em
-            className="font-serif italic font-normal text-[#f5f5f0]"
-            style={{ fontFamily: SERIF_STACK }}
+            className="font-serif italic font-normal"
+            style={{ fontFamily: SERIF_STACK, color: "#c9b896" }}
           >
             their
           </em>{" "}
@@ -368,9 +368,27 @@ export default function HomeHero() {
           </Link>
         </div>
 
+        {/* Editorial caption */}
+        <p
+          style={{
+            fontFamily: SERIF_STACK,
+            fontStyle: "italic",
+            fontWeight: 400,
+            fontSize: 14,
+            color: "#8a7d63",
+            textAlign: "center",
+            letterSpacing: "0.01em",
+            margin: "48px 0 24px",
+          }}
+        >
+          an example, in real time
+        </p>
+
+        {/* Small centered hairline */}
+        <div className="h-px bg-[#3a3328] w-12 mx-auto mb-16"></div>
+
         {/* Product visual */}
-        <div style={{ marginTop: 120, width: "100%" }}>
-          <div className="h-px bg-[#2a2a2a] w-12 mx-auto mb-16"></div>
+        <div style={{ width: "100%" }}>
           <ProductVisual
             typedChars={typedChars}
             pillIndex={pillIndex}
@@ -380,7 +398,7 @@ export default function HomeHero() {
       </div>
 
       {/* Bottom hairline */}
-      <div className="h-px bg-[#1a1a1a] w-full max-w-[1100px] mx-auto mt-16 mb-3"></div>
+      <div className="h-px bg-[#2c241c] w-full max-w-[1100px] mx-auto mt-16 mb-3"></div>
 
       {/* Bottom metadata bar */}
       <div className="flex justify-between items-center w-full max-w-[1100px] mx-auto px-6 mb-10 text-[11px] text-[#4a4a48] font-mono tracking-wider">
