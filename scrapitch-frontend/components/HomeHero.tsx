@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-const TARGET_URL = "https://stripe.com";
+const TARGET_URL = "https://scrapitch.com";
 const TYPING_MS = 1500;
 const STEP_MS = 600;
 const PIPELINE_DELAY_MS = 300;
@@ -15,14 +15,14 @@ const PILLS = ["Researching", "Writing", "Scoring"] as const;
 
 const EMAIL_CARDS = [
   {
-    subject: "Quick question about Stripe's docs",
+    subject: "Question about Scrapitch's homepage",
     preview: [
-      "Saw the redesigned docs nav. The...",
+      "Noticed the editorial redesign this week. The...",
       "Worth a 10 minute look next week?",
     ],
   },
   {
-    subject: "Idea for Stripe's growth team",
+    subject: "Idea for Scrapitch's launch",
     preview: [
       "Spotted a pattern in your latest...",
       "Open to a 15 minute call?",

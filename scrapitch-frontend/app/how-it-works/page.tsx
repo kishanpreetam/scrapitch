@@ -129,15 +129,15 @@ function DeepSection({ bg, n, eyebrow, title, paragraphs, right }: DeepSectionPr
 function FormMockup({ bg }: { bg: Bg }) {
   const c = palette(bg);
   const fields: { label: string; value: string }[] = [
-    { label: "url", value: "https://stripe.com" },
+    { label: "url", value: "https://scrapitch.com" },
     { label: "use case", value: "for sales" },
     {
       label: "about you",
-      value: "Operator at Bridgewise, helping YC companies with payment ops.",
+      value: "Operator at Bridgewise, building onboarding for AI products.",
     },
     {
       label: "your ask",
-      value: "Fifteen minute call to compare notes on Atlas expansion.",
+      value: "Fifteen minute call about your use case routing.",
     },
     { label: "tone", value: "professional, warm" },
   ];
@@ -192,16 +192,19 @@ function FormMockup({ bg }: { bg: Bg }) {
 function ExtractedFields({ bg }: { bg: Bg }) {
   const c = palette(bg);
   const fields: { key: string; value: string }[] = [
-    { key: "what_they_do", value: "Developer tools for AI infrastructure" },
+    {
+      key: "what_they_do",
+      value: "AI powered personalized cold outreach",
+    },
     {
       key: "who_they_serve",
-      value: "ML engineers at series A through C startups",
+      value: "Sales reps, job seekers, grad applicants, founders",
     },
     {
       key: "recent_signal",
-      value: "Launched a vector store offering in Q1",
+      value: "Launched v2 with five use cases in May 2026",
     },
-    { key: "team_size", value: "~40, based on careers page" },
+    { key: "team_size", value: "1, solo founder" },
   ];
 
   return (
@@ -255,23 +258,23 @@ function FrameworkCards({ bg }: { bg: Bg }) {
   const drafts: { framework: string; subject: string; preview: string; words: string }[] = [
     {
       framework: "problem, agitate, solution",
-      subject: "The compliance gap in your Atlas expansion",
+      subject: "The use case routing layer Scrapitch is missing",
       preview:
-        "Most teams hit local payment ops friction within ninety days of geo expansion. We've seen the pattern twice this quarter.",
+        "Multi vertical AI tools usually lose second month users to template confusion. We've seen the pattern twice this quarter.",
       words: "87 of 90",
     },
     {
       framework: "value first",
-      subject: "Saw Stripe's Q2 expansion. Sharing what we learned.",
+      subject: "Saw Scrapitch's v2 launch. Sharing what we learned.",
       preview:
-        "Two YC companies set up similar geo expansions last quarter. Both hit the same three issues. Happy to share notes.",
+        "Two YC AI companies hit the same multi vertical adoption issues last quarter. Both shipped a routing layer. Happy to share notes.",
       words: "102 of 110",
     },
     {
       framework: "curiosity icebreaker",
-      subject: "Quick question about Stripe Atlas's new markets",
+      subject: "Quick question about Scrapitch's five use cases",
       preview:
-        "Did you build the local payment ops stack in house, or are you partnering with a regional provider for each one?",
+        "Did you ship the use case picker as part of the v2 launch, or are you experimenting with auto routing based on the URL alone?",
       words: "94 of 100",
     },
   ];
