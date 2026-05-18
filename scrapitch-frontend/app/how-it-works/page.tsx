@@ -1,143 +1,703 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Reveal from "@/components/Reveal";
-import { HowItWorksStepList, HowItWorksFrameworkList } from "@/components/HowItWorksCards";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "How It Works — Scrapitch",
+  title: "How it works — Scrapitch",
   description:
-    "From URL to personalized cold email in under 10 seconds. Here's every step.",
+    "Three agents. One URL. Ten seconds. What Scrapitch does between you pasting a link and reading your first draft.",
 };
 
-const scoringFactors = [
-  { factor: "Personalization depth", weight: "30%", desc: "References specific details from Agent 1's research, not generic phrases" },
-  { factor: "Length compliance", weight: "20%", desc: "Respects the word limit for the variant's framework" },
-  { factor: "Single CTA", weight: "15%", desc: "Exactly one clear call to action" },
-  { factor: "Problem first framing", weight: "15%", desc: "Leads with their challenge, not your credentials" },
-  { factor: "Subject line quality", weight: "10%", desc: "Under 6 words, specific to the prospect" },
-  { factor: "No spam phrases", weight: "10%", desc: 'Avoids "I hope this finds you well" and similar clichés' },
-];
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
+type Bg = "dark" | "light";
+
+function palette(bg: Bg) {
+  const isDark = bg === "dark";
+  return {
+    isDark,
+    bg: isDark ? "#0a0a0a" : "#faf8f5",
+    text: isDark ? "#f5f5f0" : "#1a1612",
+    muted: isDark ? "#8a8a85" : "#6e6657",
+    mutedSoft: isDark ? "#9a9a92" : "#6e6657",
+    line: isDark ? "#2c241c" : "#d8d0bd",
+    italic: isDark ? "#c9b896" : "#b89968",
+    caption: "#8a7d63",
+    cardBg: isDark ? "#111111" : "#ffffff",
+    cardBorder: isDark ? "#1c1c1c" : "#e8e0cd",
+    fieldBg: isDark ? "#0f0d0a" : "#f5f1ea",
+    fieldBorder: isDark ? "#1c1812" : "#e8e0cd",
+  };
+}
+
+function ItalicWord({ word, color }: { word: string; color: string }) {
+  return (
+    <em
+      style={{
+        fontFamily: SERIF_STACK,
+        fontStyle: "italic",
+        fontWeight: 400,
+        color,
+      }}
+    >
+      {word}
+    </em>
+  );
+}
+
+type DeepSectionProps = {
+  bg: Bg;
+  n: string;
+  eyebrow: string;
+  title: { before: string; italic: string; after: string };
+  paragraphs: [string, string, string];
+  right: React.ReactNode;
+};
+
+function DeepSection({ bg, n, eyebrow, title, paragraphs, right }: DeepSectionProps) {
+  const c = palette(bg);
+
+  return (
+    <section
+      style={{
+        background: c.bg,
+        minHeight: "80vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div className="w-full mx-auto px-6" style={{ maxWidth: 1000 }}>
+        <div style={{ height: 1, background: c.line, marginBottom: 48 }} />
+
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: c.muted,
+            letterSpacing: "0.04em",
+            marginBottom: 24,
+          }}
+        >
+          {n} · {eyebrow}
+        </p>
+
+        <h2
+          style={{
+            fontSize: "clamp(40px, 5vw, 56px)",
+            fontWeight: 500,
+            lineHeight: 1.1,
+            letterSpacing: "-0.025em",
+            color: c.text,
+            marginBottom: 56,
+            maxWidth: 760,
+          }}
+        >
+          {title.before}
+          <ItalicWord word={title.italic} color={c.italic} />
+          {title.after}
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2" style={{ gap: 56 }}>
+          <div>
+            {paragraphs.map((p, i) => (
+              <p
+                key={i}
+                style={{
+                  fontSize: 16,
+                  color: c.mutedSoft,
+                  lineHeight: 1.65,
+                  marginBottom: i < paragraphs.length - 1 ? 20 : 0,
+                }}
+              >
+                {p}
+              </p>
+            ))}
+          </div>
+
+          <div>{right}</div>
+        </div>
+
+        <div style={{ height: 1, background: c.line, marginTop: 64 }} />
+      </div>
+    </section>
+  );
+}
+
+function FormMockup({ bg }: { bg: Bg }) {
+  const c = palette(bg);
+  const fields: { label: string; value: string }[] = [
+    { label: "url", value: "https://stripe.com" },
+    { label: "use case", value: "for sales" },
+    {
+      label: "about you",
+      value: "Operator at Bridgewise, helping YC companies with payment ops.",
+    },
+    {
+      label: "your ask",
+      value: "Fifteen minute call to compare notes on Atlas expansion.",
+    },
+    { label: "tone", value: "professional, warm" },
+  ];
+
+  return (
+    <div
+      style={{
+        background: c.cardBg,
+        border: `1px solid ${c.cardBorder}`,
+        borderRadius: 8,
+        padding: 24,
+      }}
+    >
+      {fields.map((f, i) => (
+        <div
+          key={f.label}
+          style={{
+            marginBottom: i < fields.length - 1 ? 18 : 0,
+          }}
+        >
+          <p
+            className="font-mono"
+            style={{
+              fontSize: 10,
+              color: c.muted,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              marginBottom: 6,
+            }}
+          >
+            {f.label}
+          </p>
+          <div
+            style={{
+              background: c.fieldBg,
+              border: `1px solid ${c.fieldBorder}`,
+              borderRadius: 4,
+              padding: "10px 12px",
+              fontSize: 14,
+              color: c.text,
+              lineHeight: 1.5,
+            }}
+          >
+            {f.value}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ExtractedFields({ bg }: { bg: Bg }) {
+  const c = palette(bg);
+  const fields: { key: string; value: string }[] = [
+    { key: "what_they_do", value: "Developer tools for AI infrastructure" },
+    {
+      key: "who_they_serve",
+      value: "ML engineers at series A through C startups",
+    },
+    {
+      key: "recent_signal",
+      value: "Launched a vector store offering in Q1",
+    },
+    { key: "team_size", value: "~40, based on careers page" },
+  ];
+
+  return (
+    <div
+      style={{
+        background: c.cardBg,
+        border: `1px solid ${c.cardBorder}`,
+        borderRadius: 8,
+        padding: 24,
+      }}
+    >
+      {fields.map((f, i) => (
+        <div key={f.key}>
+          {i > 0 && (
+            <div
+              style={{
+                height: 1,
+                background: c.cardBorder,
+                margin: "16px 0",
+              }}
+            />
+          )}
+          <p
+            className="font-mono"
+            style={{
+              fontSize: 11,
+              color: c.italic,
+              letterSpacing: "0.04em",
+              marginBottom: 6,
+            }}
+          >
+            {f.key}
+          </p>
+          <p
+            style={{
+              fontSize: 15,
+              color: c.text,
+              lineHeight: 1.5,
+            }}
+          >
+            {f.value}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function FrameworkCards({ bg }: { bg: Bg }) {
+  const c = palette(bg);
+  const drafts: { framework: string; subject: string; preview: string; words: string }[] = [
+    {
+      framework: "problem, agitate, solution",
+      subject: "The compliance gap in your Atlas expansion",
+      preview:
+        "Most teams hit local payment ops friction within ninety days of geo expansion. We've seen the pattern twice this quarter.",
+      words: "87 of 90",
+    },
+    {
+      framework: "value first",
+      subject: "Saw Stripe's Q2 expansion. Sharing what we learned.",
+      preview:
+        "Two YC companies set up similar geo expansions last quarter. Both hit the same three issues. Happy to share notes.",
+      words: "102 of 110",
+    },
+    {
+      framework: "curiosity icebreaker",
+      subject: "Quick question about Stripe Atlas's new markets",
+      preview:
+        "Did you build the local payment ops stack in house, or are you partnering with a regional provider for each one?",
+      words: "94 of 100",
+    },
+  ];
+
+  return (
+    <div className="flex flex-col" style={{ gap: 14 }}>
+      {drafts.map((d) => (
+        <div
+          key={d.framework}
+          style={{
+            background: c.cardBg,
+            border: `1px solid ${c.cardBorder}`,
+            borderRadius: 8,
+            padding: 18,
+          }}
+        >
+          <div
+            className="flex items-center justify-between"
+            style={{ marginBottom: 10 }}
+          >
+            <span
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                color: c.italic,
+                letterSpacing: "0.04em",
+              }}
+            >
+              {d.framework}
+            </span>
+            <span
+              className="font-mono"
+              style={{
+                fontSize: 10,
+                color: c.muted,
+                letterSpacing: "0.04em",
+              }}
+            >
+              {d.words}
+            </span>
+          </div>
+          <p
+            style={{
+              fontSize: 14,
+              fontWeight: 500,
+              color: c.text,
+              marginBottom: 6,
+              lineHeight: 1.4,
+            }}
+          >
+            {d.subject}
+          </p>
+          <p
+            style={{
+              fontSize: 13,
+              color: c.mutedSoft,
+              lineHeight: 1.55,
+            }}
+          >
+            {d.preview}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ScoringPanel({ bg }: { bg: Bg }) {
+  const c = palette(bg);
+  const rows: { label: string; score: string; weight: string }[] = [
+    { label: "Personalization", score: "9.2", weight: "30%" },
+    { label: "Length", score: "8.5", weight: "20%" },
+    { label: "Single ask", score: "10", weight: "15%" },
+    { label: "Problem framing", score: "8.0", weight: "15%" },
+    { label: "Subject line", score: "9.0", weight: "10%" },
+    { label: "Spam signals", score: "9.5", weight: "10%" },
+  ];
+
+  return (
+    <div
+      style={{
+        background: c.cardBg,
+        border: `1px solid ${c.cardBorder}`,
+        borderRadius: 8,
+        padding: 24,
+      }}
+    >
+      {rows.map((row, i) => (
+        <div key={row.label}>
+          {i > 0 && (
+            <div
+              style={{
+                height: 1,
+                background: c.cardBorder,
+                margin: "14px 0",
+              }}
+            />
+          )}
+          <div className="flex items-baseline justify-between" style={{ gap: 12 }}>
+            <p
+              style={{
+                fontSize: 14,
+                color: c.text,
+                lineHeight: 1.4,
+                fontWeight: 500,
+              }}
+            >
+              {row.label}
+            </p>
+            <div className="flex items-baseline" style={{ gap: 12 }}>
+              <span
+                style={{
+                  fontSize: 16,
+                  color: c.italic,
+                  fontWeight: 500,
+                }}
+              >
+                {row.score}
+              </span>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: 10,
+                  color: c.muted,
+                  letterSpacing: "0.04em",
+                }}
+              >
+                {row.weight}
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+      <div
+        style={{
+          height: 1,
+          background: c.cardBorder,
+          margin: "20px 0 16px",
+        }}
+      />
+      <div className="flex items-baseline justify-between">
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: c.muted,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+          }}
+        >
+          total
+        </p>
+        <span
+          style={{
+            fontSize: 22,
+            fontWeight: 500,
+            color: c.text,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          8.97
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function HeaderSection() {
+  return (
+    <section
+      style={{
+        background: "#0a0a0a",
+        minHeight: "60vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 160,
+        paddingBottom: 80,
+      }}
+    >
+      <div
+        className="w-full mx-auto px-6 text-center"
+        style={{ maxWidth: 720 }}
+      >
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: "#8a8a85",
+            letterSpacing: "0.04em",
+            marginBottom: 24,
+          }}
+        >
+          how it works
+        </p>
+
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto 40px",
+          }}
+        />
+
+        <h1
+          style={{
+            fontSize: "clamp(44px, 5.5vw, 64px)",
+            fontWeight: 500,
+            lineHeight: 1.08,
+            letterSpacing: "-0.028em",
+            color: "#f5f5f0",
+            marginBottom: 20,
+          }}
+        >
+          <ItalicWord word="Three" color="#c9b896" /> agents. One URL. Ten
+          seconds.
+        </h1>
+
+        <p
+          style={{
+            fontSize: 17,
+            color: "#8a8a85",
+            lineHeight: 1.5,
+            maxWidth: 520,
+            margin: "0 auto 40px",
+          }}
+        >
+          What Scrapitch actually does between you pasting a link and reading
+          your first draft.
+        </p>
+
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto",
+          }}
+        />
+      </div>
+    </section>
+  );
+}
+
+function FooterCtaSection() {
+  return (
+    <section
+      style={{
+        background: "#0a0a0a",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div
+        className="w-full mx-auto px-6 text-center"
+        style={{ maxWidth: 720 }}
+      >
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "0 auto 48px",
+          }}
+        />
+
+        <p
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: "#8a8a85",
+            letterSpacing: "0.04em",
+            marginBottom: 24,
+          }}
+        >
+          ready when you are
+        </p>
+
+        <h2
+          style={{
+            fontSize: "clamp(40px, 5vw, 56px)",
+            fontWeight: 500,
+            lineHeight: 1.1,
+            letterSpacing: "-0.025em",
+            color: "#f5f5f0",
+            marginBottom: 20,
+          }}
+        >
+          Three agents. One{" "}
+          <ItalicWord word="ten second" color="#c9b896" /> flow.
+        </h2>
+
+        <p
+          style={{
+            fontSize: 17,
+            color: "#8a8a85",
+            lineHeight: 1.5,
+            maxWidth: 460,
+            margin: "0 auto 36px",
+          }}
+        >
+          Paste a URL. Pick a use case. Send the email.
+        </p>
+
+        <div className="flex items-center justify-center">
+          <Link
+            href="/generator"
+            className="hover:underline"
+            style={{
+              color: "#3b82f6",
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: "none",
+            }}
+          >
+            Try it free
+          </Link>
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-block",
+              width: 1,
+              height: 12,
+              background: "#3a3328",
+              margin: "0 20px",
+            }}
+          />
+          <Link
+            href="/use-cases"
+            className="hover:text-[#3b82f6] transition-colors"
+            style={{
+              color: "#f5f5f0",
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: "none",
+            }}
+          >
+            See use cases
+          </Link>
+        </div>
+
+        <div
+          style={{
+            height: 1,
+            background: "#2c241c",
+            width: 64,
+            margin: "48px auto 0",
+          }}
+        />
+      </div>
+    </section>
+  );
+}
 
 export default function HowItWorksPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-20">
+      <main className="overflow-x-hidden">
+        <HeaderSection />
 
-        {/* ── Hero ──────────────────────────────────────────────────────────── */}
-        <section className="border-b border-white/6 bg-section-alt">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
-            <Reveal>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-5">
-                Under the hood
-              </p>
-            </Reveal>
-            <Reveal delay={80}>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-[1.05]">
-                URL in. <span style={{ color: "#3b82f6" }}>Cold emails out.</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={160}>
-              <p className="text-lg sm:text-xl text-[#a8a8a8] max-w-2xl mx-auto leading-relaxed">
-                Three agents. Ten seconds. Here is exactly what happens
-                between paste and send.
-              </p>
-            </Reveal>
-          </div>
-        </section>
+        <DeepSection
+          bg="light"
+          n="01"
+          eyebrow="the input"
+          title={{ before: "One URL is ", italic: "enough", after: "." }}
+          paragraphs={[
+            "Scrapitch accepts any public URL: company sites, lab pages, founder portfolios, LinkedIn style profiles.",
+            "No CSV uploads. No spreadsheet of leads. No connectors to your CRM.",
+            "Paste it once. Pick a use case. Add a sentence about who you are and what you want.",
+          ]}
+          right={<FormMockup bg="light" />}
+        />
 
-        {/* ── Four Steps ────────────────────────────────────────────────────── */}
-        <section className="py-24 sm:py-32">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <HowItWorksStepList />
-          </div>
-        </section>
+        <DeepSection
+          bg="dark"
+          n="02"
+          eyebrow="research analyst"
+          title={{
+            before: "Reads their site like a ",
+            italic: "person",
+            after: " would.",
+          }}
+          paragraphs={[
+            "The research agent visits the URL and any pages it links to: about, product, pricing, blog, careers.",
+            "It extracts structured signal: what they do, who they serve, what they ship, recent launches.",
+            "If the site is thin, it pulls what's there honestly. No fabrication.",
+          ]}
+          right={<ExtractedFields bg="dark" />}
+        />
 
-        {/* ── Email frameworks ──────────────────────────────────────────────── */}
-        <section className="border-t border-white/6 py-24 sm:py-32 bg-section-alt">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <Reveal>
-              <div className="text-center mb-16">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-4">
-                  Three frameworks
-                </p>
-                <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
-                  Why three variants?
-                </h2>
-                <p className="text-[#a8a8a8] max-w-xl mx-auto text-lg leading-relaxed">
-                  Different buyers respond to different openers. Scrapitch gives
-                  you all three so you can test, or just pick the one that fits.
-                </p>
-              </div>
-            </Reveal>
-            <HowItWorksFrameworkList />
-          </div>
-        </section>
+        <DeepSection
+          bg="light"
+          n="03"
+          eyebrow="email writer"
+          title={{
+            before: "",
+            italic: "Three",
+            after: " drafts, three frameworks.",
+          }}
+          paragraphs={[
+            "The writer uses three proven cold email frameworks: problem, agitate, solution; value first; and curiosity icebreaker.",
+            "Each draft has a hard word ceiling: 90, 110, or 100 words. No padding.",
+            "Strict no fabrication rule: only claims that came from your input or the scraped site.",
+          ]}
+          right={<FrameworkCards bg="light" />}
+        />
 
-        {/* ── Scoring breakdown ─────────────────────────────────────────────── */}
-        <section className="border-t border-white/6 py-24 sm:py-32">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <Reveal>
-              <div className="text-center mb-14">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#6b6b6b] mb-4">
-                  Reply rate scoring
-                </p>
-                <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
-                  How reply rate scores work
-                </h2>
-                <p className="text-[#a8a8a8] max-w-xl mx-auto text-lg leading-relaxed">
-                  Every email is scored 1 to 10 across 6 weighted factors by an independent Scoring Agent.
-                </p>
-                <p className="text-[#a8a8a8] max-w-xl mx-auto text-base leading-relaxed mt-3">
-                  Agent 3 evaluates each email separately from the writer. Scores are honest, not self graded.
-                </p>
-              </div>
-            </Reveal>
+        <DeepSection
+          bg="dark"
+          n="04"
+          eyebrow="scoring judge"
+          title={{
+            before: "",
+            italic: "Six",
+            after: " factors. One score per draft.",
+          }}
+          paragraphs={[
+            "The judge grades each draft against a rubric grounded in cold email research.",
+            "Personalization counts most. Length, single ask, problem framing, subject line, spam signals fill out the rest.",
+            "You see the score and the reasoning. Pick what fits, ignore what doesn't.",
+          ]}
+          right={<ScoringPanel bg="dark" />}
+        />
 
-            <Reveal delay={80}>
-              <div className="rounded-2xl border border-white/8 overflow-hidden">
-                {scoringFactors.map((s, i) => (
-                  <div
-                    key={s.factor}
-                    className={`flex items-start gap-5 sm:gap-6 px-6 py-5 ${
-                      i % 2 !== 0 ? "bg-white/3" : ""
-                    } ${i < scoringFactors.length - 1 ? "border-b border-white/6" : ""}`}
-                  >
-                    <div className="shrink-0 min-w-14 text-center rounded-lg bg-white/8 border border-white/10 px-2.5 py-1.5">
-                      <span className="text-sm font-black text-[#3b82f6] tabular-nums">{s.weight}</span>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-[#f0f0f0] leading-snug mb-0.5">{s.factor}</p>
-                      <p className="text-sm text-[#a8a8a8]">{s.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ── CTA ────────────────────────────────────────────────────────────── */}
-        <section className="border-t border-white/6 py-24 sm:py-32">
-          <div className="mx-auto max-w-2xl px-4 text-center">
-            <Reveal>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight text-white mb-4">
-                Ready to try it?
-              </h2>
-            </Reveal>
-            <Reveal delay={80}>
-              <Link
-                href="/generator"
-                className="inline-flex rounded-xl bg-[#3b82f6] px-9 py-4 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
-              >
-                Open the generator
-              </Link>
-            </Reveal>
-          </div>
-        </section>
-
+        <FooterCtaSection />
       </main>
       <Footer />
     </>
