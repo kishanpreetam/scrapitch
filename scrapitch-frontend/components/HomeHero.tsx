@@ -28,13 +28,6 @@ const EMAIL_CARDS = [
       "Open to a 15 minute call?",
     ],
   },
-  {
-    subject: "Noticed something on stripe.com",
-    preview: [
-      "Your checkout page does this thing...",
-      "Mind if I send a one pager?",
-    ],
-  },
 ];
 
 function HomeNavbar() {
@@ -82,7 +75,6 @@ type ProductVisualProps = {
 
 function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualProps) {
   const typed = TARGET_URL.slice(0, typedChars);
-  const typingDone = typedChars >= TARGET_URL.length;
 
   return (
     <div className="flex flex-col md:flex-row md:items-stretch gap-4">
@@ -118,9 +110,6 @@ function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualPro
             }}
           />
         </div>
-        <p style={{ fontSize: 12, color: "#6b7280", marginTop: 12 }}>
-          {typingDone ? "URL captured" : "Paste any URL"}
-        </p>
       </Stage>
 
       {/* Stage 2: pipeline pills */}
@@ -203,12 +192,12 @@ function ProductVisual({ typedChars, pillIndex, visibleCards }: ProductVisualPro
 function Stage({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="flex-1"
+      className="flex-1 flex flex-col"
       style={{
         background: "#111111",
         border: "1px solid #1f2937",
         borderRadius: 16,
-        padding: 18,
+        padding: "14px 18px",
       }}
     >
       {children}
@@ -332,7 +321,7 @@ export default function HomeHero() {
             fontSize: 17,
             fontWeight: 400,
             color: "#8a8a85",
-            maxWidth: 420,
+            maxWidth: 460,
             marginBottom: 40,
             textAlign: "center",
             lineHeight: 1.5,
@@ -380,7 +369,8 @@ export default function HomeHero() {
         </div>
 
         {/* Product visual */}
-        <div style={{ marginTop: 56, width: "100%" }}>
+        <div style={{ marginTop: 120, width: "100%" }}>
+          <div className="h-px bg-[#1a1a1a] w-16 mx-auto mb-16"></div>
           <ProductVisual
             typedChars={typedChars}
             pillIndex={pillIndex}
