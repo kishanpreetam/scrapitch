@@ -39,44 +39,22 @@ type GenerateResponse = {
   follow_up_sequence: FollowUp[];
 };
 
-const PLACEHOLDER_MAP: Record<"about_user" | "user_ask" | "highlights", Record<UseCase, string>> = {
-  about_user: {
-    b2b_sales: "e.g. I run a 3-person agency doing performance creative for DTC brands. We specialize in Meta ads.",
-    masters_outreach: "e.g. Final-year CS undergrad at BITS Pilani, 3.8 GPA. Strong in ML/NLP, interned at a quant firm.",
-    job_hunt: "e.g. Data engineer with 3 years at Amazon. Built Spark pipelines serving 200M+ users.",
-    executive_outreach: "e.g. Solo founder of Scrapitch, an AI outreach tool with 200 early signups.",
-    networking: "e.g. ECE master's student at Northeastern graduating May 2026. Interested in ML infrastructure.",
-  },
+const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
+
+const PLACEHOLDER_MAP: Record<"user_ask" | "highlights", Record<UseCase, string>> = {
   user_ask: {
-    b2b_sales: "e.g. 15-minute call to see if there's a fit for your team",
-    masters_outreach: "e.g. 20-minute call to ask about your research lab and the program's culture",
-    job_hunt: "e.g. 20-minute chat to learn about your team and how you evaluate senior engineers",
-    executive_outreach: "e.g. 30-minute conversation to get your perspective on early-stage go-to-market",
-    networking: "e.g. 15-minute virtual coffee to hear about your path into this field",
+    b2b_sales: "e.g. 15 minute call to see if there's a fit for your team",
+    masters_outreach: "e.g. 20 minute call to ask about your research lab and the program's culture",
+    job_hunt: "e.g. 20 minute chat to learn about your team and how you evaluate senior engineers",
+    executive_outreach: "e.g. 30 minute conversation to get your perspective on early stage go to market",
+    networking: "e.g. 15 minute virtual coffee to hear about your path into this field",
   },
   highlights: {
     b2b_sales: "e.g. Helped a similar agency 3x their reply rate in 6 weeks (optional but helps)",
-    masters_outreach: "e.g. Co-authored a paper on transformer pruning accepted at an ACL workshop (optional)",
+    masters_outreach: "e.g. Co authored a paper on transformer pruning accepted at an ACL workshop (optional)",
     job_hunt: "e.g. Led Spark migration that cut compute costs 40%, adopted by 3 downstream teams (optional)",
     executive_outreach: "e.g. 200 signups in first week, covered in two AI newsletters (optional)",
-    networking: "e.g. Building a multi-agent crisis response system, presented at Khoury symposium (optional)",
-  },
-};
-
-const HELPER_TEXT_MAP: Record<"about_user" | "user_ask", Record<UseCase, string>> = {
-  about_user: {
-    b2b_sales: "Who you are and what you sell. More specifics = better personalization.",
-    masters_outreach: "Your background, GPA, research interests, and target programs.",
-    job_hunt: "Your current role, years of experience, key projects, and what you're looking for.",
-    executive_outreach: "Your venture or role, stage, and why you're reaching out to this type of person.",
-    networking: "Your program, graduation timeline, and what area you want to break into.",
-  },
-  user_ask: {
-    b2b_sales: "One specific, low-friction ask. Avoid 'let me know if interested.'",
-    masters_outreach: "Ask for their time, not a favor. Keep it under 20 minutes.",
-    job_hunt: "A conversation, not a job. Ask to learn — not to be referred.",
-    executive_outreach: "Ask for their perspective, not their endorsement.",
-    networking: "Keep it short and easy to say yes to.",
+    networking: "e.g. Building a multi agent crisis response system, presented at Khoury symposium (optional)",
   },
 };
 
@@ -334,90 +312,191 @@ export default function GeneratorPage() {
       <Navbar />
       <main className="pt-20 min-h-screen">
         {/* Header */}
-        <section className="border-b border-zinc-800/60 py-16 sm:py-20 text-center">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tight text-zinc-50 mb-4">
-            Generate Cold Emails
-          </h1>
-          <p className="text-zinc-400 text-xl max-w-xl mx-auto">
-            Paste a prospect&apos;s URL. Three AI agents will research their site, write 3 personalized variants, and score each one.
-          </p>
-          <p className="text-zinc-600 text-sm mt-3">
-            Agent 1: Research Analyst &nbsp;&middot;&nbsp; Agent 2: Email Writer &nbsp;&middot;&nbsp; Agent 3: Scoring Judge
-          </p>
+        <section className="text-center" style={{ paddingTop: 80, paddingBottom: 24 }}>
+          <div className="mx-auto px-6" style={{ maxWidth: 720 }}>
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 11,
+                color: "#6e6e6e",
+                letterSpacing: "0.04em",
+                marginBottom: 16,
+              }}
+            >
+              the generator
+            </p>
+            <div
+              style={{
+                height: 1,
+                background: "#2c241c",
+                width: 64,
+                margin: "0 auto 32px",
+              }}
+            />
+            <h1
+              style={{
+                fontSize: "clamp(40px, 5vw, 56px)",
+                fontWeight: 500,
+                lineHeight: 1.08,
+                letterSpacing: "-0.025em",
+                color: "#f5f5f0",
+                marginBottom: 20,
+              }}
+            >
+              Paste a URL. Get{" "}
+              <em
+                style={{
+                  fontFamily: SERIF_STACK,
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  color: "#c9b896",
+                }}
+              >
+                three
+              </em>{" "}
+              drafts.
+            </h1>
+            <p
+              style={{
+                fontSize: 17,
+                lineHeight: 1.5,
+                color: "#8a8a85",
+                maxWidth: 480,
+                margin: "0 auto 24px",
+              }}
+            >
+              Three specialist agents will research the site, write personalized variants, and score each one.
+            </p>
+            <div
+              className="font-mono flex flex-wrap items-center justify-center"
+              style={{
+                fontSize: 11,
+                color: "#6e6e6e",
+                letterSpacing: "0.04em",
+                columnGap: 32,
+                rowGap: 8,
+              }}
+            >
+              <span>01 · research analyst</span>
+              <span>02 · email writer</span>
+              <span>03 · scoring judge</span>
+            </div>
+            <div
+              style={{
+                height: 1,
+                background: "#2c241c",
+                width: 64,
+                margin: "32px auto 64px",
+              }}
+            />
+          </div>
         </section>
 
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-12 space-y-8">
+        <div className="mx-auto px-6" style={{ maxWidth: 720, paddingBottom: 80 }} >
           {/* Input card */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-8">
-            <div className="space-y-6">
+          <div
+            style={{
+              background: "#0d0d0d",
+              border: "1px solid #1a1a1a",
+              borderRadius: 4,
+              padding: 48,
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
               {/* Field 1: Prospect URL */}
               <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                  Prospect URL
-                </label>
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  prospect url
+                </p>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com"
                   required
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                 />
-                <p className="mt-1.5 text-xs text-zinc-500">
-                  The website of the company, lab, person, or program you&apos;re reaching out to
+                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                  The website of the company, lab, person, or program you&apos;re reaching out to.
                 </p>
               </div>
 
               {/* Field 2: Outreach type */}
               <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                  Outreach type
-                </label>
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  outreach type
+                </p>
                 <select
                   value={useCase}
                   onChange={(e) => setUseCase(e.target.value as UseCase)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
                 >
-                  <option value="b2b_sales">B2B Sales - pitch a product or service</option>
-                  <option value="masters_outreach">Master&apos;s / PhD outreach - reach out to a lab or program</option>
-                  <option value="job_hunt">Job hunt - reach out about a role</option>
-                  <option value="executive_outreach">Executive outreach - peer-to-peer to a C-suite contact</option>
-                  <option value="networking">Networking - start a real connection</option>
+                  <option value="b2b_sales">B2B sales · pitch a product or service</option>
+                  <option value="masters_outreach">Master&apos;s / PhD outreach · reach out to a lab or program</option>
+                  <option value="job_hunt">Job hunt · reach out about a role</option>
+                  <option value="executive_outreach">Executive outreach · peer to peer to a C suite contact</option>
+                  <option value="networking">Networking · start a real connection</option>
                 </select>
-                <p className="mt-1.5 text-xs text-zinc-500">
-                  We tailor the email style, length, and tone to the type of outreach
+                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                  We tailor email length, framing, and ask to your use case.
                 </p>
               </div>
 
               {/* Field 3: About you */}
               <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                  About you
-                </label>
-                <p className="text-sm text-zinc-400 mb-2">
-                  {HELPER_TEXT_MAP.about_user[useCase]}
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  about you
                 </p>
                 <textarea
                   value={aboutUser}
                   onChange={(e) => setAboutUser(e.target.value)}
-                  placeholder={PLACEHOLDER_MAP.about_user[useCase]}
+                  placeholder="e.g. I'm a senior ML engineer applying for inference team roles at AI first companies."
                   rows={3}
                   maxLength={2000}
                   required
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                 />
-                <p className="mt-1.5 text-xs text-zinc-500">
-                  One or two sentences. Who you are, what you do, what&apos;s relevant to this outreach.
+                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                  One or two sentences. Who you are and what&apos;s relevant to this outreach.
                 </p>
               </div>
 
               {/* Field 4: Your ask */}
               <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                  What are you asking for?
-                </label>
-                <p className="text-sm text-zinc-400 mb-2">
-                  {HELPER_TEXT_MAP.user_ask[useCase]}
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  what are you asking for
                 </p>
                 <textarea
                   value={userAsk}
@@ -426,80 +505,148 @@ export default function GeneratorPage() {
                   rows={2}
                   maxLength={1000}
                   required
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                 />
-                <p className="mt-1.5 text-xs text-zinc-500">
-                  Be specific. The clearer the ask, the better the email.
+                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                  Be specific. A 15 minute call, a referral, a portfolio review, an application question.
                 </p>
               </div>
 
               {/* Field 5: Highlights (optional) */}
               <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                  Highlights (optional)
-                </label>
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  highlights (optional)
+                </p>
                 <textarea
                   value={highlights}
                   onChange={(e) => setHighlights(e.target.value)}
                   placeholder={PLACEHOLDER_MAP.highlights[useCase]}
                   rows={2}
                   maxLength={2000}
-                  className="w-full rounded-xl border border-zinc-700 bg-zinc-950/60 px-4 py-3 text-zinc-100 placeholder-zinc-600 focus:border-blue-400/60 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all text-base resize-y"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                 />
-                <p className="mt-1.5 text-xs text-zinc-500">
+                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                   Numbers, customer names, recent wins. The model weaves these in naturally.
                 </p>
               </div>
 
               {/* Field 6: Tone */}
               <div>
-                <label className="block text-sm font-semibold text-zinc-300 mb-2">
-                  Tone
-                </label>
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  tone
+                </p>
                 <select
                   value={tonePreference}
                   onChange={(e) => setTonePreference(e.target.value as TonePreference)}
-                  className="w-full h-11 rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white focus:border-blue-400/60 focus:outline-none focus:ring-1 focus:ring-blue-400/20 transition-all"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
                 >
-                  <option value="auto">Auto - match the outreach type</option>
-                  <option value="formal">Formal - polished, no contractions</option>
-                  <option value="warm">Warm - friendly, peer-to-peer</option>
-                  <option value="direct">Direct - short sentences, no fluff</option>
+                  <option value="auto">Auto · match the outreach type</option>
+                  <option value="formal">Formal · polished, no contractions</option>
+                  <option value="warm">Warm · friendly, peer to peer</option>
+                  <option value="direct">Direct · short sentences, no fluff</option>
                 </select>
-                <p className="mt-1.5 text-xs text-zinc-500">
-                  Override the default tone for this outreach type
+                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                  Override the default tone for your selected outreach type.
                 </p>
               </div>
             </div>
 
             {/* Generate button */}
-            <button
-              onClick={handleGenerate}
-              disabled={loading}
-              className="mt-8 w-full rounded-xl bg-[#3b82f6] py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-3">
-                  <span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  <span className="animate-pulse">{loadingStage || "Generating..."}</span>
-                </span>
-              ) : (
-                "Generate emails"
-              )}
-            </button>
+            <div className="text-center" style={{ marginTop: 40 }}>
+              <button
+                onClick={handleGenerate}
+                disabled={loading}
+                className="hover:border-[#f5f5f0] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                style={{
+                  background: "transparent",
+                  border: "1px solid #c9b896",
+                  color: "#f5f5f0",
+                  padding: "14px 48px",
+                  borderRadius: 4,
+                  fontSize: 15,
+                  fontWeight: 500,
+                }}
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center" style={{ gap: 12 }}>
+                    <span
+                      className="rounded-full animate-spin"
+                      style={{
+                        width: 14,
+                        height: 14,
+                        border: "2px solid rgba(201,184,150,0.25)",
+                        borderTopColor: "#c9b896",
+                      }}
+                    />
+                    <span>{loadingStage || "Generating..."}</span>
+                  </span>
+                ) : (
+                  "Generate three drafts"
+                )}
+              </button>
+              <p
+                style={{
+                  fontFamily: SERIF_STACK,
+                  fontStyle: "italic",
+                  fontWeight: 400,
+                  fontSize: 14,
+                  color: "#8a7d63",
+                  letterSpacing: "0.01em",
+                  marginTop: 16,
+                }}
+              >
+                ten seconds, on average
+              </p>
+            </div>
           </div>
 
           {/* Error state */}
           {hasAttempted && error && (
-            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-5">
-              <p className="text-sm font-semibold text-red-400 mb-1">Error</p>
-              <p className="text-sm text-red-300 whitespace-pre-wrap">{error}</p>
+            <div
+              style={{
+                marginTop: 32,
+                borderRadius: 4,
+                border: "1px solid #5a2c2c",
+                background: "rgba(120,40,40,0.08)",
+                padding: 20,
+              }}
+            >
+              <p
+                className="font-mono"
+                style={{
+                  fontSize: 11,
+                  color: "#d4a4a4",
+                  letterSpacing: "0.04em",
+                  marginBottom: 6,
+                }}
+              >
+                error
+              </p>
+              <p style={{ fontSize: 14, color: "#d4a4a4", lineHeight: 1.5, whiteSpace: "pre-wrap" }}>
+                {error}
+              </p>
             </div>
           )}
 
           {/* Results */}
           {result && (
-            <div className="space-y-6">
+            <div className="space-y-6" style={{ marginTop: 48 }}>
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-zinc-50">
@@ -531,13 +678,58 @@ export default function GeneratorPage() {
 
           {/* Empty state */}
           {!result && !loading && !error && (
-            <div className="rounded-2xl border border-dashed border-zinc-800 py-20 text-center">
-              <p className="text-5xl mb-4"></p>
-              <p className="text-zinc-400 font-medium mb-2">
-                Your emails will appear here
+            <div
+              className="text-center"
+              style={{
+                marginTop: 32,
+                border: "1px solid #1a1a1a",
+                borderRadius: 4,
+                padding: "80px 32px",
+              }}
+            >
+              <p
+                className="font-mono"
+                style={{
+                  fontSize: 11,
+                  color: "#6e6e6e",
+                  letterSpacing: "0.04em",
+                  marginBottom: 16,
+                }}
+              >
+                output
               </p>
-              <p className="text-sm text-zinc-600">
-                Paste any prospect URL above and hit Generate
+              <div
+                style={{
+                  height: 1,
+                  background: "#2c241c",
+                  width: 32,
+                  margin: "0 auto 24px",
+                }}
+              />
+              <p
+                style={{
+                  fontSize: 18,
+                  fontWeight: 500,
+                  color: "#f5f5f0",
+                  marginBottom: 8,
+                  lineHeight: 1.4,
+                }}
+              >
+                Your{" "}
+                <em
+                  style={{
+                    fontFamily: SERIF_STACK,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: "#c9b896",
+                  }}
+                >
+                  drafts
+                </em>{" "}
+                will appear here.
+              </p>
+              <p style={{ fontSize: 14, color: "#6e6e6e" }}>
+                Paste a URL above and generate.
               </p>
             </div>
           )}
