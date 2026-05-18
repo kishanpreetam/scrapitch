@@ -1,302 +1,582 @@
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import HomeLiveDemo from "@/components/HomeLiveDemo";
-import HomeUseCases from "@/components/HomeUseCases";
-import HomeComparison from "@/components/HomeComparison";
-import HomeHowItWorks from "@/components/HomeHowItWorks";
-import HomeTabbedShowcase from "@/components/HomeTabbedShowcase";
-import HomeFaqSection from "@/components/HomeFaqSection";
+import HomeHero from "@/components/HomeHero";
 
-// ── Data ──────────────────────────────────────────────────────────
-
-const tableRows = [
-  { feature: "Prospect research", traditional: "Manual. Google them, read their site, take notes", scrapitch: "Dedicated Research Agent reads their entire site" },
-  { feature: "Personalization", traditional: "Whatever you remember to include", scrapitch: "Pulled from their homepage, about page, case studies" },
-  { feature: "Industry context", traditional: "You figure out the angle", scrapitch: "Auto detected from 12 frameworks" },
-  { feature: "Tone", traditional: "One default style", scrapitch: "Matches the prospect's own tone" },
-  { feature: "Email structure", traditional: "Unstructured or template", scrapitch: "3 proven frameworks (PAS, Value First, Curious)" },
-  { feature: "Subject lines", traditional: "Write one, hope it works", scrapitch: "3 options per variant, optimized for opens" },
-  { feature: "Follow ups", traditional: "Write each manually or skip", scrapitch: "Auto generated Day 3, 7, 14" },
-  { feature: "Quality check", traditional: "Re-read it yourself", scrapitch: "Independent AI agent scores on 6 factors" },
-  { feature: "Time", traditional: "15 to 30 minutes", scrapitch: "About 10 seconds" },
-  { feature: "Consistency", traditional: "Depends on your energy", scrapitch: "Three agents check each other's work" },
+const useCaseSections = [
+  {
+    id: "sales",
+    bg: "dark" as const,
+    eyebrow: "For sales",
+    headline: "Quote their case studies. Not your features.",
+    subhead:
+      "Scrapitch reads their site and writes outreach that sounds like you've actually done the homework.",
+    sampleSubject: "Idea for [Company]'s Q2 pipeline",
+    samplePreview: [
+      "Saw the case study with your enterprise customer.",
+      "There is a similar pattern in your mid market segment that...",
+    ],
+    cta: "Try it for sales",
+    href: "/generator",
+  },
+  {
+    id: "jobs",
+    bg: "light" as const,
+    eyebrow: "For job seekers",
+    headline: "Cold emails recruiters actually open.",
+    subhead:
+      "Mention the team's real work, the actual product, the exact challenge. In your voice, not a template's.",
+    sampleSubject: "Saw your team's recent launch",
+    samplePreview: [
+      "Noticed your team shipped the new ingest pipeline.",
+      "I built something similar at my last role and...",
+    ],
+    cta: "Try it for job hunting",
+    href: "/generator",
+  },
+  {
+    id: "masters",
+    bg: "dark" as const,
+    eyebrow: "For master's outreach",
+    headline: "Email professors about their research. Not a generic ask.",
+    subhead:
+      "Scrapitch reads their lab page and shapes your email around the work they actually publish.",
+    sampleSubject: "Question about your CRISPR delivery paper",
+    samplePreview: [
+      "Read your 2025 paper on lipid nanoparticle targeting.",
+      "I am curious about the tradeoff between specificity and...",
+    ],
+    cta: "Try it for master's outreach",
+    href: "/generator",
+  },
+  {
+    id: "founders",
+    bg: "light" as const,
+    eyebrow: "For founders",
+    headline: "Reach the operator. Skip the assistant.",
+    subhead:
+      "Personalized outreach to execs and investors built on what they care about, pulled from what they ship.",
+    sampleSubject: "Noticed your latest portfolio bet",
+    samplePreview: [
+      "Saw your check into the developer tools company last month.",
+      "We are building in an adjacent space and would love your...",
+    ],
+    cta: "Try it for executive outreach",
+    href: "/generator",
+  },
+  {
+    id: "networking",
+    bg: "dark" as const,
+    eyebrow: "For networking",
+    headline: "Sound like a person. Not a pitch.",
+    subhead:
+      "Coffee chats, alumni intros, conference followups. Personalized enough to deserve a reply.",
+    sampleSubject: "Coffee chat after your talk",
+    samplePreview: [
+      "Your point about agent evaluation in the keynote stuck with me.",
+      "I would love to hear more about how your team is thinking about...",
+    ],
+    cta: "Try it for networking",
+    href: "/generator",
+  },
 ];
 
-const whoCards = [
+const pipelineCards = [
   {
-    role: "SDR at a B2B SaaS company",
-    desc: "Spending 20 min researching every prospect and still writing semi-generic copy? Paste the URL. Get 3 emails and follow ups in 10 seconds.",
-    icon: (
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-      </svg>
-    ),
+    number: "01",
+    title: "Research Analyst",
+    body: "Scrapes the prospect's site and pulls structured signal: what they do, who they serve, what they ship.",
   },
   {
-    role: "Agency owner doing outbound",
-    desc: "Generic merge tag templates get ignored. Scrapitch reads the prospect's site and writes emails that reference their actual business.",
-    icon: (
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    ),
+    number: "02",
+    title: "Email Writer",
+    body: "Drafts three variants using proven frameworks. Strict word ceilings. Zero fabricated details.",
   },
   {
-    role: "Freelance consultant",
-    desc: "No time to write personalized emails for every lead. URL in, personalized email out. Spend time closing, not writing.",
-    icon: (
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
-    ),
-  },
-  {
-    role: "Founder doing their own outreach",
-    desc: "Don't know which framework to use or whether the email is any good? Scrapitch handles the research, the writing, and the scoring.",
-    icon: (
-      <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-      </svg>
-    ),
+    number: "03",
+    title: "Scoring Judge",
+    body: "Grades each email on six factors: personalization, length, single ask, problem framing, subject line, spam signals.",
   },
 ];
 
-const cardIconStyles = [
-  { bg: "rgba(59,130,246,0.08)", color: "#3b82f6", border: "rgba(59,130,246,0.15)" },
-  { bg: "rgba(34,197,94,0.08)", color: "#22c55e", border: "rgba(34,197,94,0.15)" },
-  { bg: "rgba(245,158,11,0.08)", color: "#f59e0b", border: "rgba(245,158,11,0.15)" },
-  { bg: "rgba(168,85,247,0.08)", color: "#a855f7", border: "rgba(168,85,247,0.15)" },
+const comparisonRows = [
+  {
+    label: "Source of personalization",
+    others: "A CSV column",
+    scrapitch: "The prospect's live website",
+  },
+  {
+    label: "Research time",
+    others: "You do it",
+    scrapitch: "Ten seconds, automated",
+  },
+  {
+    label: "Variants per prospect",
+    others: "One",
+    scrapitch: "Three, each a different framework",
+  },
+  {
+    label: "Quality check",
+    others: "Re-read it yourself",
+    scrapitch: "Six-factor scoring with reasoning",
+  },
+  {
+    label: "Use cases",
+    others: "B2B sales",
+    scrapitch: "Sales, jobs, grad school, founders, networking",
+  },
+  {
+    label: "Cost",
+    others: "Subscription",
+    scrapitch: "Free",
+  },
 ];
 
-// ── Page ──────────────────────────────────────────────────────────
+function UseCaseSection({
+  section,
+}: {
+  section: (typeof useCaseSections)[number];
+}) {
+  const isDark = section.bg === "dark";
+  const bg = isDark ? "#0a0a0a" : "#faf8f5";
+  const headingColor = isDark ? "#ffffff" : "#0a0a0a";
+  const eyebrowColor = isDark ? "#9ca3af" : "#6b7280";
+  const subheadColor = isDark ? "#9ca3af" : "#525252";
+  const cardBg = isDark ? "#111111" : "#ffffff";
+  const cardBorder = isDark ? "#1f2937" : "rgba(0,0,0,0.08)";
+  const cardSubject = isDark ? "#ffffff" : "#0a0a0a";
+  const cardBody = isDark ? "#9ca3af" : "#525252";
+
+  return (
+    <section
+      style={{
+        background: bg,
+        minHeight: "80vh",
+        display: "flex",
+        alignItems: "center",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div
+        className="w-full mx-auto px-6 text-center"
+        style={{ maxWidth: 900 }}
+      >
+        <p
+          style={{
+            fontSize: 13,
+            fontWeight: 500,
+            letterSpacing: "0.06em",
+            textTransform: "uppercase",
+            color: eyebrowColor,
+            marginBottom: 20,
+          }}
+        >
+          {section.eyebrow}
+        </p>
+        <h2
+          style={{
+            fontSize: "clamp(34px, 5vw, 56px)",
+            fontWeight: 600,
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
+            color: headingColor,
+            marginBottom: 20,
+          }}
+        >
+          {section.headline}
+        </h2>
+        <p
+          style={{
+            fontSize: 18,
+            color: subheadColor,
+            lineHeight: 1.55,
+            maxWidth: 640,
+            margin: "0 auto 40px",
+          }}
+        >
+          {section.subhead}
+        </p>
+
+        {/* Sample email card */}
+        <div
+          className="mx-auto text-left"
+          style={{
+            maxWidth: 520,
+            background: cardBg,
+            border: `1px solid ${cardBorder}`,
+            borderRadius: 16,
+            padding: 24,
+            marginBottom: 32,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 11,
+              fontWeight: 500,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: isDark ? "#6b7280" : "#9ca3af",
+              marginBottom: 10,
+            }}
+          >
+            Sample subject
+          </p>
+          <p
+            style={{
+              fontSize: 16,
+              fontWeight: 500,
+              color: cardSubject,
+              marginBottom: 14,
+              lineHeight: 1.4,
+            }}
+          >
+            {section.sampleSubject}
+          </p>
+          <div
+            style={{
+              borderTop: `1px solid ${cardBorder}`,
+              paddingTop: 14,
+            }}
+          >
+            {section.samplePreview.map((line, i) => (
+              <p
+                key={i}
+                style={{
+                  fontSize: 14,
+                  color: cardBody,
+                  lineHeight: 1.6,
+                  marginBottom: i === section.samplePreview.length - 1 ? 0 : 6,
+                }}
+              >
+                {line}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        <Link
+          href={section.href}
+          className="hover:underline"
+          style={{
+            color: "#3b82f6",
+            fontWeight: 500,
+            fontSize: 17,
+            textDecoration: "none",
+          }}
+        >
+          {section.cta}
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function PipelineSection() {
+  return (
+    <section style={{ background: "#0a0a0a", paddingTop: 120, paddingBottom: 120 }}>
+      <div className="w-full mx-auto px-6" style={{ maxWidth: 1100 }}>
+        <div className="text-center" style={{ marginBottom: 64 }}>
+          <h2
+            style={{
+              fontSize: "clamp(34px, 5vw, 56px)",
+              fontWeight: 600,
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+              color: "#ffffff",
+              marginBottom: 20,
+            }}
+          >
+            One URL in. Three emails out.
+          </h2>
+          <p
+            style={{
+              fontSize: 18,
+              color: "#9ca3af",
+              maxWidth: 600,
+              margin: "0 auto",
+              lineHeight: 1.55,
+            }}
+          >
+            Three specialist agents do the work. You read the result.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {pipelineCards.map((card) => (
+            <div
+              key={card.number}
+              style={{
+                background: "#111111",
+                border: "1px solid #1f2937",
+                borderRadius: 16,
+                padding: 32,
+              }}
+            >
+              <p
+                style={{
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: "#3b82f6",
+                  marginBottom: 24,
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {card.number}
+              </p>
+              <h3
+                style={{
+                  fontSize: 22,
+                  fontWeight: 500,
+                  color: "#ffffff",
+                  marginBottom: 12,
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {card.title}
+              </h3>
+              <p style={{ fontSize: 15, color: "#9ca3af", lineHeight: 1.6 }}>
+                {card.body}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonSection() {
+  return (
+    <section style={{ background: "#faf8f5", paddingTop: 120, paddingBottom: 120 }}>
+      <div className="w-full mx-auto px-6" style={{ maxWidth: 1000 }}>
+        <div className="text-center" style={{ marginBottom: 56 }}>
+          <h2
+            style={{
+              fontSize: "clamp(34px, 5vw, 56px)",
+              fontWeight: 600,
+              lineHeight: 1.1,
+              letterSpacing: "-0.02em",
+              color: "#0a0a0a",
+              marginBottom: 20,
+            }}
+          >
+            Personalized from their website. Not your spreadsheet.
+          </h2>
+          <p
+            style={{
+              fontSize: 18,
+              color: "#525252",
+              maxWidth: 640,
+              margin: "0 auto",
+              lineHeight: 1.55,
+            }}
+          >
+            Every other AI email tool fills a template with name and company. Scrapitch reads the actual site.
+          </p>
+        </div>
+
+        <div
+          style={{
+            background: "#ffffff",
+            border: "1px solid rgba(0,0,0,0.08)",
+            borderRadius: 16,
+            overflow: "hidden",
+          }}
+        >
+          {/* Header */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-3"
+            style={{
+              background: "#f5f1ea",
+              borderBottom: "1px solid rgba(0,0,0,0.08)",
+            }}
+          >
+            <div
+              style={{
+                padding: "18px 24px",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#6b7280",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+              }}
+            >
+              Feature
+            </div>
+            <div
+              style={{
+                padding: "18px 24px",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#6b7280",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                borderLeft: "1px solid rgba(0,0,0,0.06)",
+              }}
+            >
+              Other AI tools
+            </div>
+            <div
+              style={{
+                padding: "18px 24px",
+                fontSize: 13,
+                fontWeight: 500,
+                color: "#0a0a0a",
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                borderLeft: "1px solid rgba(0,0,0,0.06)",
+              }}
+            >
+              Scrapitch
+            </div>
+          </div>
+
+          {comparisonRows.map((row, i) => (
+            <div
+              key={row.label}
+              className="grid grid-cols-1 md:grid-cols-3"
+              style={{
+                borderBottom:
+                  i < comparisonRows.length - 1
+                    ? "1px solid rgba(0,0,0,0.05)"
+                    : "none",
+              }}
+            >
+              <div
+                style={{
+                  padding: "18px 24px",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "#0a0a0a",
+                }}
+              >
+                {row.label}
+              </div>
+              <div
+                style={{
+                  padding: "18px 24px",
+                  fontSize: 15,
+                  color: "#6b7280",
+                  borderLeft: "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                {row.others}
+              </div>
+              <div
+                style={{
+                  padding: "18px 24px",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: "#0a0a0a",
+                  borderLeft: "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                {row.scrapitch}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FinalCtaSection() {
+  return (
+    <section
+      style={{
+        background: "#0a0a0a",
+        paddingTop: 120,
+        paddingBottom: 120,
+      }}
+    >
+      <div className="w-full mx-auto px-6 text-center" style={{ maxWidth: 800 }}>
+        <h2
+          style={{
+            fontSize: "clamp(40px, 6vw, 64px)",
+            fontWeight: 600,
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
+            color: "#ffffff",
+            marginBottom: 24,
+          }}
+        >
+          Stop writing cold emails alone.
+        </h2>
+        <p
+          style={{
+            fontSize: 20,
+            color: "#9ca3af",
+            lineHeight: 1.5,
+            maxWidth: 560,
+            margin: "0 auto 40px",
+          }}
+        >
+          Paste a URL. Get three emails. Send the best one.
+        </p>
+
+        <div className="flex items-center justify-center">
+          <Link
+            href="/generator"
+            className="hover:underline"
+            style={{
+              color: "#3b82f6",
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: "none",
+            }}
+          >
+            Try it free
+          </Link>
+          <span
+            aria-hidden="true"
+            style={{
+              display: "inline-block",
+              width: 1,
+              height: 20,
+              background: "#374151",
+              margin: "0 20px",
+            }}
+          />
+          <Link
+            href="/how-it-works"
+            className="hover:text-[#3b82f6] transition-colors"
+            style={{
+              color: "#ffffff",
+              fontWeight: 500,
+              fontSize: 17,
+              textDecoration: "none",
+            }}
+          >
+            See how it works
+          </Link>
+        </div>
+
+        <p
+          style={{
+            fontSize: 13,
+            color: "#6b7280",
+            marginTop: 40,
+          }}
+        >
+          Free. No card required. Works on any website with a homepage.
+        </p>
+      </div>
+    </section>
+  );
+}
 
 export default function LandingPage() {
   return (
     <>
-      <Navbar />
-      <main className="pt-14 overflow-x-hidden">
-
-        {/* ── 1. HERO ─────────────────────────────────────────── */}
-        <section className="relative overflow-hidden" style={{ background: "#0a0a0a" }}>
-          {/* Ambient glow */}
-          <div
-            aria-hidden="true"
-            style={{
-              position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-              animation: "hero-ambient 8s ease-in-out infinite",
-              background:
-                "radial-gradient(ellipse 65% 55% at 50% -5%, rgba(59,130,246,0.28) 0%, rgba(59,130,246,0.08) 45%, transparent 68%), " +
-                "radial-gradient(ellipse 45% 35% at 80% 20%, rgba(96,165,250,0.10) 0%, transparent 55%), " +
-                "radial-gradient(ellipse 40% 30% at 15% 70%, rgba(37,99,235,0.08) 0%, transparent 55%)",
-            }}
-          />
-          {/* Grid texture */}
-          <div
-            aria-hidden="true"
-            style={{
-              position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
-              opacity: 0.025,
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M0 0h1v40H0zm40 0h-1v40h1zM0 0v1h40V0zm0 40v-1h40v1z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            }}
-          />
-
-          <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pt-32 pb-28 text-center" style={{ zIndex: 1 }}>
-            {/* Pill badge */}
-            <div style={{
-              display: "inline-flex", alignItems: "center",
-              padding: "6px 16px", borderRadius: "999px",
-              background: "rgba(59,130,246,0.1)",
-              border: "1px solid rgba(59,130,246,0.3)",
-              marginBottom: 28, cursor: "default",
-            }}>
-              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#60a5fa", display: "inline-block", marginRight: 8 }} />
-              <span style={{ fontSize: 13, color: "#93c5fd", fontWeight: 500, letterSpacing: "0.01em" }}>
-                AI-powered cold email in seconds
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-[1.02] mb-6">
-              <span className="text-white block">Scrape any website.</span>
-              <span className="block">
-                <span className="text-white">Write cold emails </span>
-                <span style={{ color: "#3b82f6" }}>that convert.</span>
-              </span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="mx-auto max-w-xl text-xl text-[#94a3b8] leading-relaxed mb-10">
-              Paste a prospect&apos;s URL. Three specialized AI agents research their site, write 3 personalized variants, and score each one independently.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-5">
-              <Link
-                href="/signup"
-                className="rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
-              >
-                Get Started
-              </Link>
-              <Link
-                href="/how-it-works"
-                className="rounded-xl border border-white/15 px-8 py-3.5 text-base font-semibold text-[#94a3b8] hover:border-white/25 hover:text-white transition-colors"
-              >
-                See how it works
-              </Link>
-            </div>
-            <p className="text-sm text-[#64748b]">No setup required. Ready in seconds.</p>
-          </div>
-        </section>
-
-        {/* Dark → Light transition */}
-        <div aria-hidden="true" style={{ height: 80, background: "linear-gradient(to bottom, #0a0a0a, #faf8f5)" }} />
-
-        {/* ── 2. LIVE DEMO ─────────────────────────────────────── */}
-        <HomeLiveDemo />
-
-        {/* ── 3. USE CASES ─────────────────────────────────────── */}
-        <HomeUseCases />
-
-        {/* ── 4. COMPARISON ───────────────────────────────────── */}
-        <HomeComparison />
-
-        {/* ── 4. HOW IT WORKS ─────────────────────────────────── */}
-        <HomeHowItWorks />
-
-        {/* ── 5. TABBED SHOWCASE ──────────────────────────────── */}
-        <HomeTabbedShowcase />
-
-        {/* ── 6. WHO IT'S FOR ─────────────────────────────────── */}
-        <section className="border-t border-[#e8e4dc] py-24 md:py-32" style={{ background: "#faf8f5" }}>
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">USE CASES</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>
-                Built for anyone doing B2B outreach
-              </h2>
-              <p className="mt-4 text-lg" style={{ color: "#5a5a52" }}>
-                If you write cold emails to people who have a website, Scrapitch speeds up your research and makes your copy better.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 gap-5">
-              {whoCards.map((card, i) => (
-                <div
-                  key={i}
-                  className="rounded-2xl p-7 transition-all duration-200 shadow-sm hover:shadow-md hover:-translate-y-0.5"
-                  style={{
-                    background: "#ffffff",
-                    border: "1px solid rgba(0,0,0,0.06)",
-                  }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div
-                      className="flex items-center justify-center rounded-xl shrink-0"
-                      style={{
-                        width: 44, height: 44,
-                        background: cardIconStyles[i].bg,
-                        color: cardIconStyles[i].color,
-                        border: `1px solid ${cardIconStyles[i].border}`,
-                      }}
-                    >
-                      {card.icon}
-                    </div>
-                    <div>
-                      <p className="text-base font-bold mb-2" style={{ color: "#1a1a1a" }}>{card.role}</p>
-                      <p className="text-sm leading-relaxed" style={{ color: "#5a5a52" }}>{card.desc}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── 7. WHY SCRAPITCH TABLE ───────────────────────────── */}
-        <section className="border-t border-[#e8e4dc] py-24 md:py-32" style={{ background: "#f0ede7" }}>
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-14">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#3b82f6] mb-3">WHY SCRAPITCH</p>
-              <h2 className="text-4xl sm:text-5xl font-black tracking-tight" style={{ color: "#1a1a1a" }}>
-                The old way vs the Scrapitch way
-              </h2>
-              <p className="mt-4 text-lg max-w-2xl mx-auto" style={{ color: "#5a5a52" }}>
-                Most cold email workflows involve manual research, guesswork, and repetitive prompting. Scrapitch handles it all.
-              </p>
-            </div>
-
-            <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(0,0,0,0.08)", background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-              {/* Header */}
-              <div className="grid grid-cols-3" style={{ background: "#ede9e2", borderBottom: "1px solid rgba(0,0,0,0.08)" }}>
-                <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#8a8a82" }}>Feature</div>
-                <div className="px-5 py-4 text-sm font-semibold text-center" style={{ color: "#8a8a82", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>Traditional Approach</div>
-                <div className="px-5 py-4 text-sm font-bold text-center" style={{ color: "#3b82f6", borderLeft: "1px solid rgba(0,0,0,0.06)" }}>With Scrapitch</div>
-              </div>
-              {tableRows.map((row, i) => (
-                <div
-                  key={i}
-                  className="grid grid-cols-3"
-                  style={{
-                    borderBottom: i < tableRows.length - 1 ? "1px solid rgba(0,0,0,0.06)" : "none",
-                    background: i % 2 === 0 ? "white" : "rgba(0,0,0,0.015)",
-                  }}
-                >
-                  <div className="px-5 py-4 text-sm font-semibold" style={{ color: "#1a1a1a" }}>{row.feature}</div>
-                  <div className="px-5 py-4 text-sm" style={{ color: "#8a8a82", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.traditional}</div>
-                  <div className="px-5 py-4 text-sm font-medium" style={{ color: "#1a1a1a", borderLeft: "1px solid rgba(0,0,0,0.04)" }}>{row.scrapitch}</div>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-10 text-center">
-              <Link
-                href="/generator"
-                className="inline-flex items-center gap-2 rounded-xl bg-[#3b82f6] px-8 py-3.5 text-base font-bold text-white hover:bg-[#2563eb] transition-colors"
-              >
-                Try it now
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* ── 8. FAQ ──────────────────────────────────────────── */}
-        <HomeFaqSection />
-
-        {/* Light → Dark transition */}
-        <div aria-hidden="true" style={{ height: 80, background: "linear-gradient(to bottom, #faf8f5, #0a0a0a)" }} />
-
-        {/* ── 10. FINAL CTA ───────────────────────────────────── */}
-        <section className="py-28 md:py-36" style={{
-          background: "#0a0a0a",
-          backgroundImage: "radial-gradient(ellipse 60% 50% at 50% 100%, rgba(59,130,246,0.12) 0%, transparent 70%)",
-        }}>
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white mb-6 leading-tight">
-              Your next reply is<br />one URL away.
-            </h2>
-            <p className="text-xl text-[#94a3b8] mb-10 max-w-xl mx-auto leading-relaxed">
-              Paste a URL. Get 3 personalized cold emails, 3 subject line options each, reply rate scoring, and a full follow up sequence. All in under 10 seconds.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-              <Link
-                href="/signup"
-                className="rounded-xl bg-[#3b82f6] px-10 py-4 text-lg font-bold text-white hover:bg-[#2563eb] transition-colors"
-              >
-                Get Started
-              </Link>
-              <Link
-                href="/how-it-works"
-                className="rounded-xl border border-white/15 px-10 py-4 text-lg font-semibold text-[#94a3b8] hover:border-white/25 hover:text-white transition-colors"
-              >
-                See it in action
-              </Link>
-            </div>
-            <p className="text-sm text-[#64748b]">No setup required. Works with any website.</p>
-          </div>
-        </section>
-
+      <main className="overflow-x-hidden">
+        <HomeHero />
+        {useCaseSections.map((section) => (
+          <UseCaseSection key={section.id} section={section} />
+        ))}
+        <PipelineSection />
+        <ComparisonSection />
+        <FinalCtaSection />
       </main>
       <Footer />
     </>
