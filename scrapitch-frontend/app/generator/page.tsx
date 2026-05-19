@@ -163,12 +163,12 @@ function EmailCard({ variant }: { variant: Variant }) {
 
   return (
     <div
-      className={`rounded-2xl border bg-zinc-900/60 p-7 flex flex-col gap-4 transition-colors ${CARD_BORDER[variant.variant] || "border-zinc-700"}`}
+      className={`rounded-2xl border bg-zinc-900/60 p-5 md:p-7 flex flex-col gap-4 transition-colors ${CARD_BORDER[variant.variant] || "border-zinc-700"}`}
     >
-      {/* Header row */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
+      {/* Header row: stacks on mobile so score sits below label */}
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between md:flex-wrap gap-2">
         <span
-          className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${BADGE[variant.variant] || "bg-zinc-700 text-zinc-300"}`}
+          className={`self-start text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${BADGE[variant.variant] || "bg-zinc-700 text-zinc-300"}`}
         >
           Variant {variant.variant}: {variant.name}
         </span>
@@ -184,7 +184,7 @@ function EmailCard({ variant }: { variant: Variant }) {
           {variant.subject_lines.map((s, i) => (
             <li key={i} className="flex gap-2">
               <span className="text-xs font-bold text-zinc-600 mt-0.5 shrink-0">{i + 1}.</span>
-              <span className="font-semibold text-zinc-100 leading-snug text-sm">{s}</span>
+              <span className="font-semibold text-zinc-100 leading-snug text-base md:text-sm">{s}</span>
             </li>
           ))}
         </ol>
@@ -196,7 +196,7 @@ function EmailCard({ variant }: { variant: Variant }) {
           Email body
         </p>
         <div className="rounded-lg bg-zinc-950/60 border border-zinc-800 p-4">
-          <p className="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
+          <p className="text-[15px] md:text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
             {variant.body}
           </p>
         </div>
@@ -223,10 +223,10 @@ function EmailCard({ variant }: { variant: Variant }) {
       {/* Copy button */}
       <button
         onClick={handleCopy}
-        className={`w-full rounded-lg border py-2.5 text-sm font-semibold transition-all ${
+        className={`w-full rounded-lg border py-3 md:py-2.5 text-base md:text-sm font-semibold transition-all ${
           copied
             ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-            : "border-zinc-700 text-zinc-300 hover:border-blue-400/50 hover:text-blue-300"
+            : "border-[#c9b896] text-zinc-300 hover:text-[#f5f5f0] hover:border-[#f5f5f0]"
         }`}
       >
         {copied ? "Copied to clipboard" : "Copy email"}
