@@ -195,9 +195,8 @@ function UseCasePanel({ uc }: { uc: UseCase }) {
         </p>
 
         <div
-          className="mx-auto text-left"
+          className="mx-auto text-left w-full max-w-full md:max-w-[420px]"
           style={{
-            maxWidth: 420,
             background: cardBg,
             border: `1px solid ${cardBorder}`,
             borderRadius: 4,
