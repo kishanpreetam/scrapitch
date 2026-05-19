@@ -9,7 +9,7 @@ export function AuthLogo() {
         className="text-[20px] md:text-[24px]"
         style={{ fontWeight: 500, letterSpacing: "-0.01em" }}
       >
-        <span style={{ color: "#f5f5f0" }}>Scrap</span>
+        <span style={{ color: "#f5f5f0" }}>Scra</span>
         <span
           style={{
             fontFamily: SERIF_STACK,
@@ -18,7 +18,7 @@ export function AuthLogo() {
             color: "#c9b896",
           }}
         >
-          itch
+          pitch
         </span>
       </span>
     </Link>
