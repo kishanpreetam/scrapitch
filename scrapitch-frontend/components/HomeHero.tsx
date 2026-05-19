@@ -123,6 +123,7 @@ function ProductVisual({ typedChars, pillIndex }: ProductVisualProps) {
           {EMAIL_CARDS.map((card, i) => (
             <div
               key={i}
+              className={i > 0 ? "hidden md:block" : ""}
               style={{
                 background: "#ffffff",
                 borderRadius: 12,

@@ -228,7 +228,23 @@ function UseCasePanel({ uc }: { uc: UseCase }) {
           </p>
         </div>
 
-        <div className="flex items-center justify-center" style={{ gap: 8 }}>
+        <Link
+          href="/generator"
+          className="md:hidden inline-block hover:bg-white/5 transition-colors"
+          style={{
+            border: "1px solid #c9b896",
+            color: "#f5f5f0",
+            padding: "10px 20px",
+            borderRadius: 4,
+            fontSize: 14,
+            fontWeight: 500,
+            textDecoration: "none",
+          }}
+        >
+          {uc.cta}
+        </Link>
+
+        <div className="hidden md:flex items-center justify-center" style={{ gap: 8 }}>
           <span
             aria-hidden="true"
             style={{
@@ -354,11 +370,11 @@ function PipelineSection() {
           {PIPELINE_CARDS.map((c) => (
             <div
               key={c.n}
+              className="p-6 md:p-8"
               style={{
                 background: "#0f0d0a",
                 border: "1px solid #1c1812",
                 borderRadius: 8,
-                padding: 32,
               }}
             >
               <p
@@ -507,8 +523,9 @@ function ComparisonSection() {
         </div>
 
         <div>
+          {/* Header row — mobile: 2-col, desktop: 3-col */}
           <div
-            className="grid grid-cols-1 md:grid-cols-3"
+            className="hidden md:grid md:grid-cols-3"
             style={{
               paddingTop: 16,
               paddingBottom: 16,
@@ -550,30 +567,118 @@ function ComparisonSection() {
             </div>
           </div>
 
+          <div
+            className="grid grid-cols-2 md:hidden"
+            style={{
+              paddingTop: 14,
+              paddingBottom: 14,
+              borderBottom: "1px solid #d8d0bd",
+            }}
+          >
+            <div
+              className="font-mono"
+              style={{
+                fontSize: 12,
+                color: "#6e6657",
+                letterSpacing: "0.04em",
+                paddingRight: 12,
+              }}
+            >
+              Other AI tools
+            </div>
+            <div
+              className="font-mono flex items-center"
+              style={{
+                gap: 6,
+                fontSize: 12,
+                color: "#1a1612",
+                letterSpacing: "0.04em",
+                paddingLeft: 12,
+                borderLeft: "1px solid #d8d0bd",
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  display: "inline-block",
+                  width: 4,
+                  height: 4,
+                  borderRadius: "50%",
+                  background: "#b89968",
+                }}
+              />
+              <span>Scrapitch</span>
+            </div>
+          </div>
+
           {COMPARISON_ROWS.map((row, i) => (
             <div
               key={row.label}
-              className="grid grid-cols-1 md:grid-cols-3"
               style={{
-                paddingTop: 20,
-                paddingBottom: 20,
-                gap: 16,
+                paddingTop: 16,
+                paddingBottom: 16,
                 borderBottom:
                   i < COMPARISON_ROWS.length - 1
                     ? "1px solid #d8d0bd"
                     : "none",
               }}
             >
+              {/* Desktop: 3-col grid */}
               <div
-                style={{ fontSize: 16, fontWeight: 500, color: "#1a1612" }}
+                className="hidden md:grid md:grid-cols-3"
+                style={{ gap: 16 }}
               >
-                {row.label}
+                <div
+                  style={{ fontSize: 16, fontWeight: 500, color: "#1a1612" }}
+                >
+                  {row.label}
+                </div>
+                <div style={{ fontSize: 16, color: "#6e6657" }}>{row.other}</div>
+                <div
+                  style={{ fontSize: 16, fontWeight: 500, color: "#1a1612" }}
+                >
+                  {row.scrapitch}
+                </div>
               </div>
-              <div style={{ fontSize: 16, color: "#6e6657" }}>{row.other}</div>
-              <div
-                style={{ fontSize: 16, fontWeight: 500, color: "#1a1612" }}
-              >
-                {row.scrapitch}
+
+              {/* Mobile: label on top, 2-col underneath with vertical hairline */}
+              <div className="md:hidden">
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#c9b896",
+                    letterSpacing: "0.04em",
+                    textTransform: "lowercase",
+                    marginBottom: 10,
+                  }}
+                >
+                  {row.label}
+                </p>
+                <div className="grid grid-cols-2">
+                  <div
+                    style={{
+                      fontSize: 14,
+                      color: "#6e6657",
+                      paddingRight: 12,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {row.other}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: "#1a1612",
+                      paddingLeft: 12,
+                      borderLeft: "1px solid #d8d0bd",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {row.scrapitch}
+                  </div>
+                </div>
               </div>
             </div>
           ))}
