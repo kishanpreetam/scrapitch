@@ -200,11 +200,10 @@ export default function LoginPage() {
         <div style={{ textAlign: "right", marginBottom: 24 }}>
           <Link
             href="#"
-            className="hover:text-[#c9b896] transition-colors"
+            className="hover:text-[#c9b896] transition-colors text-[13px] md:text-[12px]"
             style={{
               fontFamily: SERIF_STACK,
               fontStyle: "italic",
-              fontSize: 12,
               color: "#8a7d63",
             }}
           >
