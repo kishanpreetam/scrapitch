@@ -258,130 +258,166 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile menu trigger */}
           <button
-            className="md:hidden flex flex-col justify-center items-center transition-colors"
+            className="md:hidden font-mono hover:text-[#f5f5f0] transition-colors"
             style={{
-              width: 32,
-              height: 32,
-              gap: 4,
-              color: "#9ca3af",
+              fontSize: 14,
+              color: "#c9b896",
+              letterSpacing: "0.04em",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "8px 4px",
             }}
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open menu"
           >
-            <span
-              className={`block transition-all duration-200 origin-center ${mobileOpen ? "rotate-45 translate-y-1.5" : ""}`}
-              style={{ width: 20, height: 1.5, background: "currentColor", borderRadius: 2 }}
-            />
-            <span
-              className={`block transition-all duration-200 ${mobileOpen ? "opacity-0 scale-x-0" : ""}`}
-              style={{ width: 20, height: 1.5, background: "currentColor", borderRadius: 2 }}
-            />
-            <span
-              className={`block transition-all duration-200 origin-center ${mobileOpen ? "-rotate-45 -translate-y-1.5" : ""}`}
-              style={{ width: 20, height: 1.5, background: "currentColor", borderRadius: 2 }}
-            />
+            menu
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
-      {mobileOpen && (
+      {/* Mobile slide-down panel */}
+      <div
+        className="md:hidden fixed left-0 right-0 top-0"
+        style={{
+          background: "#0a0a0a",
+          borderBottom: "1px solid #2c241c",
+          borderTop: "1px solid #2c241c",
+          zIndex: 60,
+          transform: mobileOpen ? "translateY(0)" : "translateY(-100%)",
+          transition: "transform 200ms ease",
+          padding: "24px 24px 32px 24px",
+          pointerEvents: mobileOpen ? "auto" : "none",
+          maxHeight: "100vh",
+          overflowY: "auto",
+        }}
+        aria-hidden={!mobileOpen}
+      >
+        {/* Mirror navbar row with close */}
         <div
-          className="md:hidden"
-          style={{
-            borderTop: "1px solid #2c241c",
-            background: "#0a0a0a",
-            padding: "16px",
-          }}
+          className="flex items-center justify-between"
+          style={{ marginBottom: 32 }}
         >
-          <nav className="flex flex-col" style={{ gap: 4, marginBottom: 16 }}>
-            {navLinks.map(({ href, label }) => {
-              const isActive = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
+          <Logo />
+          <button
+            className="font-mono hover:text-[#f5f5f0] transition-colors"
+            style={{
+              fontSize: 14,
+              color: "#c9b896",
+              letterSpacing: "0.04em",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: "8px 4px",
+            }}
+            onClick={() => setMobileOpen(false)}
+            aria-label="Close menu"
+          >
+            close
+          </button>
+        </div>
+
+        {/* Stacked links */}
+        <nav className="flex flex-col">
+          {navLinks.map(({ href, label }, i) => {
+            const isActive = pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  fontSize: 24,
+                  fontWeight: 500,
+                  color: "#f5f5f0",
+                  padding: "14px 0",
+                  borderTop: i === 0 ? "1px solid #2c241c" : undefined,
+                  borderBottom: "1px solid #2c241c",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                <span
                   style={{
-                    padding: "10px 12px",
-                    borderRadius: 8,
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: isActive ? "#f5f5f0" : "#9ca3af",
-                    borderLeft: `2px solid ${isActive ? "#c9b896" : "transparent"}`,
+                    borderBottom: isActive ? "1px solid #c9b896" : undefined,
+                    paddingBottom: isActive ? 2 : 0,
                   }}
                 >
                   {label}
-                </Link>
-              );
-            })}
-          </nav>
-          <div
-            style={{
-              borderTop: "1px solid #2c241c",
-              paddingTop: 16,
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-            }}
-          >
-            {user ? (
-              <>
-                <p style={{ fontSize: 12, color: "#6e6657", padding: "0 12px" }}>{user.email}</p>
-                <button
-                  onClick={handleSignOut}
-                  className="hover:bg-white/5 transition-colors"
-                  style={{
-                    border: "1px solid #374151",
-                    padding: "10px 16px",
-                    borderRadius: 8,
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: "#f5f5f0",
-                    textAlign: "center",
-                  }}
-                >
-                  Sign out
-                </button>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/signup"
-                  onClick={() => setMobileOpen(false)}
-                  className="hover:bg-white/5 transition-colors"
-                  style={{
-                    border: "1px solid #374151",
-                    padding: "10px 16px",
-                    borderRadius: 8,
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: "#f5f5f0",
-                    textAlign: "center",
-                  }}
-                >
-                  Sign up
-                </Link>
-                <Link
-                  href="/login"
-                  onClick={() => setMobileOpen(false)}
-                  style={{
-                    padding: "10px 16px",
-                    fontSize: 14,
-                    fontWeight: 500,
-                    color: "#9ca3af",
-                    textAlign: "center",
-                  }}
-                >
-                  Sign in
-                </Link>
-              </>
-            )}
-          </div>
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Auth block */}
+        <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 16 }}>
+          {user ? (
+            <>
+              <p
+                className="font-mono"
+                style={{
+                  fontSize: 12,
+                  color: "#6e6657",
+                  letterSpacing: "0.02em",
+                }}
+              >
+                {user.email}
+              </p>
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  handleSignOut();
+                }}
+                style={{
+                  fontSize: 24,
+                  fontWeight: 500,
+                  color: "#c9b896",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  padding: 0,
+                }}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  fontSize: 24,
+                  fontWeight: 500,
+                  color: "#f5f5f0",
+                  padding: "4px 0",
+                }}
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                onClick={() => setMobileOpen(false)}
+                className="hover:bg-white/5 transition-colors block text-center"
+                style={{
+                  border: "1px solid #c9b896",
+                  padding: "16px",
+                  borderRadius: 4,
+                  fontSize: 16,
+                  fontWeight: 500,
+                  color: "#f5f5f0",
+                }}
+              >
+                Sign up
+              </Link>
+            </>
+          )}
         </div>
-      )}
+      </div>
     </header>
   );
 }

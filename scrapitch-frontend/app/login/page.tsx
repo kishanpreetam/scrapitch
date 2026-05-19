@@ -80,7 +80,7 @@ export default function LoginPage() {
         style={{
           fontFamily: SERIF_STACK,
           fontStyle: "italic",
-          fontSize: 15,
+          fontSize: 16,
           color: "#8a7d63",
           marginBottom: 40,
         }}
@@ -97,7 +97,7 @@ export default function LoginPage() {
           border: "1px solid #2c241c",
           borderRadius: 4,
           padding: "14px 16px",
-          fontSize: 15,
+          fontSize: 16,
           fontWeight: 500,
           color: "#f5f5f0",
           gap: 12,
@@ -149,7 +149,7 @@ export default function LoginPage() {
               border: "1px solid #2c241c",
               borderRadius: 4,
               padding: "14px 16px",
-              fontSize: 15,
+              fontSize: 16,
               color: "#f5f5f0",
             }}
           />
@@ -170,7 +170,7 @@ export default function LoginPage() {
                 border: "1px solid #2c241c",
                 borderRadius: 4,
                 padding: "14px 44px 14px 16px",
-                fontSize: 15,
+                fontSize: 16,
                 color: "#f5f5f0",
               }}
             />
@@ -221,7 +221,7 @@ export default function LoginPage() {
             border: "1px solid #c9b896",
             borderRadius: 4,
             padding: "14px",
-            fontSize: 15,
+            fontSize: 16,
             fontWeight: 500,
             color: "#f5f5f0",
             marginTop: 8,
