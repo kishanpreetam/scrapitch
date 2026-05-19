@@ -21,10 +21,10 @@ const footerLinks = {
 export default function Footer() {
   return (
     <footer className="relative z-10 mt-auto" style={{ background: "#0a0a0a", borderTop: "1px solid #2c241c" }}>
-      <div className="w-full px-10 lg:px-16 py-10">
+      <div className="w-full px-6 md:px-10 lg:px-16 py-10">
 
-        {/* 4-column grid — brand wider on the left */}
-        <div className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-16">
+        {/* 4-column grid on desktop, stacked on mobile */}
+        <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-8 md:gap-16">
 
           {/* Brand */}
           <div>
@@ -86,8 +86,8 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div
-          className="mt-8 py-6 flex flex-col sm:flex-row items-center justify-between"
-          style={{ borderTop: "1px solid #2c241c", gap: 12 }}
+          className="mt-8 py-6 flex flex-col items-start md:flex-row md:items-center md:justify-between"
+          style={{ borderTop: "1px solid #2c241c", gap: 16 }}
         >
           <p
             className="font-mono"
@@ -96,7 +96,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Scrapitch · Solo founder, Boston
           </p>
           <p
-            className="font-mono text-center"
+            className="font-mono text-left md:text-center"
             style={{
               fontSize: 12,
               color: "#6e6657",

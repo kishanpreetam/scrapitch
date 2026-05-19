@@ -673,7 +673,8 @@ export default function GeneratorPage() {
                         className="group-hover:text-[#f5f5f0] transition-colors"
                         style={{ fontSize: 14, color: "#8a8a85", marginBottom: 4 }}
                       >
-                        Drop your resume here, or click to upload
+                        <span className="md:hidden">Tap to upload your resume</span>
+                        <span className="hidden md:inline">Drop your resume here, or click to upload</span>
                       </p>
                       <p
                         className="font-mono"
@@ -1185,7 +1186,7 @@ export default function GeneratorPage() {
               <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="hover:border-[#f5f5f0] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full md:w-auto hover:border-[#f5f5f0] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
                   background: "transparent",
                   border: "1px solid #c9b896",
