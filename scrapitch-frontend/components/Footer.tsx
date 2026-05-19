@@ -30,7 +30,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center mb-3">
               <span style={{ fontWeight: 500, fontSize: 18, letterSpacing: "-0.01em" }}>
-                <span style={{ color: "#f5f5f0" }}>Scrap</span>
+                <span style={{ color: "#f5f5f0" }}>Scra</span>
                 <span
                   style={{
                     fontFamily: SERIF_STACK,
@@ -39,7 +39,7 @@ export default function Footer() {
                     color: "#c9b896",
                   }}
                 >
-                  itch
+                  pitch
                 </span>
               </span>
             </Link>
