@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useState, useEffect } from "react";
+import DualCta from "./DualCta";
 
 const TARGET_URL = "https://scrapitch.com";
 const TYPING_MS = 1500;
@@ -172,10 +172,19 @@ function dotStyle(color: string): React.CSSProperties {
 }
 
 export default function HomeHero() {
-  const [typedChars, setTypedChars] = useState(0);
-  const [pillIndex, setPillIndex] = useState(-1);
+  const [typedChars, setTypedChars] = useState(TARGET_URL.length);
+  const [pillIndex, setPillIndex] = useState(2);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: no-preference)");
+    const desktopQuery = window.matchMedia("(min-width: 768px)");
+    if (!motionQuery.matches || !desktopQuery.matches) {
+      setTypedChars(TARGET_URL.length);
+      setPillIndex(2);
+      return;
+    }
+
     let timers: ReturnType<typeof setTimeout>[] = [];
     let cancelled = false;
 
@@ -276,41 +285,11 @@ export default function HomeHero() {
         </p>
 
         {/* CTA row */}
-        <div className="flex items-center justify-center">
-          <Link
-            href="/generator"
-            className="hover:underline"
-            style={{
-              color: "#3b82f6",
-              fontWeight: 500,
-              fontSize: 17,
-              textDecoration: "none",
-            }}
-          >
-            Try it free
-          </Link>
-          <span
-            aria-hidden="true"
-            style={{
-              display: "inline-block",
-              width: 1,
-              height: 20,
-              background: "#374151",
-              margin: "0 20px",
-            }}
+        <div className="w-full max-w-[320px] md:max-w-none">
+          <DualCta
+            primary={{ href: "/generator", label: "Try it free" }}
+            secondary={{ href: "/how-it-works", label: "See how it works" }}
           />
-          <Link
-            href="/how-it-works"
-            className="hover:text-[#3b82f6] transition-colors"
-            style={{
-              color: "#ffffff",
-              fontWeight: 500,
-              fontSize: 17,
-              textDecoration: "none",
-            }}
-          >
-            See how it works
-          </Link>
         </div>
 
         {/* Editorial caption */}

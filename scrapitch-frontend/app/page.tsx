@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HomeHero from "@/components/HomeHero";
+import DualCta from "@/components/DualCta";
 
 const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
 
@@ -656,41 +657,11 @@ function FinalCtaSection() {
           no card, no setup, no catch
         </p>
 
-        <div className="flex items-center justify-center">
-          <Link
-            href="/generator"
-            className="hover:underline"
-            style={{
-              color: "#3b82f6",
-              fontWeight: 500,
-              fontSize: 17,
-              textDecoration: "none",
-            }}
-          >
-            Try it free
-          </Link>
-          <span
-            aria-hidden="true"
-            style={{
-              display: "inline-block",
-              width: 1,
-              height: 12,
-              background: "#3a3328",
-              margin: "0 20px",
-            }}
+        <div className="w-full max-w-[320px] mx-auto md:max-w-none">
+          <DualCta
+            primary={{ href: "/generator", label: "Try it free" }}
+            secondary={{ href: "/how-it-works", label: "See how it works" }}
           />
-          <Link
-            href="/how-it-works"
-            className="hover:text-[#3b82f6] transition-colors"
-            style={{
-              color: "#f5f5f0",
-              fontWeight: 500,
-              fontSize: 17,
-              textDecoration: "none",
-            }}
-          >
-            See how it works
-          </Link>
         </div>
 
         <div

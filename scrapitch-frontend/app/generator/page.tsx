@@ -506,7 +506,7 @@ export default function GeneratorPage() {
             />
             <h1
               style={{
-                fontSize: "clamp(40px, 5vw, 56px)",
+                fontSize: "clamp(32px, 5vw, 56px)",
                 fontWeight: 500,
                 lineHeight: 1.08,
                 letterSpacing: "-0.025em",
@@ -593,7 +593,7 @@ export default function GeneratorPage() {
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com"
                   required
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                 />
                 <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                   The website of the company, lab, person, or program you&apos;re reaching out to.
@@ -616,7 +616,7 @@ export default function GeneratorPage() {
                 <select
                   value={useCase}
                   onChange={(e) => setUseCase(e.target.value as UseCase)}
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
                 >
                   <option value="b2b_sales">B2B sales · pitch a product or service</option>
                   <option value="masters_outreach">Master&apos;s / PhD outreach · reach out to a lab or program</option>
@@ -798,7 +798,7 @@ export default function GeneratorPage() {
                             type="text"
                             value={resumeData.name}
                             onChange={(e) => updateResumeField("name", e.target.value)}
-                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-[14px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                           />
                         </div>
                         <div>
@@ -817,7 +817,7 @@ export default function GeneratorPage() {
                             type="text"
                             value={resumeData.current_status}
                             onChange={(e) => updateResumeField("current_status", e.target.value)}
-                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-[14px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                           />
                         </div>
                         <div>
@@ -836,7 +836,7 @@ export default function GeneratorPage() {
                             value={accomplishment}
                             onChange={(e) => setAccomplishment(e.target.value)}
                             rows={2}
-                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-[14px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                           />
                         </div>
                       </div>
@@ -891,7 +891,7 @@ export default function GeneratorPage() {
                       value={targetRole}
                       onChange={(e) => setTargetRole(e.target.value)}
                       placeholder="e.g. Senior ML Engineer, inference team"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       The specific role or team you&apos;re reaching out about.
@@ -914,7 +914,7 @@ export default function GeneratorPage() {
                       value={portfolioLink}
                       onChange={(e) => setPortfolioLink(e.target.value)}
                       placeholder="https://github.com/yourname"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       Goes in the signature so recruiters can see your work.
@@ -937,7 +937,7 @@ export default function GeneratorPage() {
                       onChange={(e) => setAccomplishment(e.target.value)}
                       placeholder="e.g. Shipped a Spark migration that cut compute 40 percent."
                       rows={2}
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       One metric or win. The writer will use just this one.
@@ -965,7 +965,7 @@ export default function GeneratorPage() {
                       value={currentSchoolYear}
                       onChange={(e) => setCurrentSchoolYear(e.target.value)}
                       placeholder="e.g. Northeastern, MS Analytics, graduating 2026"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       Where you study now and your expected graduation.
@@ -988,7 +988,7 @@ export default function GeneratorPage() {
                       value={paperOrTopic}
                       onChange={(e) => setPaperOrTopic(e.target.value)}
                       placeholder="e.g. Their 2025 paper on lipid nanoparticle delivery"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       A specific paper, project, or research area the professor publishes on.
@@ -1011,7 +1011,7 @@ export default function GeneratorPage() {
                       value={programTerm}
                       onChange={(e) => setProgramTerm(e.target.value)}
                       placeholder="e.g. Fall 2026"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       The intake you&apos;re aiming for.
@@ -1039,7 +1039,7 @@ export default function GeneratorPage() {
                       value={companyStage}
                       onChange={(e) => setCompanyStage(e.target.value)}
                       placeholder="e.g. Pre-seed AI tools, two founders, six months in"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       Stage, team size, time in. Helps the writer set the frame.
@@ -1062,7 +1062,7 @@ export default function GeneratorPage() {
                       value={tractionMetric}
                       onChange={(e) => setTractionMetric(e.target.value)}
                       placeholder="e.g. 200 paying teams in six months"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
                     />
                     <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                       One quantified signal. Revenue, retention, signups, anything real.
@@ -1091,7 +1091,7 @@ export default function GeneratorPage() {
                   rows={3}
                   maxLength={2000}
                   required
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                 />
                 <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                   One or two sentences. Who you are and what&apos;s relevant to this outreach.
@@ -1118,7 +1118,7 @@ export default function GeneratorPage() {
                   rows={2}
                   maxLength={1000}
                   required
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                 />
                 <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                   Be specific. A 15 minute call, a referral, a portfolio review, an application question.
@@ -1144,7 +1144,7 @@ export default function GeneratorPage() {
                   placeholder={PLACEHOLDER_MAP.highlights[useCase]}
                   rows={2}
                   maxLength={2000}
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
                 />
                 <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
                   Numbers, customer names, recent wins. The model weaves these in naturally.
@@ -1167,7 +1167,7 @@ export default function GeneratorPage() {
                 <select
                   value={tonePreference}
                   onChange={(e) => setTonePreference(e.target.value as TonePreference)}
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-[15px] text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
+                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
                 >
                   <option value="auto">Auto · match the outreach type</option>
                   <option value="formal">Formal · polished, no contractions</option>
@@ -1192,7 +1192,7 @@ export default function GeneratorPage() {
                   color: "#f5f5f0",
                   padding: "14px 48px",
                   borderRadius: 4,
-                  fontSize: 15,
+                  fontSize: 16,
                   fontWeight: 500,
                 }}
               >
