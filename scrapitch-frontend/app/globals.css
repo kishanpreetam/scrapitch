@@ -116,6 +116,15 @@ input[type="password"]::-webkit-textfield-decoration-container {
   animation: scrapitch-pulse 1.2s ease-in-out infinite;
 }
 
+/* Generic 150ms fade-in for live indicators */
+@keyframes fade-in-150 {
+  from { opacity: 0; transform: translateY(-2px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-in-150 {
+  animation: fade-in-150 150ms ease-out;
+}
+
 /* Reduced motion overrides */
 @media (prefers-reduced-motion: reduce) {
   .cursor-blink { animation: none; opacity: 1; }
