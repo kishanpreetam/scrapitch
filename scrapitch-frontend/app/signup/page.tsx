@@ -24,23 +24,29 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const checks = useMemo(() => ({
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    number: /[0-9]/.test(password),
-    special: /[!@#$%^&*]/.test(password),
-  }), [password]);
+  const strengthScore = useMemo(() => {
+    const hasNumber = /[0-9]/.test(password);
+    const hasLetter = /[a-zA-Z]/.test(password);
+    const hasSymbol = /[!@#$%^&*]/.test(password);
+    if (password.length >= 10 && hasNumber && hasLetter && hasSymbol) return 4;
+    if (password.length >= 8 && hasNumber && hasLetter) return 3;
+    if (password.length >= 6 && hasNumber) return 2;
+    if (password.length >= 6) return 1;
+    return 0;
+  }, [password]);
 
-  const strengthScore = Object.values(checks).filter(Boolean).length;
+  const strengthLabel = ["", "weak", "okay", "good", "strong"][strengthScore];
 
-  const allChecksPassed = Object.values(checks).every(Boolean);
   const passwordsMatch = confirm.length > 0 && password === confirm;
   const confirmMismatch = confirm.length > 0 && password !== confirm;
-  const formReady =
-    allChecksPassed && passwordsMatch && name.trim().length > 0 && email.trim().length > 0;
+
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const passwordValid = password.length >= 6;
+  const isFormValid =
+    name.trim().length > 0 && emailValid && passwordValid && passwordsMatch;
 
   const handleSignUp = async () => {
-    if (!formReady) return;
+    if (!isFormValid) return;
     setLoading(true);
     setError(null);
 
@@ -77,6 +83,12 @@ export default function SignupPage() {
     fontSize: 16,
     color: "#f5f5f0",
   } as const;
+
+  const confirmBorderColor = passwordsMatch
+    ? "#8ca56e"
+    : confirmMismatch
+      ? "#c97c5a"
+      : "#2c241c";
 
   return (
     <AuthShell>
@@ -225,21 +237,32 @@ export default function SignupPage() {
             </button>
           </div>
 
+          <div className="flex" style={{ gap: 4, marginTop: 10 }}>
+            {[1, 2, 3, 4].map((level) => (
+              <div
+                key={level}
+                style={{
+                  height: 3,
+                  flex: 1,
+                  borderRadius: 2,
+                  background: level <= strengthScore ? "#c9b896" : "#2c241c",
+                  transition: "background 200ms ease",
+                }}
+              />
+            ))}
+          </div>
           {password.length > 0 && (
-            <div className="flex" style={{ gap: 4, marginTop: 10 }}>
-              {[1, 2, 3, 4].map((level) => (
-                <div
-                  key={level}
-                  style={{
-                    height: 2,
-                    flex: 1,
-                    borderRadius: 2,
-                    background: level <= strengthScore ? "#c9b896" : "#2c241c",
-                    transition: "background 200ms ease",
-                  }}
-                />
-              ))}
-            </div>
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 12,
+                color: "#6e6657",
+                letterSpacing: "0.04em",
+                marginTop: 8,
+              }}
+            >
+              {strengthLabel}
+            </p>
           )}
         </div>
 
@@ -253,8 +276,13 @@ export default function SignupPage() {
               placeholder="••••••••"
               autoComplete="new-password"
               required
-              className="w-full focus:border-[#c9b896] focus:outline-none transition-colors"
-              style={{ ...fieldStyle, paddingRight: 44 }}
+              aria-describedby="confirm-password-feedback"
+              className="w-full focus:outline-none transition-colors"
+              style={{
+                ...fieldStyle,
+                paddingRight: 44,
+                borderColor: confirmBorderColor,
+              }}
             />
             <button
               type="button"
@@ -277,24 +305,61 @@ export default function SignupPage() {
               <EyeIcon open={showConfirmPassword} />
             </button>
           </div>
-          {confirmMismatch && (
-            <p
-              style={{
-                fontSize: 12,
-                color: "#d4a4a4",
-                marginTop: 8,
-                lineHeight: 1.5,
-              }}
-            >
-              Passwords don&apos;t match.
-            </p>
-          )}
+          <p
+            id="confirm-password-feedback"
+            role="status"
+            aria-live="polite"
+            style={{
+              marginTop: 8,
+              minHeight: 18,
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontSize: 13,
+              lineHeight: 1.4,
+            }}
+          >
+            {passwordsMatch ? (
+              <span
+                key="match"
+                className="fade-in-150"
+                style={{ color: "#8ca56e", display: "inline-flex", alignItems: "center" }}
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#8ca56e"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    display: "inline-block",
+                    verticalAlign: "middle",
+                    marginRight: 4,
+                  }}
+                  aria-hidden="true"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Passwords match.
+              </span>
+            ) : confirmMismatch ? (
+              <span
+                key="mismatch"
+                className="fade-in-150"
+                style={{ color: "#c97c5a" }}
+              >
+                Passwords don&apos;t match yet.
+              </span>
+            ) : null}
+          </p>
         </div>
 
         <button
           type="button"
           onClick={handleSignUp}
-          disabled={!formReady || loading}
+          disabled={!isFormValid || loading}
           className="w-full hover:border-[#f5f5f0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           style={{
             background: "transparent",
@@ -304,6 +369,7 @@ export default function SignupPage() {
             fontSize: 16,
             fontWeight: 500,
             color: "#f5f5f0",
+            pointerEvents: !isFormValid || loading ? "none" : "auto",
           }}
         >
           {loading ? (
