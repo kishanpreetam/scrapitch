@@ -524,7 +524,7 @@ def generate_emails(scraped_data: dict) -> dict:
     Returns a dict with 'variants' and 'follow_up_sequence'.
     """
     client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    model = "claude-sonnet-4-20250514"
+    model = "claude-sonnet-4-6"
 
     use_case = scraped_data.get("use_case", "")
     if use_case not in _WORD_LIMITS_BY_USE_CASE:
