@@ -20,6 +20,28 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
+
+  const handleForgot = async () => {
+    setNotice(null);
+    setError(null);
+    if (!email.trim()) {
+      setError("Enter your email above, then tap reset.");
+      return;
+    }
+    setResetting(true);
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(
+      email.trim(),
+      { redirectTo: `${window.location.origin}/auth/callback?next=/reset-password` },
+    );
+    setResetting(false);
+    if (resetError) {
+      setError(resetError.message);
+      return;
+    }
+    setNotice("Password reset link sent. Check your email.");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -134,6 +156,21 @@ export default function LoginPage() {
         </div>
       )}
 
+      {notice && (
+        <div
+          style={{
+            border: "1px solid rgba(140, 165, 110, 0.3)",
+            background: "rgba(140, 165, 110, 0.06)",
+            borderRadius: 4,
+            padding: "12px 14px",
+            marginBottom: 20,
+            textAlign: "left",
+          }}
+        >
+          <p style={{ fontSize: 13, color: "#8ca56e", lineHeight: 1.5 }}>{notice}</p>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="text-left">
         <div style={{ marginBottom: 20 }}>
           <MonoLabel>email</MonoLabel>
@@ -198,17 +235,23 @@ export default function LoginPage() {
         </div>
 
         <div style={{ textAlign: "right", marginBottom: 24 }}>
-          <Link
-            href="#"
-            className="hover:text-[#c9b896] transition-colors text-[13px] md:text-[12px]"
+          <button
+            type="button"
+            onClick={handleForgot}
+            disabled={resetting}
+            className="hover:text-[#c9b896] transition-colors text-[13px] md:text-[12px] disabled:opacity-50"
             style={{
               fontFamily: SERIF_STACK,
               fontStyle: "italic",
               color: "#8a7d63",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
             }}
           >
-            Forgot password?
-          </Link>
+            {resetting ? "Sending reset link..." : "Forgot password?"}
+          </button>
         </div>
 
         <button
