@@ -21,6 +21,7 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,8 +43,11 @@ export default function SignupPage() {
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
   const passwordValid = password.length >= 6;
-  const isFormValid =
+  const otherFieldsValid =
     name.trim().length > 0 && emailValid && passwordValid && passwordsMatch;
+  const isFormValid = otherFieldsValid && agreed;
+  // Everything else is filled in; the only thing left is to accept the terms.
+  const showAgreePrompt = otherFieldsValid && !agreed;
 
   const handleSignUp = async () => {
     if (!isFormValid) return;
@@ -87,6 +91,12 @@ export default function SignupPage() {
   const confirmBorderColor = passwordsMatch
     ? "#8ca56e"
     : confirmMismatch
+      ? "#c97c5a"
+      : "#2c241c";
+
+  const agreeBorderColor = agreed
+    ? "#8ca56e"
+    : showAgreePrompt
       ? "#c97c5a"
       : "#2c241c";
 
@@ -356,6 +366,113 @@ export default function SignupPage() {
           </p>
         </div>
 
+        <div style={{ marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
+            <button
+              type="button"
+              role="checkbox"
+              aria-checked={agreed}
+              aria-label="I agree to the Terms of Service and Privacy Policy"
+              aria-describedby="agree-feedback"
+              onClick={() => setAgreed((v) => !v)}
+              className="shrink-0 transition-colors"
+              style={{
+                width: 20,
+                height: 20,
+                marginTop: 1,
+                borderRadius: 4,
+                border: `1px solid ${agreeBorderColor}`,
+                background: agreed ? "rgba(140,165,110,0.12)" : "transparent",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                padding: 0,
+              }}
+            >
+              {agreed && (
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#8ca56e"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              )}
+            </button>
+            <p style={{ fontSize: 14, color: "#8a8a85", lineHeight: 1.5 }}>
+              I agree to the{" "}
+              <Link
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline transition-colors"
+                style={{ color: "#c9b896" }}
+              >
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline transition-colors"
+                style={{ color: "#c9b896" }}
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          </div>
+          <p
+            id="agree-feedback"
+            role="status"
+            aria-live="polite"
+            style={{
+              marginTop: 8,
+              minHeight: 18,
+              fontFamily: SERIF_STACK,
+              fontStyle: "italic",
+              fontSize: 13,
+              lineHeight: 1.4,
+            }}
+          >
+            {agreed ? (
+              <span
+                key="agreed"
+                className="fade-in-150"
+                style={{ color: "#8ca56e", display: "inline-flex", alignItems: "center" }}
+              >
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="#8ca56e"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{ display: "inline-block", verticalAlign: "middle", marginRight: 4 }}
+                  aria-hidden="true"
+                >
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+                Thanks. You can create your account.
+              </span>
+            ) : showAgreePrompt ? (
+              <span key="prompt" className="fade-in-150" style={{ color: "#c97c5a" }}>
+                Please agree to the Terms and Privacy Policy to continue.
+              </span>
+            ) : null}
+          </p>
+        </div>
+
         <button
           type="button"
           onClick={handleSignUp}
@@ -390,36 +507,6 @@ export default function SignupPage() {
           )}
         </button>
       </form>
-
-      <p
-        className="font-mono mx-auto text-center"
-        style={{
-          fontSize: 12,
-          color: "#6e6657",
-          letterSpacing: "0.02em",
-          maxWidth: 320,
-          lineHeight: 1.5,
-          marginTop: 24,
-        }}
-      >
-        By creating an account, you agree to our{" "}
-        <Link
-          href="/terms"
-          className="hover:underline transition-colors"
-          style={{ color: "#8a7d63" }}
-        >
-          terms
-        </Link>{" "}
-        and{" "}
-        <Link
-          href="/privacy"
-          className="hover:underline transition-colors"
-          style={{ color: "#8a7d63" }}
-        >
-          privacy policy
-        </Link>
-        .
-      </p>
 
       <p
         className="text-center"
