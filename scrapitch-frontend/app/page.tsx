@@ -88,7 +88,7 @@ const USE_CASES: UseCase[] = [
       italic: "person",
       after: ". Not a pitch.",
     },
-    subhead: "Coffee chats, alumni intros, conference follow ups.",
+    subhead: "Coffee chats, alumni intros, conference follow-ups.",
     caption: "for warm intros and reconnections",
     subject: "Coffee chat after your talk",
     cta: "Try it for networking",

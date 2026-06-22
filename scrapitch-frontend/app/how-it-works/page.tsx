@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import DualCta from "@/components/DualCta";
 
 export const metadata: Metadata = {
-  title: "How it works — Scrapitch",
+  title: "How it works · Scrapitch",
   description:
     "Three agents. One URL. Ten seconds. What Scrapitch does between you pasting a link and reading your first draft.",
 };

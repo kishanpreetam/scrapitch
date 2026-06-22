@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Scrapitch — AI Cold Email Generator",
+  title: "Scrapitch · AI Cold Email Generator",
   description:
     "Paste any prospect URL. Scrapitch scrapes their website and writes 3 personalized cold emails with reply-rate scores. Built for agency owners, SDRs, and freelancers.",
   keywords: [

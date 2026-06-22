@@ -12,9 +12,9 @@ const footerLinks = {
     { href: "/faq", label: "FAQ" },
   ],
   Legal: [
-    { href: "#", label: "Privacy policy" },
-    { href: "#", label: "Terms of service" },
-    { href: "#", label: "GDPR policy" },
+    { href: "/privacy", label: "Privacy policy" },
+    { href: "/terms", label: "Terms of service" },
+    { href: "/privacy#gdpr", label: "GDPR policy" },
   ],
 };
 

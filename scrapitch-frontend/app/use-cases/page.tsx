@@ -5,7 +5,7 @@ import Footer from "@/components/Footer";
 import DualCta from "@/components/DualCta";
 
 export const metadata: Metadata = {
-  title: "Use cases — Scrapitch",
+  title: "Use cases · Scrapitch",
   description:
     "Five ways to use Scrapitch: sales, jobs, graduate outreach, founder fundraising, and networking. One engine, five framings.",
 };
@@ -154,7 +154,7 @@ const USE_CASES: UseCaseData[] = [
       italic: "person",
       after: ". Not a pitch.",
     },
-    caption: "for coffee chats, alumni intros, conference followups",
+    caption: "for coffee chats, alumni intros, conference follow-ups",
     problems: [
       "The strongest networking emails reference a specific thing the recipient did or said. The weakest ones just ask for time.",
       "You met someone at a conference, exchanged cards, and a week later you're staring at a blank compose window.",
