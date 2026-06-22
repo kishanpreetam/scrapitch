@@ -4,8 +4,14 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const nextParam = searchParams.get('next')
+  // Only allow internal, single-slash paths to avoid open redirects.
+  const next =
+    nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')
+      ? nextParam
+      : '/generator'
 
-  const redirectTo = NextResponse.redirect(`${origin}/generator`)
+  const redirectTo = NextResponse.redirect(`${origin}${next}`)
 
   if (code) {
     const supabase = createServerClient(
