@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "FAQ — Scrapitch",
+  title: "FAQ · Scrapitch",
   description:
     "Common questions about Scrapitch: pricing, data handling, supported sites, and how the generation works.",
 };
@@ -38,9 +38,9 @@ const QUESTIONS: Question[] = [
     q: {
       before: "How is this ",
       italic: "different",
-      after: " from ChatGPT or other AI writers?",
+      after: " from a generic AI chatbot?",
     },
-    a: "Other AI writers personalize from what you type. Scrapitch reads the prospect's actual site at generation time. The personalization comes from their public content, not your imagination.",
+    a: "A generic AI chatbot personalizes from what you type. Mail-merge tools swap in a name and a company. Scrapitch reads the prospect's actual site at generation time, so the personalization comes from their public content, not your imagination.",
   },
   {
     n: "05",

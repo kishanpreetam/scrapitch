@@ -122,13 +122,13 @@ const PLACEHOLDER_MAP: Record<"user_ask" | "highlights", Record<UseCase, string>
 const BADGE = {
   A: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
   B: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
-  C: "bg-pink-500/20 text-purple-300 border border-purple-500/30",
+  C: "bg-pink-500/20 text-pink-300 border border-pink-500/30",
 } as Record<string, string>;
 
 const CARD_BORDER = {
   A: "border-blue-500/20 hover:border-blue-500/40",
   B: "border-emerald-500/20 hover:border-emerald-500/40",
-  C: "border-purple-500/20 hover:border-purple-500/40",
+  C: "border-pink-500/20 hover:border-pink-500/40",
 } as Record<string, string>;
 
 function ScoreBadge({ score }: { score: number }) {
@@ -208,8 +208,10 @@ function EmailCard({ variant }: { variant: Variant }) {
           onClick={() => setReasonOpen(!reasonOpen)}
           className="flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
         >
-          <span className={`transition-transform ${reasonOpen ? "rotate-90" : ""}`}>
-            ▶
+          <span className={`inline-flex transition-transform ${reasonOpen ? "rotate-90" : ""}`}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
           </span>
           Score reasoning
         </button>
@@ -247,10 +249,14 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
         className="flex items-center justify-between w-full text-left"
       >
         <div className="flex items-center gap-3">
-          <span className={`text-zinc-500 transition-transform ${open ? "rotate-90" : ""}`}>▶</span>
+          <span className={`inline-flex text-zinc-500 transition-transform ${open ? "rotate-90" : ""}`}>
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </span>
           <div>
-            <p className="text-sm font-semibold text-zinc-200">Follow up sequence</p>
-            <p className="text-xs text-zinc-600 mt-0.5">{sequence.length} follow up emails ready to send</p>
+            <p className="text-sm font-semibold text-zinc-200">Follow-up sequence</p>
+            <p className="text-xs text-zinc-600 mt-0.5">{sequence.length} follow-up emails ready to send</p>
           </div>
         </div>
         <span className="text-xs font-medium text-zinc-500 shrink-0 ml-4">
@@ -264,7 +270,7 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
             <div key={i} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 bg-zinc-800 px-2 py-0.5 rounded-full">
-                  Follow up {i + 1} · Day {fu.day}
+                  Follow-up {i + 1} · Day {fu.day}
                 </span>
               </div>
               <p className="text-xs font-semibold text-zinc-400 mb-2">
@@ -621,7 +627,7 @@ export default function GeneratorPage() {
                   <option value="b2b_sales">B2B sales · pitch a product or service</option>
                   <option value="masters_outreach">Master&apos;s / PhD outreach · reach out to a lab or program</option>
                   <option value="job_hunt">Job hunt · reach out about a role</option>
-                  <option value="executive_outreach">Executive outreach · peer to peer to a C suite contact</option>
+                  <option value="executive_outreach">Executive outreach · peer-to-peer to a C-suite contact</option>
                   <option value="networking">Networking · start a real connection</option>
                 </select>
                 <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
@@ -1172,7 +1178,7 @@ export default function GeneratorPage() {
                 >
                   <option value="auto">Auto · match the outreach type</option>
                   <option value="formal">Formal · polished, no contractions</option>
-                  <option value="warm">Warm · friendly, peer to peer</option>
+                  <option value="warm">Warm · friendly, peer-to-peer</option>
                   <option value="direct">Direct · short sentences, no fluff</option>
                 </select>
                 <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
@@ -1274,6 +1280,22 @@ export default function GeneratorPage() {
                 <div className="text-xs text-zinc-600 text-right hidden sm:block">
                   9-10 Elite &nbsp;·&nbsp; 7-8 Strong &nbsp;·&nbsp; 5-6 Average &nbsp;·&nbsp; 1-4 Needs work
                 </div>
+              </div>
+
+              {/* Persistent point-of-use compliance notice */}
+              <div style={{ borderTop: "1px solid #2c241c", paddingTop: 14 }}>
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#6e6657",
+                    letterSpacing: "0.04em",
+                    lineHeight: 1.6,
+                    margin: 0,
+                  }}
+                >
+                  AI-generated. Review and edit before sending. You are the sender and responsible for compliance.
+                </p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-5">
