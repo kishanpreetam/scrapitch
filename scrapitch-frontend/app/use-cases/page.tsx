@@ -50,8 +50,8 @@ const USE_CASES: UseCaseData[] = [
       "Writes three variants that quote their context, not your pitch deck.",
     ],
     email: {
-      subject: "Idea for Linear's enterprise pipeline",
-      body: "Hi Karri, noticed Linear just rolled out the Asks integration to enterprise customers this month. The pattern I've seen with that kind of release: the AE team starts hearing 'can it also do X' from existing accounts, and the answer becomes a roadmap problem fast. We built a tool that turns those conversational asks into structured product feedback. Helped Notion's AE team last quarter cut the time from 'customer asked' to 'on the roadmap' from 6 weeks to 11 days. Worth fifteen minutes to see if it'd help here?",
+      subject: "Idea for your enterprise pipeline",
+      body: "Hi Karri, noticed you just rolled out a new integration to enterprise customers this month. The pattern I've seen with that kind of release: the AE team starts hearing 'can it also do X' from existing accounts, and the answer becomes a roadmap problem fast. We built a tool that turns those conversational asks into structured product feedback. Helped a similar AE team last quarter cut the time from 'customer asked' to 'on the roadmap' from 6 weeks to 11 days. Worth fifteen minutes to see if it'd help here?",
       signature: "Maya · Operator at Bridgewise",
     },
     emailMeta: "generated in 8 seconds · scored 9.1",
@@ -69,7 +69,7 @@ const USE_CASES: UseCaseData[] = [
     },
     caption: "for engineers, designers, analysts, and PMs",
     problems: [
-      "LinkedIn easy-apply has a 1 percent response rate. A good cold email is 5 to 10x that.",
+      "One-click job applications have a 1 percent response rate. A good cold email is 5 to 10x that.",
       "But every applicant uses the same template the same career service handed out. The recruiter can spot it in 4 seconds.",
       "You're applying to twenty companies. Researching every one of them on top of doing your current job is not a real plan.",
     ],
@@ -80,7 +80,7 @@ const USE_CASES: UseCaseData[] = [
     ],
     email: {
       subject: "Saw your team's vector store rewrite",
-      body: "Hi Anjali, your blog post on rebuilding the vector search layer at Notion caught me. The hybrid approach with metadata filtering matches what I shipped at my last role on a smaller scale: I rewrote our document retrieval to use a similar pattern and cut p99 latency by 40 percent. I'm exploring infra-leaning ML roles. If your team is hiring or about to, I'd love fifteen minutes to learn what you're building next.",
+      body: "Hi Anjali, your blog post on rebuilding the vector search layer at your company caught me. The hybrid approach with metadata filtering matches what I shipped at my last role on a smaller scale: I rewrote our document retrieval to use a similar pattern and cut p99 latency by 40 percent. I'm exploring infra-leaning ML roles. If your team is hiring or about to, I'd love fifteen minutes to learn what you're building next.",
       signature: "Kishan · github.com/kishanpreetam",
     },
     emailMeta: "generated in 9 seconds · scored 9.3",
@@ -138,7 +138,7 @@ const USE_CASES: UseCaseData[] = [
     ],
     email: {
       subject: "Noticed your bet on developer infrastructure",
-      body: "Hi Sarah, your portfolio's leaned hard into developer tools for AI-native workflows: Hex, Modal, Wandb. Scrapitch sits at exactly that intersection: free tool for personalized outreach, three-agent pipeline, sub-ten-second generation. We've hit 1,200 generations a day in the first month with zero paid acquisition. The pattern you wrote about in your AI-native developer thesis last quarter, the one about consumer-grade UX being the new moat, that's what we're chasing. Would you have fifteen minutes to look at where we're heading?",
+      body: "Hi Sarah, your portfolio's leaned hard into developer tools for AI-native workflows. Scrapitch sits at exactly that intersection: free tool for personalized outreach, three-agent pipeline, sub-ten-second generation. We've hit 1,200 generations a day in the first month with zero paid acquisition. The pattern you wrote about in your AI-native developer thesis last quarter, the one about consumer-grade UX being the new moat, that's what we're chasing. Would you have fifteen minutes to look at where we're heading?",
       signature: "Kishan · founder, Scrapitch",
     },
     emailMeta: "generated in 9 seconds · scored 8.9",
@@ -166,7 +166,7 @@ const USE_CASES: UseCaseData[] = [
       "Writes a short, warm email that references something specific and asks for a small, defined thing.",
     ],
     email: {
-      subject: "Coffee chat after your talk at Lattice",
+      subject: "Coffee chat after your talk",
       body: "Hi Diego, your talk on rebuilding perf reviews landed. The line about replacing rubrics with stories stuck with me, especially the part about engineering managers being uncomfortable with narrative until they realized rubrics were just narrative with worse signal. I'm rebuilding something similar at my org right now and the same uncomfortable conversations are happening. Would love fifteen minutes whenever it works for you. Coffee on me if you're in Boston, or just a video call if easier.",
       signature: "Kishan · north end, boston",
     },

@@ -26,12 +26,12 @@ const QUESTIONS: Question[] = [
   {
     n: "02",
     q: { before: "What sites can Scrapitch ", italic: "read", after: "?" },
-    a: "Most public web pages: company sites, blogs, lab pages, founder portfolios. Sites that aggressively block scraping (LinkedIn, gated platforms) return less. Public profile pages on most platforms work.",
+    a: "Most public web pages: company sites, blogs, lab pages, founder portfolios. Sites that aggressively block scraping (large social networks, gated platforms) return less. Public profile pages on most platforms work.",
   },
   {
     n: "03",
     q: { before: "What happens to ", italic: "my", after: " data?" },
-    a: "Your input and the scraped content go to Anthropic's Claude API for generation. Anthropic does not train on API inputs. We store your generations so you can come back to them. We don't share data with third parties.",
+    a: "Your input and the scraped content go to our AI provider's API for generation. The provider does not train on API inputs. We store your generations so you can come back to them. We don't share data with third parties.",
   },
   {
     n: "04",

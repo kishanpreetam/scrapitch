@@ -268,7 +268,7 @@ function FrameworkCards({ bg }: { bg: Bg }) {
       framework: "value first",
       subject: "Saw Scrapitch's v2 launch. Sharing what we learned.",
       preview:
-        "Two YC AI companies hit the same multi vertical adoption issues last quarter. Both shipped a routing layer. Happy to share notes.",
+        "Two early-stage AI companies hit the same multi vertical adoption issues last quarter. Both shipped a routing layer. Happy to share notes.",
       words: "102 of 110",
     },
     {
@@ -613,7 +613,7 @@ export default function HowItWorksPage() {
           eyebrow="the input"
           title={{ before: "One URL is ", italic: "enough", after: "." }}
           paragraphs={[
-            "Scrapitch accepts any public URL: company sites, lab pages, founder portfolios, LinkedIn style profiles.",
+            "Scrapitch accepts any public URL: company sites, lab pages, founder portfolios, public professional profiles.",
             "No CSV uploads. No spreadsheet of leads. No connectors to your CRM.",
             "Paste it once. Pick a use case. Add a sentence about who you are and what you want.",
           ]}
