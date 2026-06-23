@@ -1,10 +1,25 @@
 import json
+import logging
 import re
 import os
 import anthropic
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
+
+log = logging.getLogger(__name__)
+
+# Model configuration. Three tiers, one env-overridable selection per agent.
+# Agent 1 (structured extraction) and Agent 3 (scoring) run fine on the cheaper,
+# faster Haiku tier; Agent 2 (writing) is the quality-critical step, so it stays
+# on Sonnet. Each agent is now a one-line env change.
+HAIKU = "claude-haiku-4-5-20251001"
+SONNET = "claude-sonnet-4-6"
+OPUS = "claude-opus-4-8"
+
+MODEL_RESEARCH = os.getenv("MODEL_RESEARCH", HAIKU)
+MODEL_WRITER = os.getenv("MODEL_WRITER", SONNET)
+MODEL_JUDGE = os.getenv("MODEL_JUDGE", HAIKU)
 
 
 _WORD_LIMITS_BY_USE_CASE: dict[str, dict[str, int]] = {
@@ -41,18 +56,36 @@ def cleanup_text(text: str) -> str:
     return text
 
 
-def enforce_word_limit(text: str, max_words: int) -> str:
-    """Truncate text to the last complete sentence within max_words."""
-    words = text.split()
-    if len(words) <= max_words:
+def enforce_word_limit(text: str, max_words: int, tolerance: float = 0.2) -> str:
+    """Sentence-aware safety net for the soft word targets.
+
+    Only trims when the draft exceeds max_words by more than ``tolerance`` (about
+    20 percent). When trimming, it keeps whole sentences up to max_words and cuts
+    at the last complete sentence that fits, never mid-word or mid-sentence. If no
+    complete sentence fits, the draft is left intact and logged rather than
+    emitting a fragment.
+    """
+    if not text:
         return text
-    truncated = " ".join(words[:max_words])
-    last_period = truncated.rfind(".")
-    last_question = truncated.rfind("?")
-    last_sentence_end = max(last_period, last_question)
-    if last_sentence_end > 0:
-        return truncated[:last_sentence_end + 1]
-    return truncated + "."
+    if len(text.split()) <= int(max_words * (1 + tolerance)):
+        return text
+    sentences = re.split(r"(?<=[.?!])\s+", text.strip())
+    kept: list[str] = []
+    count = 0
+    for sentence in sentences:
+        n = len(sentence.split())
+        if count + n > max_words:
+            break
+        kept.append(sentence)
+        count += n
+    if not kept:
+        log.warning(
+            "enforce_word_limit: no complete sentence fits within %d words "
+            "(draft has %d); leaving draft intact",
+            max_words, len(text.split()),
+        )
+        return text
+    return " ".join(kept).strip()
 
 
 def _call_claude(
@@ -280,6 +313,17 @@ _TONE_LINES = {
 }
 
 
+def _word_targets(use_case: str) -> str:
+    """Soft word targets per variant, derived from the single limits config."""
+    limits = _WORD_LIMITS_BY_USE_CASE[use_case]
+    return (
+        "WORD TARGETS (aim for these, a little over is fine, do not pad to reach them):\n"
+        f"- Variant A: aim for about {limits['A']} words.\n"
+        f"- Variant B: aim for about {limits['B']} words.\n"
+        f"- Variant C: aim for about {limits['C']} words.\n\n"
+    )
+
+
 def _agent2_b2b_sales(tone_preference: str) -> str:
     tone_override = _TONE_LINES.get(tone_preference, "")
     return (
@@ -287,11 +331,8 @@ def _agent2_b2b_sales(tone_preference: str) -> str:
         "cold emails that get replies. You receive structured research about a prospect company "
         "and write personalized cold sales emails.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
-        "WORD LIMITS (strictly enforced):\n"
-        "- Variant A: MAXIMUM 80 words. Count them.\n"
-        "- Variant B: MAXIMUM 110 words. Count them.\n"
-        "- Variant C: MAXIMUM 100 words. Count them.\n\n"
-        "VARIANT A (PAS — Problem / Agitate / Solution):\n"
+        + _word_targets("b2b_sales")
+        + "VARIANT A (PAS: Problem / Agitate / Solution):\n"
         "- Line 1: Specific problem from research\n"
         "- Line 2: Real consequence if not fixed\n"
         "- Line 3: You as the fix, one sentence\n"
@@ -323,11 +364,8 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         "applicants write cold emails to faculty about research opportunities. Be specific, "
         "respectful, and substantive.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
-        "WORD LIMITS (strictly enforced):\n"
-        "- Variant A: MAXIMUM 110 words. Count them.\n"
-        "- Variant B: MAXIMUM 140 words. Count them.\n"
-        "- Variant C: MAXIMUM 160 words. Count them.\n\n"
-        "VARIANT A (Research Alignment):\n"
+        + _word_targets("masters_outreach")
+        + "VARIANT A (Research Alignment):\n"
         "- Line 1: Reference a specific paper, project, or research area from the lab\n"
         "- Line 2: Why that work resonates with your background\n"
         "- Line 3: One concrete thing you bring (skill, prior work, methodology)\n"
@@ -366,11 +404,8 @@ def _agent2_job_hunt(tone_preference: str) -> str:
         "hiring managers, recruiters, or team leads about open roles. Confident, specific, "
         "never desperate.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
-        "WORD LIMITS (strictly enforced):\n"
-        "- Variant A: MAXIMUM 100 words. Count them.\n"
-        "- Variant B: MAXIMUM 100 words. Count them.\n"
-        "- Variant C: MAXIMUM 100 words. Count them.\n\n"
-        "VARIANT A (Specific Role Context):\n"
+        + _word_targets("job_hunt")
+        + "VARIANT A (Specific Role Context):\n"
         "- Line 1: Reference a specific role, team, or hiring signal from research\n"
         "- Line 2: One concrete proof point that maps to that role\n"
         "- Line 3: A specific reason this company over others\n"
@@ -405,11 +440,8 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         "senior operators to senior operators. Tight, specific, insight-driven.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
         "SUBJECT LINE OVERRIDE (executive): subject lines must be 1 to 4 words. Tighter is mandatory; ignore the 6-word default.\n\n"
-        "WORD LIMITS (strictly enforced, execs do not read long emails):\n"
-        "- Variant A: MAXIMUM 70 words. Count them.\n"
-        "- Variant B: MAXIMUM 70 words. Count them.\n"
-        "- Variant C: MAXIMUM 70 words. Count them.\n\n"
-        "VARIANT A (One Insight):\n"
+        + _word_targets("executive_outreach")
+        + "VARIANT A (One Insight):\n"
         "- Line 1: One sharp insight or observation tied to their recent move or metric\n"
         "- Line 2: Why it matters\n"
         "- Line 3: Low-friction ask\n\n"
@@ -441,11 +473,8 @@ def _agent2_networking(tone_preference: str) -> str:
         "person to another for coffee chats, intros, and specific questions. Casual, specific, "
         "never transactional.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
-        "WORD LIMITS (strictly enforced):\n"
-        "- Variant A: MAXIMUM 90 words. Count them.\n"
-        "- Variant B: MAXIMUM 90 words. Count them.\n"
-        "- Variant C: MAXIMUM 90 words. Count them.\n\n"
-        "VARIANT A (Specific Reason):\n"
+        + _word_targets("networking")
+        + "VARIANT A (Specific Reason):\n"
         "- Line 1: The specific reason you are reaching out to THEM, not generic\n"
         "- Line 2: A short context about you\n"
         "- Line 3: Low-pressure ask\n\n"
@@ -547,7 +576,6 @@ def generate_emails(scraped_data: dict) -> dict:
     Returns a dict with 'variants' and 'follow_up_sequence'.
     """
     client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-    model = "claude-sonnet-4-6"
 
     use_case = scraped_data.get("use_case", "")
     if use_case not in _WORD_LIMITS_BY_USE_CASE:
@@ -576,7 +604,7 @@ def generate_emails(scraped_data: dict) -> dict:
     research = None
     for attempt in range(2):
         try:
-            text = _call_claude(client, agent1_system, agent1_user, 800, model)
+            text = _call_claude(client, agent1_system, agent1_user, 800, MODEL_RESEARCH)
             research = _parse_json(text)
             break
         except (json.JSONDecodeError, ValueError) as e:
@@ -608,7 +636,7 @@ def generate_emails(scraped_data: dict) -> dict:
     emails = None
     for attempt in range(2):
         try:
-            text = _call_claude(client, agent2_system, agent2_user, 2000, model)
+            text = _call_claude(client, agent2_system, agent2_user, 2000, MODEL_WRITER)
             emails = _parse_json(text)
             break
         except (json.JSONDecodeError, ValueError) as e:
@@ -644,7 +672,7 @@ def generate_emails(scraped_data: dict) -> dict:
     scoring = {"scores": []}
     for attempt in range(2):
         try:
-            text = _call_claude(client, agent3_system, agent3_user, 500, model)
+            text = _call_claude(client, agent3_system, agent3_user, 500, MODEL_JUDGE)
             scoring = _parse_json(text)
             break
         except (json.JSONDecodeError, ValueError):
