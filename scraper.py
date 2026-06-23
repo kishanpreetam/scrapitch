@@ -116,11 +116,9 @@ def scrape_website(url: str) -> dict:
 
     specific_details = [str(d).strip() for d in specific_details if d and str(d).strip()]
 
-    if len(specific_details) < 3:
-        raise RuntimeError(
-            f"specific_details must have at least 3 non-empty entries, got {len(specific_details)}"
-        )
-
+    # No hard floor. A thin or blocked page can legitimately return 0, 1, or 2
+    # entries; the orchestration layer branches on this count (0 is unreadable,
+    # 1 to 2 is limited personalization, 3 or more is normal) instead of raising.
     specific_details = specific_details[:5]
 
     log.info("scrapegraph: success elapsed_ms=%s", api_result.elapsed_ms)

@@ -291,6 +291,16 @@ _AGENT2_NO_INVENT_EXECUTIVE = (
     "fabricated connection."
 )
 
+# Applied when the scrape returned only 1 to 2 real facts. This is the highest
+# fabrication-risk case, so the anti-fabrication rule must hold hardest here.
+_AGENT2_THIN_PAGE = (
+    "LIMITED RESEARCH MODE (the scrape returned very few real facts about the recipient):\n"
+    "Lean on the sender details the user entered plus the few real facts that are present. "
+    "Do NOT extrapolate, guess, or invent any recipient detail to make up for the thin page. "
+    "Personalize only with what is actually there. If that means a shorter, more general email, write that. "
+    "Inventing detail to compensate is the worst possible outcome here."
+)
+
 _AGENT2_RESUME_RULES = (
     "RESUME INTEGRATION (only applies when 'resume_data' is provided in the user content):\n"
     "- Use ONE accomplishment from the resume that best fits the prospect's context.\n"
@@ -633,6 +643,8 @@ def generate_emails(scraped_data: dict) -> dict:
     agent2_user = json.dumps(agent2_user_dict)
 
     agent2_system = build_agent2_system(use_case, tone_preference)
+    if scraped_data.get("limited_personalization"):
+        agent2_system += "\n\n" + _AGENT2_THIN_PAGE
     emails = None
     for attempt in range(2):
         try:
