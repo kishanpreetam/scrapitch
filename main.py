@@ -8,6 +8,7 @@ from typing import Literal, Optional
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, HttpUrl
 
 from scraper import scrape_website
@@ -76,12 +77,26 @@ class GenerateResponse(BaseModel):
     company_name: str
     variants: list[EmailVariant]
     follow_up_sequence: list[FollowUp]
+    limited_personalization: bool = False
+
+
+# Shown verbatim to the user when a page yields no usable detail (blocked,
+# auth-walled, or empty). No internal field names appear in any user-facing text.
+UNREADABLE_MESSAGE = (
+    "We couldn't read enough from that page to personalize. Some sites, including "
+    "social profiles, block automated access. Try the company, lab, or person's own "
+    "website instead."
+)
 
 
 @app.post("/generate", response_model=GenerateResponse)
 async def generate(request: GenerateRequest):
     if not os.getenv("ANTHROPIC_API_KEY"):
-        raise HTTPException(status_code=500, detail="ANTHROPIC_API_KEY not configured")
+        log.error("ANTHROPIC_API_KEY is not configured")
+        raise HTTPException(
+            status_code=500,
+            detail="The service is temporarily unavailable. Please try again later.",
+        )
 
     url = str(request.url)
 
@@ -91,8 +106,19 @@ async def generate(request: GenerateRequest):
         log.error("scrape failure for %s: %s", url, exc)
         raise HTTPException(
             status_code=422,
-            detail=f"Could not scrape website: {exc}",
+            detail="We couldn't reach that page. Check the URL and try again.",
         ) from exc
+
+    # Branch on how much the scrape returned, instead of throwing a hard floor.
+    non_empty_details = [d for d in scraped.get("specific_details", []) if d and str(d).strip()]
+    if len(non_empty_details) == 0:
+        # Effectively unreadable. Skip Agent 2 and Agent 3; return clean guidance.
+        log.info("unreadable page (no usable detail) for %s", url)
+        return JSONResponse(
+            status_code=200,
+            content={"status": "unreadable", "message": UNREADABLE_MESSAGE},
+        )
+    limited_personalization = len(non_empty_details) < 3
 
     payload = {
         **scraped,
@@ -110,6 +136,7 @@ async def generate(request: GenerateRequest):
         "program_term": request.program_term,
         "company_stage": request.company_stage,
         "traction_metric": request.traction_metric,
+        "limited_personalization": limited_personalization,
     }
 
     try:
@@ -118,7 +145,7 @@ async def generate(request: GenerateRequest):
         log.error("email generation failure for %s: %s", url, exc)
         raise HTTPException(
             status_code=500,
-            detail=f"Email generation failed: {exc}",
+            detail="Something went wrong generating your drafts. Please try again.",
         ) from exc
 
     return GenerateResponse(
@@ -126,6 +153,7 @@ async def generate(request: GenerateRequest):
         company_name=scraped["company_name"],
         variants=result["variants"],
         follow_up_sequence=result.get("follow_up_sequence", []),
+        limited_personalization=limited_personalization,
     )
 
 

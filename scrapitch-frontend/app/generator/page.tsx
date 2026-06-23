@@ -37,6 +37,7 @@ type GenerateResponse = {
   company_name: string;
   variants: Variant[];
   follow_up_sequence: FollowUp[];
+  limited_personalization?: boolean;
 };
 
 // Only the one-line summary is used, to autofill the sender-side about-you field.
@@ -297,6 +298,7 @@ export default function GeneratorPage() {
   const [loadingStage, setLoadingStage] = useState("");
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [unreadable, setUnreadable] = useState<string | null>(null);
   const [hasAttempted, setHasAttempted] = useState(false);
 
   // Resume upload (job hunt and masters only). Fills the about-you field.
@@ -371,6 +373,7 @@ export default function GeneratorPage() {
     }
 
     setError(null);
+    setUnreadable(null);
     setResult(null);
     setLoading(true);
     setLoadingStage("Analyzing website...");
@@ -399,21 +402,28 @@ export default function GeneratorPage() {
         body: JSON.stringify(body),
       });
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new Error(data.detail || `Error ${res.status}`);
-      }
+      const data = await res.json().catch(() => null);
 
-      const data: GenerateResponse = await res.json();
-      setResult(data);
-    } catch (err: unknown) {
-      if (err instanceof TypeError && err.message.includes("fetch")) {
-        setError("Failed to connect. Please try again.");
-      } else if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unexpected error occurred.");
+      // Never surface a raw backend message. Map known cases; generic otherwise.
+      if (!res.ok) {
+        setError("Something went wrong generating your drafts. Please try again.");
+        return;
       }
+      if (data && data.status === "unreadable") {
+        setUnreadable(
+          typeof data.message === "string"
+            ? data.message
+            : "We couldn't read enough from that page to personalize. Some sites, including social profiles, block automated access. Try the company, lab, or person's own website instead.",
+        );
+        return;
+      }
+      if (!data || !Array.isArray(data.variants)) {
+        setError("Something went wrong generating your drafts. Please try again.");
+        return;
+      }
+      setResult(data as GenerateResponse);
+    } catch {
+      setError("Couldn't reach the server. Please check your connection and try again.");
     } finally {
       clearTimeout(stageTimer);
       setLoading(false);
@@ -512,7 +522,7 @@ export default function GeneratorPage() {
                   className={fieldClass}
                 />
                 <p style={helperStyle}>
-                  The website of the company, lab, person, or program you&apos;re reaching out to.
+                  Their company, lab, or personal site. Social profiles often can&apos;t be read.
                 </p>
               </div>
 
@@ -812,6 +822,30 @@ export default function GeneratorPage() {
             </div>
           )}
 
+          {/* Unreadable page: calm guidance, not an error. The URL above stays editable. */}
+          {unreadable && !loading && (
+            <div
+              style={{
+                marginTop: 32,
+                borderRadius: 4,
+                border: "1px solid #2c241c",
+                background: "#0d0d0d",
+                padding: 24,
+              }}
+            >
+              <p
+                className="font-mono"
+                style={{ fontSize: 11, color: "#c9b896", letterSpacing: "0.04em", marginBottom: 10 }}
+              >
+                heads up
+              </p>
+              <p style={{ fontSize: 15, color: "#c9c9c4", lineHeight: 1.6 }}>{unreadable}</p>
+              <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 12 }}>
+                Edit the URL above and try a different page.
+              </p>
+            </div>
+          )}
+
           {/* Results */}
           {result && (
             <div className="space-y-6" style={{ marginTop: 48 }}>
@@ -844,6 +878,21 @@ export default function GeneratorPage() {
                 </p>
               </div>
 
+              {result.limited_personalization && (
+                <div
+                  style={{
+                    borderRadius: 4,
+                    border: "1px solid #3a3328",
+                    background: "rgba(201,184,150,0.06)",
+                    padding: "12px 16px",
+                  }}
+                >
+                  <p style={{ fontSize: 13, color: "#c9b896", lineHeight: 1.55 }}>
+                    We could only read limited detail from that page, so these drafts are less personalized than usual. A company or lab site usually produces stronger drafts.
+                  </p>
+                </div>
+              )}
+
               <div className="grid md:grid-cols-3 gap-5">
                 {result.variants.map((v) => (
                   <EmailCard key={v.variant} variant={v} />
@@ -859,7 +908,7 @@ export default function GeneratorPage() {
           )}
 
           {/* Empty state */}
-          {!result && !loading && !error && (
+          {!result && !loading && !error && !unreadable && (
             <div
               className="text-center"
               style={{
