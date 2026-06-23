@@ -36,15 +36,14 @@ You choose the URLs you submit and the targets of your outreach. Where a page yo
 
 ## 5. How we share information
 
-We do not sell your personal information. We share information with the service providers (sub-processors) that help us operate the Service, each of which processes information on our behalf:
+We do not sell your personal information. We share information only with the service providers (sub-processors) that help us operate the Service, each of which processes information on our behalf and only as needed to provide it. These providers fall into the following categories:
 
-- Anthropic, for AI generation,
-- ScrapeGraphAI, for fetching the pages you submit,
-- Supabase, for authentication and data storage,
-- Google, for sign-in,
-- Vercel and Railway, for hosting.
+- AI processing, to generate your drafts,
+- web page fetching, to retrieve the pages you submit,
+- authentication and data storage, to sign you in and store your account information,
+- hosting and infrastructure, to run the Service.
 
-We may also disclose information if required by law, to protect our rights, or in connection with a business transfer.
+We may also disclose information if required by law, to protect our rights, or in connection with a business transfer. We can provide the current list of our sub-processors on request at hello@scrapitch.com.
 
 ## 6. Data retention
 
