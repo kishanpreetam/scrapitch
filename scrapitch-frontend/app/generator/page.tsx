@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -37,6 +37,11 @@ type GenerateResponse = {
   company_name: string;
   variants: Variant[];
   follow_up_sequence: FollowUp[];
+};
+
+// Only the one-line summary is used, to autofill the sender-side about-you field.
+type ParsedResume = {
+  summary_one_line?: string;
 };
 
 const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
@@ -294,8 +299,59 @@ export default function GeneratorPage() {
   const [error, setError] = useState<string | null>(null);
   const [hasAttempted, setHasAttempted] = useState(false);
 
+  // Resume upload (job hunt and masters only). Fills the about-you field.
+  const [resumeFileName, setResumeFileName] = useState("");
+  const [resumeParsing, setResumeParsing] = useState(false);
+  const [resumeError, setResumeError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const aboutYou = ABOUT_YOU[useCase];
   const highlightsField = HIGHLIGHTS[useCase];
+  const showResume = useCase === "job_hunt" || useCase === "masters_outreach";
+
+  const handleResumeFile = async (file: File) => {
+    setResumeError(null);
+    setResumeParsing(true);
+    setResumeFileName(file.name);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch(`${API_BASE}/parse-resume`, { method: "POST", body: formData });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ detail: res.statusText }));
+        throw new Error(data.detail || `Error ${res.status}`);
+      }
+      const parsed: ParsedResume = await res.json();
+      if (parsed.summary_one_line) setAboutUser(parsed.summary_one_line);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unexpected error.";
+      setResumeError(
+        `Couldn't read this resume. ${message}. Try a cleaner PDF or fill the field below manually.`,
+      );
+      setResumeFileName("");
+    } finally {
+      setResumeParsing(false);
+    }
+  };
+
+  const handleResumeRemove = () => {
+    setResumeFileName("");
+    setResumeError(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleResumeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleResumeFile(file);
+  };
+
+  const handleResumeDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleResumeFile(file);
+  };
 
   const handleGenerate = async () => {
     setHasAttempted(true);
@@ -478,6 +534,139 @@ export default function GeneratorPage() {
                 </select>
                 <p style={helperStyle}>We tailor email length, framing, and ask to your use case.</p>
               </div>
+
+              {/* Resume upload (job hunt and masters only); fills the about-you field below */}
+              {showResume && (
+                <div>
+                  <p className="font-mono" style={labelStyle}>
+                    resume (optional)
+                  </p>
+
+                  {!resumeFileName && !resumeParsing && (
+                    <div
+                      onClick={() => fileInputRef.current?.click()}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={() => setIsDragging(false)}
+                      onDrop={handleResumeDrop}
+                      role="button"
+                      tabIndex={0}
+                      className="hover:border-[#c9b896] transition-colors group cursor-pointer"
+                      style={{
+                        background: isDragging ? "#0d0c0a" : "#0a0a0a",
+                        border: `1px ${isDragging ? "solid" : "dashed"} ${isDragging ? "#c9b896" : "#2c241c"}`,
+                        borderRadius: 4,
+                        padding: "20px 16px",
+                        minHeight: 72,
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        textAlign: "center",
+                      }}
+                    >
+                      <p
+                        className="group-hover:text-[#f5f5f0] transition-colors"
+                        style={{ fontSize: 14, color: "#8a8a85", marginBottom: 4 }}
+                      >
+                        <span className="md:hidden">Tap to upload your resume</span>
+                        <span className="hidden md:inline">Drop your resume here, or click to upload</span>
+                      </p>
+                      <p
+                        className="font-mono"
+                        style={{ fontSize: 11, color: "#6e6657", letterSpacing: "0.04em" }}
+                      >
+                        PDF or DOCX, up to 10MB
+                      </p>
+                    </div>
+                  )}
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={handleResumeInput}
+                    style={{ display: "none" }}
+                  />
+
+                  {resumeParsing && (
+                    <div
+                      style={{
+                        background: "#0a0a0a",
+                        border: "1px solid #2c241c",
+                        borderRadius: 4,
+                        padding: "20px 16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 10,
+                      }}
+                    >
+                      <span
+                        className="rounded-full animate-spin"
+                        style={{
+                          width: 12,
+                          height: 12,
+                          border: "2px solid rgba(201,184,150,0.25)",
+                          borderTopColor: "#c9b896",
+                        }}
+                      />
+                      <span
+                        style={{
+                          fontFamily: SERIF_STACK,
+                          fontStyle: "italic",
+                          fontSize: 14,
+                          color: "#8a7d63",
+                        }}
+                      >
+                        reading your resume...
+                      </span>
+                    </div>
+                  )}
+
+                  {resumeFileName && !resumeParsing && (
+                    <div
+                      className="flex items-center justify-between"
+                      style={{
+                        background: "#0d0c0a",
+                        border: "1px solid #2c241c",
+                        borderRadius: 4,
+                        padding: "12px 16px",
+                        gap: 12,
+                      }}
+                    >
+                      <span style={{ fontSize: 14, color: "#f5f5f0", wordBreak: "break-all" }}>
+                        {resumeFileName}
+                      </span>
+                      <button
+                        onClick={handleResumeRemove}
+                        className="hover:text-[#f5f5f0] transition-colors shrink-0"
+                        style={{
+                          fontSize: 12,
+                          color: "#c9b896",
+                          background: "none",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        remove
+                      </button>
+                    </div>
+                  )}
+
+                  {resumeError && (
+                    <p style={{ fontSize: 13, color: "#d4a4a4", lineHeight: 1.5, marginTop: 8 }}>
+                      {resumeError}
+                    </p>
+                  )}
+
+                  <p style={helperStyle}>
+                    Optional. We read it once to fill your background below, then it isn&apos;t saved.
+                  </p>
+                </div>
+              )}
 
               {/* About you (label and placeholder adapt to the use case) */}
               <div>
