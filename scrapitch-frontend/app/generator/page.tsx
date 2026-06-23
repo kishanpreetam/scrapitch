@@ -1,71 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
-
-type ParsedResumeLinks = {
-  linkedin: string | null;
-  github: string | null;
-  portfolio: string | null;
-  other: string[];
-};
-
-type ParsedResumeWork = {
-  title: string;
-  company: string;
-  duration: string;
-  bullets: string[];
-  metrics: string[];
-};
-
-type ParsedResumeProject = {
-  name: string;
-  description: string;
-  metrics: string[];
-};
-
-type ParsedResumePublication = {
-  title: string;
-  venue: string | null;
-  year: string | null;
-};
-
-type ParsedResume = {
-  name: string;
-  email: string | null;
-  phone: string | null;
-  location: string | null;
-  links: ParsedResumeLinks;
-  current_status: string;
-  school_year: string | null;
-  education: Array<{ school: string; degree: string; year: string; gpa: string | null }>;
-  work_experience: ParsedResumeWork[];
-  skills: string[];
-  projects: ParsedResumeProject[];
-  publications: ParsedResumePublication[];
-  research_interests: string[];
-  summary_one_line: string;
-};
-
-function pickTopMetric(resume: ParsedResume): string {
-  for (const w of resume.work_experience) {
-    if (w.metrics && w.metrics.length > 0) return w.metrics[0];
-  }
-  for (const p of resume.projects) {
-    if (p.metrics && p.metrics.length > 0) return p.metrics[0];
-  }
-  for (const w of resume.work_experience) {
-    if (w.bullets && w.bullets.length > 0) return w.bullets[0];
-  }
-  return "";
-}
-
-function pickPortfolioLink(resume: ParsedResume): string {
-  return resume.links.portfolio || resume.links.github || resume.links.linkedin || "";
-}
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://web-production-f17a7.up.railway.app";
 
@@ -102,20 +41,54 @@ type GenerateResponse = {
 
 const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
 
-const PLACEHOLDER_MAP: Record<"user_ask" | "highlights", Record<UseCase, string>> = {
-  user_ask: {
-    b2b_sales: "e.g. 15 minute call to see if there's a fit for your team",
-    masters_outreach: "e.g. 20 minute call to ask about your research lab and the program's culture",
-    job_hunt: "e.g. 20 minute chat to learn about your team and how you evaluate senior engineers",
-    executive_outreach: "e.g. 30 minute conversation to get your perspective on early stage go to market",
-    networking: "e.g. 15 minute virtual coffee to hear about your path into this field",
+// The form asks only for the sender's side. The recipient's details come from
+// the scrape, so labels and placeholders adapt to the selected outreach type
+// without ever asking the user to describe the prospect.
+const ABOUT_YOU: Record<UseCase, { label: string; placeholder: string }> = {
+  b2b_sales: {
+    label: "what you deliver",
+    placeholder: "The result you deliver, e.g. 'cut onboarding time 40%'. Not your title.",
   },
-  highlights: {
-    b2b_sales: "e.g. Helped a similar agency 3x their reply rate in 6 weeks (optional but helps)",
-    masters_outreach: "e.g. Co authored a paper on transformer pruning accepted at an ACL workshop (optional)",
-    job_hunt: "e.g. Led Spark migration that cut compute costs 40%, adopted by 3 downstream teams (optional)",
-    executive_outreach: "e.g. 200 signups in first week, covered in two AI newsletters (optional)",
-    networking: "e.g. Building a multi agent crisis response system, presented at Khoury symposium (optional)",
+  masters_outreach: {
+    label: "your relevant background",
+    placeholder:
+      "Your degree plus the specific skills or one project that line up with this lab. e.g. 'MS in computer vision, built a 3D reconstruction pipeline.'",
+  },
+  job_hunt: {
+    label: "your relevant experience",
+    placeholder:
+      "Your relevant experience for this role or team. One recognizable employer or one metric helps.",
+  },
+  executive_outreach: {
+    label: "your credibility",
+    placeholder: "One named customer, one metric, or a shared connection. One is enough.",
+  },
+  networking: {
+    label: "about you",
+    placeholder:
+      "One line on who you are, plus why this person specifically: a shared school, a talk you saw, something they made.",
+  },
+};
+
+const ASK_PLACEHOLDER: Record<UseCase, string> = {
+  b2b_sales: "A specific low-friction ask. e.g. 'Worth a quick call next week?'",
+  masters_outreach:
+    "Be specific and small: a 15-minute call, or whether they are taking students for Fall 2026.",
+  job_hunt: "Ask for a short conversation, not a job. e.g. 'Open to a 15-minute call about the X role?'",
+  executive_outreach: "Offer value, not a meeting. e.g. 'Open to a benchmark of how peers handled X?'",
+  networking:
+    "Keep it small and advice-shaped. e.g. '15 minutes to hear how you moved into X?' Not a job ask.",
+};
+
+// Networking is intentionally absent: achievements read as bragging in a
+// networking ask, so the highlights field is hidden for it.
+const HIGHLIGHTS: Partial<Record<UseCase, { label: string; placeholder: string }>> = {
+  b2b_sales: { label: "proof", placeholder: "Numbers, named customers, recent wins." },
+  executive_outreach: { label: "proof", placeholder: "Numbers, named customers, recent wins." },
+  job_hunt: { label: "proof", placeholder: "Numbers, named customers, recent wins." },
+  masters_outreach: {
+    label: "relevant result (optional)",
+    placeholder: "One result or project that aligns with their work.",
   },
 };
 
@@ -287,6 +260,18 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
   );
 }
 
+const labelStyle = {
+  fontSize: 11,
+  color: "#c9b896",
+  letterSpacing: "0.04em",
+  marginBottom: 10,
+} as const;
+
+const helperStyle = { fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 } as const;
+
+const fieldClass =
+  "w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors";
+
 export default function GeneratorPage() {
   const router = useRouter();
 
@@ -309,100 +294,8 @@ export default function GeneratorPage() {
   const [error, setError] = useState<string | null>(null);
   const [hasAttempted, setHasAttempted] = useState(false);
 
-  // Resume state
-  const [resumeData, setResumeData] = useState<ParsedResume | null>(null);
-  const [resumeFileName, setResumeFileName] = useState<string>("");
-  const [resumeParsing, setResumeParsing] = useState(false);
-  const [resumeError, setResumeError] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Conditional fields (job_hunt)
-  const [targetRole, setTargetRole] = useState("");
-  const [portfolioLink, setPortfolioLink] = useState("");
-  const [accomplishment, setAccomplishment] = useState("");
-
-  // Conditional fields (masters_outreach)
-  const [currentSchoolYear, setCurrentSchoolYear] = useState("");
-  const [paperOrTopic, setPaperOrTopic] = useState("");
-  const [programTerm, setProgramTerm] = useState("");
-
-  // Conditional fields (executive_outreach)
-  const [companyStage, setCompanyStage] = useState("");
-  const [tractionMetric, setTractionMetric] = useState("");
-
-  const showResumeBlock =
-    useCase === "job_hunt" || useCase === "masters_outreach" || useCase === "executive_outreach";
-
-  const applyResumeAutofill = (parsed: ParsedResume) => {
-    const topMetric = pickTopMetric(parsed);
-    setAccomplishment(topMetric);
-    setPortfolioLink(pickPortfolioLink(parsed));
-    setCurrentSchoolYear(parsed.school_year || "");
-    setCompanyStage(parsed.current_status || "");
-    if (!aboutUser.trim() && parsed.summary_one_line) {
-      setAboutUser(parsed.summary_one_line);
-    }
-  };
-
-  const handleResumeFile = async (file: File) => {
-    setResumeError(null);
-    setResumeParsing(true);
-    setResumeFileName(file.name);
-
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch(`${API_BASE}/parse-resume`, {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new Error(data.detail || `Error ${res.status}`);
-      }
-      const parsed: ParsedResume = await res.json();
-      setResumeData(parsed);
-      applyResumeAutofill(parsed);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Unexpected error.";
-      setResumeError(
-        `Couldn't read this resume. ${message}. Try a cleaner PDF or fill the fields manually.`
-      );
-      setResumeData(null);
-      setResumeFileName("");
-    } finally {
-      setResumeParsing(false);
-    }
-  };
-
-  const handleResumeRemove = () => {
-    setResumeData(null);
-    setResumeFileName("");
-    setResumeError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  const handleResumeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) handleResumeFile(file);
-  };
-
-  const handleResumeDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) handleResumeFile(file);
-  };
-
-  const updateResumeField = <K extends "name" | "current_status" | "summary_one_line">(
-    key: K,
-    value: string
-  ) => {
-    setResumeData((prev) => (prev ? { ...prev, [key]: value } : prev));
-  };
+  const aboutYou = ABOUT_YOU[useCase];
+  const highlightsField = HIGHLIGHTS[useCase];
 
   const handleGenerate = async () => {
     setHasAttempted(true);
@@ -439,22 +332,10 @@ export default function GeneratorPage() {
         use_case: useCase,
         about_user: aboutUser,
         user_ask: userAsk,
-        highlights: highlights,
+        // Highlights is hidden for networking, so never send stale text for it.
+        highlights: highlightsField ? highlights : "",
         tone_preference: tonePreference,
       };
-      if (resumeData) body.resume_data = resumeData;
-      if (useCase === "job_hunt") {
-        if (targetRole.trim()) body.target_role = targetRole.trim();
-        if (portfolioLink.trim()) body.portfolio_link = portfolioLink.trim();
-        if (accomplishment.trim()) body.accomplishment = accomplishment.trim();
-      } else if (useCase === "masters_outreach") {
-        if (currentSchoolYear.trim()) body.current_school_year = currentSchoolYear.trim();
-        if (paperOrTopic.trim()) body.paper_or_topic = paperOrTopic.trim();
-        if (programTerm.trim()) body.program_term = programTerm.trim();
-      } else if (useCase === "executive_outreach") {
-        if (companyStage.trim()) body.company_stage = companyStage.trim();
-        if (tractionMetric.trim()) body.traction_metric = tractionMetric.trim();
-      }
 
       const res = await fetch(`${API_BASE}/generate`, {
         method: "POST",
@@ -493,23 +374,11 @@ export default function GeneratorPage() {
           <div className="mx-auto px-6" style={{ maxWidth: 720 }}>
             <p
               className="font-mono"
-              style={{
-                fontSize: 11,
-                color: "#6e6e6e",
-                letterSpacing: "0.04em",
-                marginBottom: 16,
-              }}
+              style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 16 }}
             >
               the generator
             </p>
-            <div
-              style={{
-                height: 1,
-                background: "#2c241c",
-                width: 64,
-                margin: "0 auto 32px",
-              }}
-            />
+            <div style={{ height: 1, background: "#2c241c", width: 64, margin: "0 auto 32px" }} />
             <h1
               style={{
                 fontSize: "clamp(32px, 5vw, 56px)",
@@ -558,18 +427,11 @@ export default function GeneratorPage() {
               <span>02 · email writer</span>
               <span>03 · scoring judge</span>
             </div>
-            <div
-              style={{
-                height: 1,
-                background: "#2c241c",
-                width: 64,
-                margin: "32px auto 64px",
-              }}
-            />
+            <div style={{ height: 1, background: "#2c241c", width: 64, margin: "32px auto 64px" }} />
           </div>
         </section>
 
-        <div className="mx-auto px-6" style={{ maxWidth: 720, paddingBottom: 80 }} >
+        <div className="mx-auto px-6" style={{ maxWidth: 720, paddingBottom: 80 }}>
           {/* Input card */}
           <div
             style={{
@@ -580,17 +442,9 @@ export default function GeneratorPage() {
             }}
           >
             <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-              {/* Field 1: Prospect URL */}
+              {/* Prospect URL */}
               <div>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#c9b896",
-                    letterSpacing: "0.04em",
-                    marginBottom: 10,
-                  }}
-                >
+                <p className="font-mono" style={labelStyle}>
                   prospect url
                 </p>
                 <input
@@ -599,24 +453,16 @@ export default function GeneratorPage() {
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com"
                   required
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
+                  className={fieldClass}
                 />
-                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
+                <p style={helperStyle}>
                   The website of the company, lab, person, or program you&apos;re reaching out to.
                 </p>
               </div>
 
-              {/* Field 2: Outreach type */}
+              {/* Outreach type */}
               <div>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#c9b896",
-                    letterSpacing: "0.04em",
-                    marginBottom: 10,
-                  }}
-                >
+                <p className="font-mono" style={labelStyle}>
                   outreach type
                 </p>
                 <select
@@ -630,545 +476,65 @@ export default function GeneratorPage() {
                   <option value="executive_outreach">Executive outreach · peer-to-peer to a C-suite contact</option>
                   <option value="networking">Networking · start a real connection</option>
                 </select>
-                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                  We tailor email length, framing, and ask to your use case.
-                </p>
+                <p style={helperStyle}>We tailor email length, framing, and ask to your use case.</p>
               </div>
 
-              {/* Resume upload (conditional: jobs, grad, founders) */}
-              {showResumeBlock && (
-                <div>
-                  <p
-                    className="font-mono"
-                    style={{
-                      fontSize: 11,
-                      color: "#c9b896",
-                      letterSpacing: "0.04em",
-                      marginBottom: 10,
-                    }}
-                  >
-                    resume (optional)
-                  </p>
-
-                  {!resumeData && !resumeParsing && (
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      onDragOver={(e) => {
-                        e.preventDefault();
-                        setIsDragging(true);
-                      }}
-                      onDragLeave={() => setIsDragging(false)}
-                      onDrop={handleResumeDrop}
-                      role="button"
-                      tabIndex={0}
-                      className="hover:border-[#c9b896] transition-colors group cursor-pointer"
-                      style={{
-                        background: isDragging ? "#0d0c0a" : "#0a0a0a",
-                        border: `1px ${isDragging ? "solid" : "dashed"} ${isDragging ? "#c9b896" : "#2c241c"}`,
-                        borderRadius: 4,
-                        padding: "20px 16px",
-                        minHeight: 80,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                      }}
-                    >
-                      <p
-                        className="group-hover:text-[#f5f5f0] transition-colors"
-                        style={{ fontSize: 14, color: "#8a8a85", marginBottom: 4 }}
-                      >
-                        <span className="md:hidden">Tap to upload your resume</span>
-                        <span className="hidden md:inline">Drop your resume here, or click to upload</span>
-                      </p>
-                      <p
-                        className="font-mono"
-                        style={{
-                          fontSize: 11,
-                          color: "#6e6657",
-                          letterSpacing: "0.04em",
-                        }}
-                      >
-                        PDF or DOCX, up to 10MB
-                      </p>
-                    </div>
-                  )}
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={handleResumeInput}
-                    style={{ display: "none" }}
-                  />
-
-                  {resumeParsing && (
-                    <div
-                      style={{
-                        background: "#0a0a0a",
-                        border: "1px solid #2c241c",
-                        borderRadius: 4,
-                        padding: "20px 16px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 10,
-                      }}
-                    >
-                      <span
-                        className="rounded-full animate-spin"
-                        style={{
-                          width: 12,
-                          height: 12,
-                          border: "2px solid rgba(201,184,150,0.25)",
-                          borderTopColor: "#c9b896",
-                        }}
-                      />
-                      <span
-                        style={{
-                          fontFamily: SERIF_STACK,
-                          fontStyle: "italic",
-                          fontSize: 14,
-                          color: "#8a7d63",
-                        }}
-                      >
-                        reading your resume...
-                      </span>
-                    </div>
-                  )}
-
-                  {resumeData && !resumeParsing && (
-                    <div
-                      style={{
-                        background: "#0d0c0a",
-                        border: "1px solid #2c241c",
-                        borderRadius: 4,
-                        padding: 20,
-                      }}
-                    >
-                      <div
-                        className="flex items-baseline justify-between"
-                        style={{ marginBottom: 6, gap: 12 }}
-                      >
-                        <p
-                          style={{
-                            fontSize: 14,
-                            fontWeight: 500,
-                            color: "#f5f5f0",
-                            wordBreak: "break-all",
-                          }}
-                        >
-                          {resumeFileName || "Parsed resume"}
-                        </p>
-                        <button
-                          onClick={handleResumeRemove}
-                          className="hover:text-[#f5f5f0] transition-colors shrink-0"
-                          style={{
-                            fontSize: 12,
-                            color: "#c9b896",
-                            background: "none",
-                            border: "none",
-                            cursor: "pointer",
-                          }}
-                        >
-                          remove
-                        </button>
-                      </div>
-                      <p
-                        style={{
-                          fontFamily: SERIF_STACK,
-                          fontStyle: "italic",
-                          fontSize: 14,
-                          color: "#8a7d63",
-                          marginBottom: 20,
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        looks like {resumeData.summary_one_line || "someone interesting"}
-                      </p>
-
-                      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                        <div>
-                          <p
-                            className="font-mono"
-                            style={{
-                              fontSize: 10,
-                              color: "#c9b896",
-                              letterSpacing: "0.04em",
-                              marginBottom: 6,
-                            }}
-                          >
-                            name
-                          </p>
-                          <input
-                            type="text"
-                            value={resumeData.name}
-                            onChange={(e) => updateResumeField("name", e.target.value)}
-                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <p
-                            className="font-mono"
-                            style={{
-                              fontSize: 10,
-                              color: "#c9b896",
-                              letterSpacing: "0.04em",
-                              marginBottom: 6,
-                            }}
-                          >
-                            current status
-                          </p>
-                          <input
-                            type="text"
-                            value={resumeData.current_status}
-                            onChange={(e) => updateResumeField("current_status", e.target.value)}
-                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                          />
-                        </div>
-                        <div>
-                          <p
-                            className="font-mono"
-                            style={{
-                              fontSize: 10,
-                              color: "#c9b896",
-                              letterSpacing: "0.04em",
-                              marginBottom: 6,
-                            }}
-                          >
-                            top accomplishment to lead with
-                          </p>
-                          <textarea
-                            value={accomplishment}
-                            onChange={(e) => setAccomplishment(e.target.value)}
-                            rows={2}
-                            className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-3 py-2 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {resumeError && (
-                    <p
-                      style={{
-                        fontSize: 13,
-                        color: "#d4a4a4",
-                        lineHeight: 1.5,
-                        marginTop: 8,
-                      }}
-                    >
-                      {resumeError}
-                    </p>
-                  )}
-
-                  <p
-                    className="font-mono"
-                    style={{
-                      fontSize: 12,
-                      color: "#6e6657",
-                      letterSpacing: "0.02em",
-                      lineHeight: 1.5,
-                      marginTop: 8,
-                    }}
-                  >
-                    Your resume is parsed once and used only for this generation. It isn&apos;t saved anywhere.
-                  </p>
-                </div>
-              )}
-
-              {/* Conditional fields per use case */}
-              {useCase === "job_hunt" && (
-                <>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      target role
-                    </p>
-                    <input
-                      type="text"
-                      value={targetRole}
-                      onChange={(e) => setTargetRole(e.target.value)}
-                      placeholder="e.g. Senior ML Engineer, inference team"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      The specific role or team you&apos;re reaching out about.
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      portfolio or github link
-                    </p>
-                    <input
-                      type="text"
-                      value={portfolioLink}
-                      onChange={(e) => setPortfolioLink(e.target.value)}
-                      placeholder="https://github.com/yourname"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      Goes in the signature so recruiters can see your work.
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      one accomplishment to lead with
-                    </p>
-                    <textarea
-                      value={accomplishment}
-                      onChange={(e) => setAccomplishment(e.target.value)}
-                      placeholder="e.g. Shipped a Spark migration that cut compute 40 percent."
-                      rows={2}
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      One metric or win. The writer will use just this one.
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {useCase === "masters_outreach" && (
-                <>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      your current school or year
-                    </p>
-                    <input
-                      type="text"
-                      value={currentSchoolYear}
-                      onChange={(e) => setCurrentSchoolYear(e.target.value)}
-                      placeholder="e.g. Northeastern, MS Analytics, graduating 2026"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      Where you study now and your expected graduation.
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      paper or topic to reference
-                    </p>
-                    <input
-                      type="text"
-                      value={paperOrTopic}
-                      onChange={(e) => setPaperOrTopic(e.target.value)}
-                      placeholder="e.g. Their 2025 paper on lipid nanoparticle delivery"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      A specific paper, project, or research area the professor publishes on.
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      program term you&apos;re applying for
-                    </p>
-                    <input
-                      type="text"
-                      value={programTerm}
-                      onChange={(e) => setProgramTerm(e.target.value)}
-                      placeholder="e.g. Fall 2026"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      The intake you&apos;re aiming for.
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {useCase === "executive_outreach" && (
-                <>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      your company stage
-                    </p>
-                    <input
-                      type="text"
-                      value={companyStage}
-                      onChange={(e) => setCompanyStage(e.target.value)}
-                      placeholder="e.g. Pre-seed AI tools, two founders, six months in"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      Stage, team size, time in. Helps the writer set the frame.
-                    </p>
-                  </div>
-                  <div>
-                    <p
-                      className="font-mono"
-                      style={{
-                        fontSize: 11,
-                        color: "#c9b896",
-                        letterSpacing: "0.04em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      strongest traction metric
-                    </p>
-                    <input
-                      type="text"
-                      value={tractionMetric}
-                      onChange={(e) => setTractionMetric(e.target.value)}
-                      placeholder="e.g. 200 paying teams in six months"
-                      className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors"
-                    />
-                    <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                      One quantified signal. Revenue, retention, signups, anything real.
-                    </p>
-                  </div>
-                </>
-              )}
-
-              {/* Field 3: About you */}
+              {/* About you (label and placeholder adapt to the use case) */}
               <div>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#c9b896",
-                    letterSpacing: "0.04em",
-                    marginBottom: 10,
-                  }}
-                >
-                  about you
+                <p className="font-mono" style={labelStyle}>
+                  {aboutYou.label}
                 </p>
                 <textarea
                   value={aboutUser}
                   onChange={(e) => setAboutUser(e.target.value)}
-                  placeholder="e.g. I'm a senior ML engineer applying for inference team roles at AI first companies."
+                  placeholder={aboutYou.placeholder}
                   rows={3}
                   maxLength={2000}
                   required
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                  className={`${fieldClass} resize-y`}
                 />
-                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                  One or two sentences. Who you are and what&apos;s relevant to this outreach.
+                <p style={helperStyle}>
+                  Your side only. We read the recipient&apos;s details from the page you submitted.
                 </p>
               </div>
 
-              {/* Field 4: Your ask */}
+              {/* The ask (placeholder adapts to the use case) */}
               <div>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#c9b896",
-                    letterSpacing: "0.04em",
-                    marginBottom: 10,
-                  }}
-                >
+                <p className="font-mono" style={labelStyle}>
                   what are you asking for
                 </p>
                 <textarea
                   value={userAsk}
                   onChange={(e) => setUserAsk(e.target.value)}
-                  placeholder={PLACEHOLDER_MAP.user_ask[useCase]}
+                  placeholder={ASK_PLACEHOLDER[useCase]}
                   rows={2}
                   maxLength={1000}
                   required
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
+                  className={`${fieldClass} resize-y`}
                 />
-                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                  Be specific. A 15 minute call, a referral, a portfolio review, an application question.
-                </p>
+                <p style={helperStyle}>One clear, specific ask.</p>
               </div>
 
-              {/* Field 5: Highlights (optional) */}
-              <div>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#c9b896",
-                    letterSpacing: "0.04em",
-                    marginBottom: 10,
-                  }}
-                >
-                  highlights (optional)
-                </p>
-                <textarea
-                  value={highlights}
-                  onChange={(e) => setHighlights(e.target.value)}
-                  placeholder={PLACEHOLDER_MAP.highlights[useCase]}
-                  rows={2}
-                  maxLength={2000}
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] placeholder:text-[#4a4a48] focus:border-[#c9b896] focus:outline-none transition-colors resize-y"
-                />
-                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                  Numbers, customer names, recent wins. The model weaves these in naturally.
-                </p>
-              </div>
+              {/* Highlights (use-case-aware; hidden for networking) */}
+              {highlightsField && (
+                <div>
+                  <p className="font-mono" style={labelStyle}>
+                    {highlightsField.label}
+                  </p>
+                  <textarea
+                    value={highlights}
+                    onChange={(e) => setHighlights(e.target.value)}
+                    placeholder={highlightsField.placeholder}
+                    rows={2}
+                    maxLength={2000}
+                    className={`${fieldClass} resize-y`}
+                  />
+                </div>
+              )}
 
-              {/* Field 6: Tone */}
+              {/* Tone */}
               <div>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#c9b896",
-                    letterSpacing: "0.04em",
-                    marginBottom: 10,
-                  }}
-                >
+                <p className="font-mono" style={labelStyle}>
                   tone
                 </p>
                 <select
@@ -1181,9 +547,7 @@ export default function GeneratorPage() {
                   <option value="warm">Warm · friendly, peer-to-peer</option>
                   <option value="direct">Direct · short sentences, no fluff</option>
                 </select>
-                <p style={{ fontSize: 13, color: "#6e6657", lineHeight: 1.5, marginTop: 8 }}>
-                  Override the default tone for your selected outreach type.
-                </p>
+                <p style={helperStyle}>Override the default tone for your selected outreach type.</p>
               </div>
             </div>
 
@@ -1249,12 +613,7 @@ export default function GeneratorPage() {
             >
               <p
                 className="font-mono"
-                style={{
-                  fontSize: 11,
-                  color: "#d4a4a4",
-                  letterSpacing: "0.04em",
-                  marginBottom: 6,
-                }}
+                style={{ fontSize: 11, color: "#d4a4a4", letterSpacing: "0.04em", marginBottom: 6 }}
               >
                 error
               </p>
@@ -1273,9 +632,7 @@ export default function GeneratorPage() {
                     Results for{" "}
                     <span className="text-blue-400">{result.company_name}</span>
                   </h2>
-                  <p className="text-sm text-zinc-500 mt-0.5">
-                    {result.url}
-                  </p>
+                  <p className="text-sm text-zinc-500 mt-0.5">{result.url}</p>
                 </div>
                 <div className="text-xs text-zinc-600 text-right hidden sm:block">
                   9-10 Elite &nbsp;·&nbsp; 7-8 Strong &nbsp;·&nbsp; 5-6 Average &nbsp;·&nbsp; 1-4 Needs work
@@ -1325,23 +682,11 @@ export default function GeneratorPage() {
             >
               <p
                 className="font-mono"
-                style={{
-                  fontSize: 11,
-                  color: "#6e6e6e",
-                  letterSpacing: "0.04em",
-                  marginBottom: 16,
-                }}
+                style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 16 }}
               >
                 output
               </p>
-              <div
-                style={{
-                  height: 1,
-                  background: "#2c241c",
-                  width: 32,
-                  margin: "0 auto 24px",
-                }}
-              />
+              <div style={{ height: 1, background: "#2c241c", width: 32, margin: "0 auto 24px" }} />
               <p
                 style={{
                   fontSize: 18,
@@ -1364,13 +709,10 @@ export default function GeneratorPage() {
                 </em>{" "}
                 will appear here.
               </p>
-              <p style={{ fontSize: 14, color: "#6e6e6e" }}>
-                Paste a URL above and generate.
-              </p>
+              <p style={{ fontSize: 14, color: "#6e6e6e" }}>Paste a URL above and generate.</p>
             </div>
           )}
         </div>
-
       </main>
       <Footer />
     </>

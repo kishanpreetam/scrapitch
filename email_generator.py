@@ -9,7 +9,7 @@ load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 
 _WORD_LIMITS_BY_USE_CASE: dict[str, dict[str, int]] = {
     "b2b_sales":          {"A": 80,  "B": 110, "C": 100},
-    "masters_outreach":   {"A": 120, "B": 140, "C": 160},
+    "masters_outreach":   {"A": 110, "B": 140, "C": 160},
     "job_hunt":           {"A": 100, "B": 100, "C": 100},
     "executive_outreach": {"A": 70,  "B": 70,  "C": 70},
     "networking":         {"A": 90,  "B": 90,  "C": 90},
@@ -209,7 +209,7 @@ _AGENT2_ABSOLUTE_RULES = (
     "- Every email must reference at least ONE specific detail from the research in line 1 or "
     "line 2 (not buried later).\n"
     "- Exactly ONE CTA per email. Low-friction only.\n"
-    "- Subject line under 7 words. No dashes, no arrows, no exclamation marks.\n"
+    "- Subject line: 6 words or fewer by default. No dashes, no arrows, no exclamation marks.\n"
     "- Write like a smart colleague firing off a quick note, not like a marketing textbook.\n"
 )
 
@@ -232,11 +232,30 @@ _AGENT2_OUTPUT_SHAPE = (
 )
 
 _AGENT2_ANTI_FABRICATION = (
-    "CRITICAL — DO NOT FABRICATE:\n"
-    "Only use information that was explicitly provided in about_user, user_ask, and highlights.\n"
-    "Do NOT invent credentials, metrics, outcomes, project names, company names, or bridging context that was not given.\n"
-    "If the input fields are sparse, write a shorter and vaguer email — do not fill gaps with invented details.\n"
+    "CRITICAL, DO NOT FABRICATE:\n"
+    "Personalization may draw on TWO sources only:\n"
+    "(a) the structured research facts about the recipient that Agent 1 returned from the scrape, and\n"
+    "(b) the sender details the user actually entered (about_user, user_ask, highlights, and resume_data if present).\n"
+    "NEVER invent a shared interest, a shared paper, a peer connection, a metric, a customer, a credential, "
+    "an outcome, a project name, a company name, or any recipient detail that is not present in the research.\n"
+    "If a field is empty or the research is thin, write around it. Never fill the gap with invention.\n"
     "A shorter honest email is always better than a longer fabricated one."
+)
+
+_AGENT2_NO_INVENT_MASTERS = (
+    "STRONGEST RULE FOR THIS USE CASE:\n"
+    "Never invent a shared research interest, a paper, a finding, or a methodology tie. "
+    "Reference a paper, project, or research area ONLY if it appears in the research facts from the scrape. "
+    "If none is present, write a shorter email about your own background and one narrow, honest question, "
+    "without naming specific work you cannot verify."
+)
+
+_AGENT2_NO_INVENT_EXECUTIVE = (
+    "STRONGEST RULE FOR THIS USE CASE:\n"
+    "Never invent a peer tie, a mutual connection, a customer, or a metric. "
+    "Use a public move, quote, or number ONLY if it appears in the research facts from the scrape or the "
+    "sender's own input. If none is present, lead with one genuine, specific question rather than a "
+    "fabricated connection."
 )
 
 _AGENT2_RESUME_RULES = (
@@ -305,7 +324,7 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         "respectful, and substantive.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
         "WORD LIMITS (strictly enforced):\n"
-        "- Variant A: MAXIMUM 120 words. Count them.\n"
+        "- Variant A: MAXIMUM 110 words. Count them.\n"
         "- Variant B: MAXIMUM 140 words. Count them.\n"
         "- Variant C: MAXIMUM 160 words. Count them.\n\n"
         "VARIANT A (Research Alignment):\n"
@@ -335,7 +354,8 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         + _AGENT2_RESUME_PUBS_GRAD + "\n"
         + _AGENT2_FOLLOW_UPS + "\n"
         + _AGENT2_OUTPUT_SHAPE + "\n\n"
-        + _AGENT2_ANTI_FABRICATION
+        + _AGENT2_ANTI_FABRICATION + "\n\n"
+        + _AGENT2_NO_INVENT_MASTERS
     )
 
 
@@ -384,6 +404,7 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         "You are an executive-tier cold email copywriter. You write peer-to-peer emails from "
         "senior operators to senior operators. Tight, specific, insight-driven.\n\n"
         + _AGENT2_ABSOLUTE_RULES + "\n"
+        "SUBJECT LINE OVERRIDE (executive): subject lines must be 1 to 4 words. Tighter is mandatory; ignore the 6-word default.\n\n"
         "WORD LIMITS (strictly enforced, execs do not read long emails):\n"
         "- Variant A: MAXIMUM 70 words. Count them.\n"
         "- Variant B: MAXIMUM 70 words. Count them.\n"
@@ -408,7 +429,8 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         + _AGENT2_RESUME_RULES + "\n"
         + _AGENT2_FOLLOW_UPS + "\n"
         + _AGENT2_OUTPUT_SHAPE + "\n\n"
-        + _AGENT2_ANTI_FABRICATION
+        + _AGENT2_ANTI_FABRICATION + "\n\n"
+        + _AGENT2_NO_INVENT_EXECUTIVE
     )
 
 
@@ -469,6 +491,7 @@ def build_agent3_system(use_case: str) -> str:
         raise ValueError(f"Unsupported use_case: {use_case!r}")
     w = _SCORE_WEIGHTS_BY_USE_CASE[use_case]
     limits = _WORD_LIMITS_BY_USE_CASE[use_case]
+    subject_rule = "1 to 4 words" if use_case == "executive_outreach" else "6 words or fewer"
     formula = (
         f"(personalization * {w['personalization']/100:.2f}) + "
         f"(length * {w['length']/100:.2f}) + "
@@ -502,7 +525,7 @@ def build_agent3_system(use_case: str) -> str:
         "action. No multi-asks. Score 1-10.\n"
         f"4. Problem-first / context-first framing ({w['problem_first']}%): Leads with "
         "their context, not the sender's product. Score 1-10.\n"
-        f"5. Subject line quality ({w['subject_line']}%): Under 7 words, specific to the "
+        f"5. Subject line quality ({w['subject_line']}%): {subject_rule}, specific to the "
         "prospect, no generic phrases. Score 1-10.\n"
         f"6. No spam phrases ({w['no_spam']}%): Free of 'hope this finds you well', "
         "corporate jargon, em dashes, arrows. Score 1-10.\n\n"
