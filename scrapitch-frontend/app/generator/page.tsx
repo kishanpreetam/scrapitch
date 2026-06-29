@@ -102,31 +102,21 @@ const HIGHLIGHTS: Partial<Record<UseCase, { label: string; placeholder: string }
   },
 };
 
-const BADGE = {
-  A: "bg-blue-500/20 text-blue-300 border border-blue-500/30",
-  B: "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30",
-  C: "bg-pink-500/20 text-pink-300 border border-pink-500/30",
-} as Record<string, string>;
-
-const CARD_BORDER = {
-  A: "border-blue-500/20 hover:border-blue-500/40",
-  B: "border-emerald-500/20 hover:border-emerald-500/40",
-  C: "border-pink-500/20 hover:border-pink-500/40",
-} as Record<string, string>;
-
 function ScoreBadge({ score }: { score: number }) {
-  const cls =
-    score >= 9
-      ? "bg-emerald-500/20 text-emerald-400"
-      : score >= 7
-        ? "bg-yellow-500/20 text-yellow-400"
-        : score >= 5
-          ? "bg-orange-500/20 text-orange-400"
-          : "bg-red-500/20 text-red-400";
-  const label = score >= 9 ? "Elite" : score >= 7 ? "Strong" : score >= 5 ? "Average" : "Needs work";
   return (
-    <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${cls}`}>
-      {score}/10 · {label}
+    <span
+      className="font-mono"
+      style={{
+        fontSize: 11,
+        background: "rgba(59,130,246,0.12)",
+        color: "#60a5fa",
+        padding: "3px 10px",
+        borderRadius: 99,
+        letterSpacing: "0.04em",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {score}/10
     </span>
   );
 }
@@ -146,60 +136,127 @@ function EmailCard({ variant }: { variant: Variant }) {
 
   return (
     <div
-      className={`rounded-2xl border bg-zinc-900/60 p-5 md:p-7 flex flex-col gap-4 transition-colors ${CARD_BORDER[variant.variant] || "border-zinc-700"}`}
+      style={{
+        background: "#141414",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 12,
+        padding: 20,
+        display: "flex",
+        flexDirection: "column",
+        gap: 16,
+      }}
     >
-      {/* Header row: stacks on mobile so score sits below label */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between md:flex-wrap gap-2">
-        <span
-          className={`self-start text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide ${BADGE[variant.variant] || "bg-zinc-700 text-zinc-300"}`}
-        >
-          Variant {variant.variant}: {variant.name}
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <span className="font-mono" style={{ fontSize: 11, letterSpacing: "0.04em" }}>
+          <span style={{ color: "#c9b896" }}>variant {variant.variant.toLowerCase()}</span>
+          <span style={{ color: "#6e6e6e" }}> · {variant.name.toLowerCase()}</span>
         </span>
         <ScoreBadge score={variant.score} />
       </div>
 
-      {/* Subject lines */}
+      {/* Hairline */}
+      <div style={{ height: 1, background: "rgba(255,255,255,0.08)" }} />
+
+      {/* Subject */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-2">
-          Subject line options
+        <p
+          className="font-mono"
+          style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 8 }}
+        >
+          subject
         </p>
-        <ol className="space-y-1.5">
+        <ol
+          style={{
+            listStyle: "none",
+            padding: 0,
+            margin: 0,
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+          }}
+        >
           {variant.subject_lines.map((s, i) => (
-            <li key={i} className="flex gap-2">
-              <span className="text-xs font-bold text-zinc-600 mt-0.5 shrink-0">{i + 1}.</span>
-              <span className="font-semibold text-zinc-100 leading-snug text-base md:text-sm">{s}</span>
+            <li key={i} style={{ display: "flex", gap: 8 }}>
+              <span
+                className="font-mono"
+                style={{ fontSize: 11, color: "#6e6e6e", marginTop: 3, flexShrink: 0 }}
+              >
+                {i + 1}.
+              </span>
+              <span style={{ fontSize: 15, fontWeight: 500, color: "#f5f5f0", lineHeight: 1.4 }}>
+                {s}
+              </span>
             </li>
           ))}
         </ol>
       </div>
 
       {/* Body */}
-      <div className="flex-1">
-        <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600 mb-1">
-          Email body
+      <div style={{ flex: 1 }}>
+        <p
+          className="font-mono"
+          style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 8 }}
+        >
+          body
         </p>
-        <div className="rounded-lg bg-zinc-950/60 border border-zinc-800 p-4">
-          <p className="text-[15px] md:text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap">
-            {variant.body}
-          </p>
-        </div>
+        <p style={{ fontSize: 15, lineHeight: 1.6, color: "#e8e8e8", whiteSpace: "pre-wrap" }}>
+          {variant.body}
+        </p>
       </div>
 
       {/* Score reasoning accordion */}
       <div>
         <button
           onClick={() => setReasonOpen(!reasonOpen)}
-          className="flex items-center gap-2 text-xs font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
+          className="font-mono"
+          style={{
+            fontSize: 11,
+            color: "#6e6e6e",
+            letterSpacing: "0.04em",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+          }}
         >
-          <span className={`inline-flex transition-transform ${reasonOpen ? "rotate-90" : ""}`}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <span
+            style={{
+              display: "inline-flex",
+              transition: "transform 0.15s",
+              transform: reasonOpen ? "rotate(90deg)" : "rotate(0deg)",
+            }}
+          >
+            <svg
+              width="10"
+              height="10"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
               <polyline points="9 18 15 12 9 6" />
             </svg>
           </span>
-          Score reasoning
+          score reasoning
         </button>
         {reasonOpen && (
-          <p className="mt-2 text-xs text-zinc-500 leading-relaxed border-l-2 border-zinc-700 pl-3">
+          <p
+            style={{
+              marginTop: 8,
+              fontSize: 12,
+              color: "#6e6e6e",
+              lineHeight: 1.6,
+              borderLeft: "2px solid rgba(255,255,255,0.1)",
+              paddingLeft: 12,
+            }}
+          >
             {variant.score_reasoning}
           </p>
         )}
@@ -208,64 +265,109 @@ function EmailCard({ variant }: { variant: Variant }) {
       {/* Copy button */}
       <button
         onClick={handleCopy}
-        className={`w-full rounded-lg border py-3 md:py-2.5 text-base md:text-sm font-semibold transition-all ${
-          copied
-            ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
-            : "border-[#c9b896] text-zinc-300 hover:text-[#f5f5f0] hover:border-[#f5f5f0]"
-        }`}
+        style={{
+          width: "100%",
+          background: "transparent",
+          border: `1px solid ${copied ? "rgba(34,197,94,0.4)" : "rgba(59,130,246,0.4)"}`,
+          borderRadius: 8,
+          padding: "10px 16px",
+          color: copied ? "#4ade80" : "#60a5fa",
+          fontSize: 14,
+          fontWeight: 500,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+          transition: "border-color 0.15s, color 0.15s",
+        }}
       >
-        {copied ? "Copied to clipboard" : "Copy email"}
+        {copied ? (
+          <>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            copied
+          </>
+        ) : (
+          <>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+            copy email
+          </>
+        )}
       </button>
     </div>
   );
 }
 
 function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
-  const [open, setOpen] = useState(false);
-
   if (!sequence || sequence.length === 0) return null;
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-6">
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center justify-between w-full text-left"
+    <div
+      style={{
+        background: "#141414",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: 12,
+        padding: 20,
+      }}
+    >
+      <p
+        className="font-mono"
+        style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 20 }}
       >
-        <div className="flex items-center gap-3">
-          <span className={`inline-flex text-zinc-500 transition-transform ${open ? "rotate-90" : ""}`}>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </span>
-          <div>
-            <p className="text-sm font-semibold text-zinc-200">Follow-up sequence</p>
-            <p className="text-xs text-zinc-600 mt-0.5">{sequence.length} follow-up emails ready to send</p>
-          </div>
-        </div>
-        <span className="text-xs font-medium text-zinc-500 shrink-0 ml-4">
-          {open ? "Collapse" : "Expand"}
-        </span>
-      </button>
-
-      {open && (
-        <div className="mt-5 space-y-4">
-          {sequence.map((fu, i) => (
-            <div key={i} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 bg-zinc-800 px-2 py-0.5 rounded-full">
-                  Follow-up {i + 1} · Day {fu.day}
+        follow up sequence
+      </p>
+      <div>
+        {sequence.map((fu, i) => (
+          <div key={i}>
+            {i > 0 && (
+              <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "16px 0" }} />
+            )}
+            <div style={{ display: "flex", gap: 20 }}>
+              <div style={{ flexShrink: 0, width: 52 }}>
+                <span
+                  className="font-mono"
+                  style={{ fontSize: 11, color: "#60a5fa", letterSpacing: "0.04em" }}
+                >
+                  day {fu.day}
                 </span>
               </div>
-              <p className="text-xs font-semibold text-zinc-400 mb-2">
-                Subject: <span className="text-zinc-200">{fu.subject}</span>
-              </p>
-              <p className="text-sm text-zinc-400 leading-relaxed whitespace-pre-wrap">
-                {fu.body}
-              </p>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 13, fontWeight: 500, color: "#c9c9c4", marginBottom: 6 }}>
+                  {fu.subject}
+                </p>
+                <p style={{ fontSize: 14, color: "#8a8a85", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                  {fu.body}
+                </p>
+              </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -517,6 +619,7 @@ export default function GeneratorPage() {
           </div>
         </section>
 
+        {/* Form wrapper */}
         <div className="mx-auto px-6" style={{ maxWidth: 720, paddingBottom: 80 }}>
           {/* Input card */}
           <div
@@ -849,67 +952,6 @@ export default function GeneratorPage() {
             </div>
           )}
 
-          {/* Results */}
-          {result && (
-            <div className="space-y-6" style={{ marginTop: 48 }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-bold text-zinc-50">
-                    Results for{" "}
-                    <span className="text-blue-400">{result.company_name}</span>
-                  </h2>
-                  <p className="text-sm text-zinc-500 mt-0.5">{result.url}</p>
-                </div>
-                <div className="text-xs text-zinc-600 text-right hidden sm:block">
-                  9-10 Elite &nbsp;·&nbsp; 7-8 Strong &nbsp;·&nbsp; 5-6 Average &nbsp;·&nbsp; 1-4 Needs work
-                </div>
-              </div>
-
-              {/* Persistent point-of-use compliance notice */}
-              <div style={{ borderTop: "1px solid #2c241c", paddingTop: 14 }}>
-                <p
-                  className="font-mono"
-                  style={{
-                    fontSize: 11,
-                    color: "#6e6657",
-                    letterSpacing: "0.04em",
-                    lineHeight: 1.6,
-                    margin: 0,
-                  }}
-                >
-                  AI-generated. Review and edit before sending. You are the sender and responsible for compliance.
-                </p>
-              </div>
-
-              {result.limited_personalization && (
-                <div
-                  style={{
-                    borderRadius: 4,
-                    border: "1px solid #3a3328",
-                    background: "rgba(201,184,150,0.06)",
-                    padding: "12px 16px",
-                  }}
-                >
-                  <p style={{ fontSize: 13, color: "#c9b896", lineHeight: 1.55 }}>
-                    We could only read limited detail from that page, so these drafts are less personalized than usual. A company or lab site usually produces stronger drafts.
-                  </p>
-                </div>
-              )}
-
-              <div className="grid md:grid-cols-3 gap-5">
-                {result.variants.map((v) => (
-                  <EmailCard key={v.variant} variant={v} />
-                ))}
-              </div>
-
-              <FollowUpSection sequence={result.follow_up_sequence} />
-
-              <p className="text-xs text-zinc-600 text-center">
-                Tip: Edit before sending. The AI gives you a strong start. Your voice makes it land.
-              </p>
-            </div>
-          )}
-
           {/* Empty state */}
           {!result && !loading && !error && !unreadable && (
             <div
@@ -954,6 +996,102 @@ export default function GeneratorPage() {
             </div>
           )}
         </div>
+
+        {/* Results — own container, lifted outside the form wrapper */}
+        {result && (
+          <div className="mx-auto px-6" style={{ maxWidth: 720, paddingBottom: 80 }}>
+            {/* Hairline divider separating form from results */}
+            <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 32 }} />
+
+            {/* Section heading */}
+            <div style={{ marginBottom: 24 }}>
+              <h2
+                style={{
+                  fontSize: 20,
+                  fontWeight: 500,
+                  color: "#f5f5f0",
+                  lineHeight: 1.3,
+                  marginBottom: 6,
+                }}
+              >
+                Results for{" "}
+                <em
+                  style={{
+                    fontFamily: SERIF_STACK,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    color: "#c9b896",
+                  }}
+                >
+                  {result.company_name}
+                </em>
+              </h2>
+              <p
+                className="font-mono"
+                style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em" }}
+              >
+                {result.url}
+              </p>
+            </div>
+
+            {/* Compliance notice */}
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 11,
+                color: "#6e6657",
+                letterSpacing: "0.04em",
+                lineHeight: 1.6,
+                marginBottom: 24,
+              }}
+            >
+              AI-generated. Review and edit before sending. You are the sender and responsible for compliance.
+            </p>
+
+            {result.limited_personalization && (
+              <div
+                style={{
+                  borderRadius: 4,
+                  border: "1px solid #3a3328",
+                  background: "rgba(201,184,150,0.06)",
+                  padding: "12px 16px",
+                  marginBottom: 24,
+                }}
+              >
+                <p style={{ fontSize: 13, color: "#c9b896", lineHeight: 1.55 }}>
+                  We could only read limited detail from that page, so these drafts are less personalized than usual. A company or lab site usually produces stronger drafts.
+                </p>
+              </div>
+            )}
+
+            {/* Single-column email cards */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              {result.variants.map((v) => (
+                <EmailCard key={v.variant} variant={v} />
+              ))}
+            </div>
+
+            {/* Follow-up timeline */}
+            {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
+              <div style={{ marginTop: 20 }}>
+                <FollowUpSection sequence={result.follow_up_sequence} />
+              </div>
+            )}
+
+            <p
+              className="font-mono"
+              style={{
+                fontSize: 11,
+                color: "#6e6e6e",
+                letterSpacing: "0.04em",
+                textAlign: "center",
+                marginTop: 24,
+              }}
+            >
+              Edit before sending. The AI gives you a strong start. Your voice makes it land.
+            </p>
+          </div>
+        )}
       </main>
       <Footer />
     </>
