@@ -102,40 +102,92 @@ const HIGHLIGHTS: Partial<Record<UseCase, { label: string; placeholder: string }
   },
 };
 
-function ScoreBadge({ score }: { score: number }) {
+function StrongestTag() {
   return (
     <span
       className="font-mono"
       style={{
-        fontSize: 11,
+        fontSize: 10,
         background: "rgba(59,130,246,0.12)",
         color: "#60a5fa",
-        padding: "3px 10px",
+        padding: "2px 8px",
         borderRadius: 99,
         letterSpacing: "0.04em",
         whiteSpace: "nowrap",
       }}
     >
-      {score}/10
+      Strongest
     </span>
   );
 }
 
-function EmailCard({ variant }: { variant: Variant }) {
-  const [copied, setCopied] = useState(false);
+function CopyIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+      <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <polyline points="20 6 9 17 4 12" />
+    </svg>
+  );
+}
+
+function EmailCard({
+  variant,
+  rank,
+  isStrongest,
+}: {
+  variant: Variant;
+  rank: number;
+  isStrongest: boolean;
+}) {
+  const [copiedSubject, setCopiedSubject] = useState<number | null>(null);
+  const [copiedBody, setCopiedBody] = useState(false);
   const [reasonOpen, setReasonOpen] = useState(false);
 
-  const handleCopy = () => {
-    const subject = variant.subject_lines[0] ?? "";
-    const text = `Subject: ${subject}\n\n${variant.body}`;
-    navigator.clipboard.writeText(text).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const handleCopySubject = (subject: string, index: number) => {
+    navigator.clipboard.writeText(subject).then(() => {
+      setCopiedSubject(index);
+      setTimeout(() => setCopiedSubject(null), 2000);
+    });
+  };
+
+  const handleCopyBody = () => {
+    navigator.clipboard.writeText(variant.body).then(() => {
+      setCopiedBody(true);
+      setTimeout(() => setCopiedBody(false), 2000);
     });
   };
 
   return (
     <div
+      id={`draft-${rank}`}
       style={{
         background: "#141414",
         border: "1px solid rgba(255,255,255,0.08)",
@@ -149,10 +201,10 @@ function EmailCard({ variant }: { variant: Variant }) {
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
         <span className="font-mono" style={{ fontSize: 11, letterSpacing: "0.04em" }}>
-          <span style={{ color: "#c9b896" }}>variant {variant.variant.toLowerCase()}</span>
+          <span style={{ color: "#c9b896" }}>{rank}</span>
           <span style={{ color: "#6e6e6e" }}> · {variant.name.toLowerCase()}</span>
         </span>
-        <ScoreBadge score={variant.score} />
+        {isStrongest && <StrongestTag />}
       </div>
 
       {/* Hairline */}
@@ -166,30 +218,39 @@ function EmailCard({ variant }: { variant: Variant }) {
         >
           subject
         </p>
-        <ol
-          style={{
-            listStyle: "none",
-            padding: 0,
-            margin: 0,
-            display: "flex",
-            flexDirection: "column",
-            gap: 6,
-          }}
-        >
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {variant.subject_lines.map((s, i) => (
-            <li key={i} style={{ display: "flex", gap: 8 }}>
+            <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
               <span
                 className="font-mono"
                 style={{ fontSize: 11, color: "#6e6e6e", marginTop: 3, flexShrink: 0 }}
               >
                 {i + 1}.
               </span>
-              <span style={{ fontSize: 15, fontWeight: 500, color: "#f5f5f0", lineHeight: 1.4 }}>
+              <span style={{ flex: 1, fontSize: 15, fontWeight: 500, color: "#f5f5f0", lineHeight: 1.4 }}>
                 {s}
               </span>
-            </li>
+              <button
+                onClick={() => handleCopySubject(s, i)}
+                title="Copy subject"
+                style={{
+                  flexShrink: 0,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: copiedSubject === i ? "#4ade80" : "#6e6e6e",
+                  padding: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: 2,
+                  transition: "color 0.15s",
+                }}
+              >
+                {copiedSubject === i ? <CheckIcon /> : <CopyIcon />}
+              </button>
+            </div>
           ))}
-        </ol>
+        </div>
       </div>
 
       {/* Body */}
@@ -205,73 +266,75 @@ function EmailCard({ variant }: { variant: Variant }) {
         </p>
       </div>
 
-      {/* Score reasoning accordion */}
-      <div>
-        <button
-          onClick={() => setReasonOpen(!reasonOpen)}
-          className="font-mono"
-          style={{
-            fontSize: 11,
-            color: "#6e6e6e",
-            letterSpacing: "0.04em",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-          }}
-        >
-          <span
+      {/* Why this works accordion */}
+      {variant.score_reasoning && (
+        <div>
+          <button
+            onClick={() => setReasonOpen(!reasonOpen)}
+            className="font-mono"
             style={{
-              display: "inline-flex",
-              transition: "transform 0.15s",
-              transform: reasonOpen ? "rotate(90deg)" : "rotate(0deg)",
-            }}
-          >
-            <svg
-              width="10"
-              height="10"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </span>
-          score reasoning
-        </button>
-        {reasonOpen && (
-          <p
-            style={{
-              marginTop: 8,
-              fontSize: 12,
+              fontSize: 11,
               color: "#6e6e6e",
-              lineHeight: 1.6,
-              borderLeft: "2px solid rgba(255,255,255,0.1)",
-              paddingLeft: 12,
+              letterSpacing: "0.04em",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
             }}
           >
-            {variant.score_reasoning}
-          </p>
-        )}
-      </div>
+            <span
+              style={{
+                display: "inline-flex",
+                transition: "transform 0.15s",
+                transform: reasonOpen ? "rotate(90deg)" : "rotate(0deg)",
+              }}
+            >
+              <svg
+                width="10"
+                height="10"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </span>
+            why this works
+          </button>
+          {reasonOpen && (
+            <p
+              style={{
+                marginTop: 8,
+                fontSize: 12,
+                color: "#6e6e6e",
+                lineHeight: 1.6,
+                borderLeft: "2px solid rgba(255,255,255,0.1)",
+                paddingLeft: 12,
+              }}
+            >
+              {variant.score_reasoning}
+            </p>
+          )}
+        </div>
+      )}
 
-      {/* Copy button */}
+      {/* Copy body button */}
       <button
-        onClick={handleCopy}
+        onClick={handleCopyBody}
         style={{
           width: "100%",
           background: "transparent",
-          border: `1px solid ${copied ? "rgba(34,197,94,0.4)" : "rgba(59,130,246,0.4)"}`,
+          border: `1px solid ${copiedBody ? "rgba(34,197,94,0.4)" : "rgba(59,130,246,0.4)"}`,
           borderRadius: 8,
           padding: "10px 16px",
-          color: copied ? "#4ade80" : "#60a5fa",
+          color: copiedBody ? "#4ade80" : "#60a5fa",
           fontSize: 14,
           fontWeight: 500,
           cursor: "pointer",
@@ -282,7 +345,7 @@ function EmailCard({ variant }: { variant: Variant }) {
           transition: "border-color 0.15s, color 0.15s",
         }}
       >
-        {copied ? (
+        {copiedBody ? (
           <>
             <svg
               width="14"
@@ -315,10 +378,112 @@ function EmailCard({ variant }: { variant: Variant }) {
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
               <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
             </svg>
-            copy email
+            copy body
           </>
         )}
       </button>
+    </div>
+  );
+}
+
+function FollowUpRow({ fu, index }: { fu: FollowUp; index: number }) {
+  const [copiedSubject, setCopiedSubject] = useState(false);
+  const [copiedBody, setCopiedBody] = useState(false);
+
+  return (
+    <div>
+      {index > 0 && (
+        <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "20px 0" }} />
+      )}
+      <div style={{ display: "flex", gap: 20 }}>
+        <div style={{ flexShrink: 0, width: 52 }}>
+          <span
+            className="font-mono"
+            style={{ fontSize: 11, color: "#60a5fa", letterSpacing: "0.04em" }}
+          >
+            day {fu.day}
+          </span>
+        </div>
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
+          {/* Subject */}
+          <div>
+            <p
+              className="font-mono"
+              style={{ fontSize: 10, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 4 }}
+            >
+              subject
+            </p>
+            <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+              <span
+                style={{ flex: 1, fontSize: 13, fontWeight: 500, color: "#c9c9c4", lineHeight: 1.4 }}
+              >
+                {fu.subject}
+              </span>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(fu.subject).then(() => {
+                    setCopiedSubject(true);
+                    setTimeout(() => setCopiedSubject(false), 2000);
+                  });
+                }}
+                title="Copy subject"
+                style={{
+                  flexShrink: 0,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: copiedSubject ? "#4ade80" : "#6e6e6e",
+                  padding: "2px 4px",
+                  display: "flex",
+                  alignItems: "center",
+                  marginTop: 1,
+                  transition: "color 0.15s",
+                }}
+              >
+                {copiedSubject ? <CheckIcon /> : <CopyIcon />}
+              </button>
+            </div>
+          </div>
+          {/* Body */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+            <p
+              style={{
+                flex: 1,
+                fontSize: 14,
+                color: "#8a8a85",
+                lineHeight: 1.6,
+                whiteSpace: "pre-wrap",
+                margin: 0,
+              }}
+            >
+              {fu.body}
+            </p>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(fu.body).then(() => {
+                  setCopiedBody(true);
+                  setTimeout(() => setCopiedBody(false), 2000);
+                });
+              }}
+              title="Copy body"
+              style={{
+                flexShrink: 0,
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: copiedBody ? "#4ade80" : "#6e6e6e",
+                padding: "2px 4px",
+                display: "flex",
+                alignItems: "center",
+                marginTop: 2,
+                transition: "color 0.15s",
+              }}
+            >
+              {copiedBody ? <CheckIcon /> : <CopyIcon />}
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -328,6 +493,7 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
 
   return (
     <div
+      id="follow-up"
       style={{
         background: "#141414",
         border: "1px solid rgba(255,255,255,0.08)",
@@ -343,29 +509,7 @@ function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
       </p>
       <div>
         {sequence.map((fu, i) => (
-          <div key={i}>
-            {i > 0 && (
-              <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "16px 0" }} />
-            )}
-            <div style={{ display: "flex", gap: 20 }}>
-              <div style={{ flexShrink: 0, width: 52 }}>
-                <span
-                  className="font-mono"
-                  style={{ fontSize: 11, color: "#60a5fa", letterSpacing: "0.04em" }}
-                >
-                  day {fu.day}
-                </span>
-              </div>
-              <div style={{ flex: 1 }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: "#c9c9c4", marginBottom: 6 }}>
-                  {fu.subject}
-                </p>
-                <p style={{ fontSize: 14, color: "#8a8a85", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                  {fu.body}
-                </p>
-              </div>
-            </div>
-          </div>
+          <FollowUpRow key={i} fu={fu} index={i} />
         ))}
       </div>
     </div>
@@ -552,6 +696,10 @@ export default function GeneratorPage() {
       setLoadingStage("");
     }
   };
+
+  const sortedVariants = result
+    ? [...result.variants].sort((a, b) => b.score - a.score)
+    : [];
 
   return (
     <>
@@ -997,14 +1145,14 @@ export default function GeneratorPage() {
           )}
         </div>
 
-        {/* Results — own container, lifted outside the form wrapper */}
+        {/* Results — two-pane layout at >= 1024px, single column below */}
         {result && (
-          <div className="mx-auto px-6" style={{ maxWidth: 720, paddingBottom: 80 }}>
-            {/* Hairline divider separating form from results */}
+          <div className="mx-auto px-6" style={{ maxWidth: 1080, paddingBottom: 80 }}>
+            {/* Hairline divider */}
             <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 32 }} />
 
-            {/* Section heading */}
-            <div style={{ marginBottom: 24 }}>
+            {/* Mobile-only header (hidden on desktop — lives in the rail instead) */}
+            <div className="lg:hidden" style={{ marginBottom: 24 }}>
               <h2
                 style={{
                   fontSize: 20,
@@ -1028,68 +1176,218 @@ export default function GeneratorPage() {
               </h2>
               <p
                 className="font-mono"
-                style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em" }}
+                style={{
+                  fontSize: 11,
+                  color: "#6f6f6f",
+                  wordBreak: "break-all",
+                  marginBottom: 10,
+                  lineHeight: 1.5,
+                }}
               >
                 {result.url}
               </p>
-            </div>
-
-            {/* Compliance notice */}
-            <p
-              className="font-mono"
-              style={{
-                fontSize: 11,
-                color: "#6e6657",
-                letterSpacing: "0.04em",
-                lineHeight: 1.6,
-                marginBottom: 24,
-              }}
-            >
-              AI-generated. Review and edit before sending. You are the sender and responsible for compliance.
-            </p>
-
-            {result.limited_personalization && (
-              <div
+              <p
+                className="font-mono"
                 style={{
-                  borderRadius: 4,
-                  border: "1px solid #3a3328",
-                  background: "rgba(201,184,150,0.06)",
-                  padding: "12px 16px",
-                  marginBottom: 24,
+                  fontSize: 11,
+                  color: "#8f8f8f",
+                  letterSpacing: "0.04em",
+                  lineHeight: 1.6,
                 }}
               >
-                <p style={{ fontSize: 13, color: "#c9b896", lineHeight: 1.55 }}>
-                  We could only read limited detail from that page, so these drafts are less personalized than usual. A company or lab site usually produces stronger drafts.
-                </p>
-              </div>
-            )}
-
-            {/* Single-column email cards */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              {result.variants.map((v) => (
-                <EmailCard key={v.variant} variant={v} />
-              ))}
+                AI-generated. Review before sending. You are the sender.
+              </p>
             </div>
 
-            {/* Follow-up timeline */}
-            {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
-              <div style={{ marginTop: 20 }}>
-                <FollowUpSection sequence={result.follow_up_sequence} />
-              </div>
-            )}
+            {/* Two-pane flex */}
+            <div style={{ display: "flex", alignItems: "flex-start" }}>
 
-            <p
-              className="font-mono"
-              style={{
-                fontSize: 11,
-                color: "#6e6e6e",
-                letterSpacing: "0.04em",
-                textAlign: "center",
-                marginTop: 24,
-              }}
-            >
-              Edit before sending. The AI gives you a strong start. Your voice makes it land.
-            </p>
+              {/* Left rail — desktop only */}
+              <div
+                className="hidden lg:flex"
+                style={{
+                  width: 260,
+                  flexShrink: 0,
+                  position: "sticky",
+                  top: 80,
+                  borderRight: "1px solid rgba(255,255,255,0.08)",
+                  padding: "0 18px 40px 0",
+                  flexDirection: "column",
+                }}
+              >
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#8f8f8f",
+                    letterSpacing: "0.04em",
+                    marginBottom: 8,
+                  }}
+                >
+                  results
+                </p>
+                <p
+                  style={{
+                    fontFamily: SERIF_STACK,
+                    fontStyle: "italic",
+                    fontWeight: 400,
+                    fontSize: 16,
+                    color: "#c9b896",
+                    marginBottom: 6,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {result.company_name}
+                </p>
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#6f6f6f",
+                    wordBreak: "break-all",
+                    marginBottom: 16,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {result.url}
+                </p>
+                <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 16 }} />
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#8f8f8f",
+                    letterSpacing: "0.04em",
+                    lineHeight: 1.6,
+                    marginBottom: 16,
+                  }}
+                >
+                  AI-generated. Review before sending. You are the sender.
+                </p>
+                <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 16 }} />
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#8f8f8f",
+                    letterSpacing: "0.04em",
+                    marginBottom: 10,
+                  }}
+                >
+                  drafts
+                </p>
+                {sortedVariants.map((v, i) => (
+                  <a
+                    key={v.variant}
+                    href={`#draft-${i + 1}`}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 8,
+                      padding: "7px 0 7px 12px",
+                      borderLeft: i === 0 ? "2px solid #3b82f6" : "2px solid transparent",
+                      textDecoration: "none",
+                      marginBottom: 2,
+                    }}
+                  >
+                    <span
+                      className="font-mono"
+                      style={{
+                        fontSize: 11,
+                        color: "#6e6e6e",
+                        letterSpacing: "0.04em",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {i + 1} · {v.name.toLowerCase()}
+                    </span>
+                    {i === 0 && <StrongestTag />}
+                  </a>
+                ))}
+                {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
+                  <a
+                    href="#follow-up"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "7px 0 7px 12px",
+                      borderLeft: "2px solid transparent",
+                      textDecoration: "none",
+                      marginTop: 8,
+                    }}
+                  >
+                    <svg
+                      width="11"
+                      height="11"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#6e6e6e"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <circle cx="12" cy="12" r="10" />
+                      <polyline points="12 6 12 12 16 14" />
+                    </svg>
+                    <span
+                      className="font-mono"
+                      style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em" }}
+                    >
+                      follow up sequence
+                    </span>
+                  </a>
+                )}
+              </div>
+
+              {/* Main column */}
+              <div className="lg:pl-8" style={{ flex: 1, minWidth: 0, maxWidth: 720 }}>
+                {result.limited_personalization && (
+                  <div
+                    style={{
+                      borderRadius: 4,
+                      border: "1px solid #3a3328",
+                      background: "rgba(201,184,150,0.06)",
+                      padding: "12px 16px",
+                      marginBottom: 24,
+                    }}
+                  >
+                    <p style={{ fontSize: 13, color: "#c9b896", lineHeight: 1.55 }}>
+                      We could only read limited detail from that page, so these drafts are less personalized than usual. A company or lab site usually produces stronger drafts.
+                    </p>
+                  </div>
+                )}
+
+                {/* Email cards — sorted by score, strongest first */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  {sortedVariants.map((v, i) => (
+                    <EmailCard key={v.variant} variant={v} rank={i + 1} isStrongest={i === 0} />
+                  ))}
+                </div>
+
+                {/* Follow-up timeline */}
+                {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
+                  <div style={{ marginTop: 20 }}>
+                    <FollowUpSection sequence={result.follow_up_sequence} />
+                  </div>
+                )}
+
+                <p
+                  className="font-mono"
+                  style={{
+                    fontSize: 11,
+                    color: "#6e6e6e",
+                    letterSpacing: "0.04em",
+                    textAlign: "center",
+                    marginTop: 24,
+                  }}
+                >
+                  Edit before sending. The AI gives you a strong start. Your voice makes it land.
+                </p>
+              </div>
+            </div>
           </div>
         )}
       </main>
