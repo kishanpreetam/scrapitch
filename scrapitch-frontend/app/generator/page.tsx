@@ -90,6 +90,30 @@ const ASK_PLACEHOLDER: Record<UseCase, string> = {
     "Keep it small and advice-shaped. e.g. '15 minutes to hear how you moved into X?' Not a job ask.",
 };
 
+const URL_LABEL: Record<UseCase, string> = {
+  b2b_sales: "prospect url",
+  masters_outreach: "prospect url",
+  job_hunt: "prospect url",
+  executive_outreach: "prospect url",
+  networking: "their site (optional)",
+};
+
+const URL_HELPER: Record<UseCase, string> = {
+  b2b_sales: "The prospect's company site, product page, or about page works best.",
+  masters_outreach: "The professor's lab or group page, or a recent paper. The university homepage is usually too thin.",
+  job_hunt: "The job posting itself, or the company site.",
+  executive_outreach: "The firm's thesis or portfolio page, or a partner's recent post. A generic homepage is usually thin.",
+  networking: "Optional. Their personal site, company bio page, or a talk URL.",
+};
+
+const PASTE_HELPER: Record<UseCase, string> = {
+  b2b_sales: "Or paste their about page, product description, or company overview.",
+  masters_outreach: "Or paste their lab overview, research summary, or paper abstract.",
+  job_hunt: "Or paste their public bio, about section, or a recent post.",
+  executive_outreach: "Or paste their public bio, about section, or a recent post.",
+  networking: "Or paste their public bio, about section, or a recent post.",
+};
+
 // Networking is intentionally absent: achievements read as bragging in a
 // networking ask, so the highlights field is hidden for it.
 const HIGHLIGHTS: Partial<Record<UseCase, { label: string; placeholder: string }>> = {
@@ -538,6 +562,9 @@ export default function GeneratorPage() {
   }, [router]);
 
   const [url, setUrl] = useState("");
+  const [pastedText, setPastedText] = useState("");
+  const [personName, setPersonName] = useState("");
+  const [personDisambiguator, setPersonDisambiguator] = useState("");
   const [useCase, setUseCase] = useState<UseCase>("b2b_sales");
   const [aboutUser, setAboutUser] = useState("");
   const [userAsk, setUserAsk] = useState("");
@@ -559,6 +586,7 @@ export default function GeneratorPage() {
   const aboutYou = ABOUT_YOU[useCase];
   const highlightsField = HIGHLIGHTS[useCase];
   const showResume = useCase === "job_hunt" || useCase === "masters_outreach";
+  const isNetworking = useCase === "networking";
 
   const handleResumeFile = async (file: File) => {
     setResumeError(null);
@@ -607,9 +635,16 @@ export default function GeneratorPage() {
     setHasAttempted(true);
 
     const trimmedUrl = url.trim();
-    if (!trimmedUrl) {
-      setError("Please enter a URL.");
-      return;
+    if (isNetworking) {
+      if (!personName.trim() && !trimmedUrl && !pastedText.trim()) {
+        setError("Enter their name, paste their site URL, or paste some text to work from.");
+        return;
+      }
+    } else {
+      if (!trimmedUrl && !pastedText.trim()) {
+        setError("Please enter a URL or paste some text about the recipient.");
+        return;
+      }
     }
     if (!aboutUser.trim()) {
       setError("Please tell us a bit about you.");
@@ -624,12 +659,7 @@ export default function GeneratorPage() {
     setUnreadable(null);
     setResult(null);
     setLoading(true);
-    setLoadingStage("Analyzing website...");
-
-    const normalised =
-      trimmedUrl.startsWith("http://") || trimmedUrl.startsWith("https://")
-        ? trimmedUrl
-        : `https://${trimmedUrl}`;
+    setLoadingStage(pastedText.trim() ? "Analyzing text..." : "Analyzing website...");
 
     const stageTimer = setTimeout(() => setLoadingStage("Generating emails..."), 4000);
     const controller = new AbortController();
@@ -638,12 +668,23 @@ export default function GeneratorPage() {
 
     try {
       const body: Record<string, unknown> = {
-        url: normalised,
         use_case: useCase,
         about_user: aboutUser,
         user_ask: userAsk,
         highlights: highlightsField ? highlights : "",
       };
+      if (trimmedUrl) {
+        const normalised =
+          trimmedUrl.startsWith("http://") || trimmedUrl.startsWith("https://")
+            ? trimmedUrl
+            : `https://${trimmedUrl}`;
+        body.url = normalised;
+      }
+      if (pastedText.trim()) body.pasted_text = pastedText.trim();
+      if (isNetworking && personName.trim()) {
+        body.person_name = personName.trim();
+        body.person_disambiguator = personDisambiguator.trim();
+      }
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -782,19 +823,17 @@ export default function GeneratorPage() {
               {/* Prospect URL */}
               <div>
                 <p className="font-mono" style={labelStyle}>
-                  prospect url
+                  {URL_LABEL[useCase]}
                 </p>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://example.com"
-                  required
+                  required={!isNetworking}
                   className={fieldClass}
                 />
-                <p style={helperStyle}>
-                  Their company, lab, or personal site. Social profiles often can&apos;t be read.
-                </p>
+                <p style={helperStyle}>{URL_HELPER[useCase]}</p>
               </div>
 
               {/* Outreach type */}
@@ -814,6 +853,51 @@ export default function GeneratorPage() {
                   <option value="networking">Networking · start a real connection</option>
                 </select>
                 <p style={helperStyle}>We tailor email length, framing, and ask to your use case.</p>
+              </div>
+
+              {/* Networking: name + context fields */}
+              {isNetworking && (
+                <div>
+                  <p className="font-mono" style={labelStyle}>
+                    their name
+                  </p>
+                  <input
+                    type="text"
+                    value={personName}
+                    onChange={(e) => setPersonName(e.target.value)}
+                    placeholder="e.g. Sarah Chen"
+                    className={fieldClass}
+                    style={{ marginBottom: 8 }}
+                  />
+                  <input
+                    type="text"
+                    value={personDisambiguator}
+                    onChange={(e) => setPersonDisambiguator(e.target.value)}
+                    placeholder="company, role, city, or topic to narrow it down"
+                    className={fieldClass}
+                  />
+                  <p style={helperStyle}>A name plus one detail is usually enough to find them. Or skip the name and paste text or a URL below.</p>
+                </div>
+              )}
+
+              {/* Paste text fallback (also the LinkedIn / X path for any use case) */}
+              <div>
+                <p className="font-mono" style={labelStyle}>
+                  paste text (optional)
+                </p>
+                <textarea
+                  value={pastedText}
+                  onChange={(e) => setPastedText(e.target.value)}
+                  placeholder={PASTE_HELPER[useCase]}
+                  rows={4}
+                  className={fieldClass}
+                  style={{ resize: "vertical", minHeight: 96 }}
+                />
+                {isNetworking ? (
+                  <p style={helperStyle}>Or paste their public bio, about section, or a recent post. One is enough: name, URL, or pasted text.</p>
+                ) : (
+                  <p style={helperStyle}>{PASTE_HELPER[useCase]} No URL needed when text is pasted.</p>
+                )}
               </div>
 
               {/* Resume upload (job hunt and masters only); fills the about-you field below */}
