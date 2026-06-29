@@ -24,7 +24,7 @@ MODEL_JUDGE = os.getenv("MODEL_JUDGE", HAIKU)
 
 _WORD_LIMITS_BY_USE_CASE: dict[str, dict[str, int]] = {
     "b2b_sales":          {"A": 80,  "B": 110, "C": 100},
-    "masters_outreach":   {"A": 110, "B": 140, "C": 160},
+    "masters_outreach":   {"A": 90, "B": 110, "C": 120},
     "job_hunt":           {"A": 100, "B": 100, "C": 100},
     "executive_outreach": {"A": 70,  "B": 70,  "C": 70},
     "networking":         {"A": 90,  "B": 90,  "C": 90},
@@ -244,16 +244,25 @@ _AGENT2_ABSOLUTE_RULES = (
     "- Exactly ONE CTA per email. Low-friction only.\n"
     "- Subject line: 6 words or fewer by default. No dashes, no arrows, no exclamation marks.\n"
     "- Write like a smart colleague firing off a quick note, not like a marketing textbook.\n"
+    "- Plain, direct sentences. One idea per sentence. Avoid multi-clause constructions.\n"
+    "- One core idea per email. Do not pack multiple benefits, angles, or achievements into a single draft.\n"
+    "- Ask the recipient directly. NEVER say 'point me to the right person', 'forward this along', "
+    "or any redirect when you are writing to the intended contact.\n"
 )
 
-_AGENT2_FOLLOW_UPS = (
-    "FOLLOW-UPS (always 3, in this order):\n"
-    "- Day 3: Light bump with a NEW angle. NEVER 'just following up'. Max 50 words.\n"
-    "- Day 7: Completely different angle. A stat, insight, or reframe. Max 60 words.\n"
-    "- Day 14: Breakup. Low pressure, leave door open. Max 50 words.\n"
+_AGENT2_FOLLOW_UPS_THREE = (
+    "FOLLOW-UPS (three, in this order):\n"
+    "- Day 3: New angle. Not 'just following up'. Max 50 words.\n"
+    "- Day 7: Different angle. A stat, insight, or reframe. Max 60 words.\n"
+    "- Day 14: Soft close. Low pressure, leave door open. Max 50 words.\n"
 )
 
-_AGENT2_OUTPUT_SHAPE = (
+_AGENT2_FOLLOW_UPS_ONE = (
+    "FOLLOW-UP (one only):\n"
+    "- Day 7: One fresh angle. Not a re-pitch. Not 'just following up'. Max 55 words.\n"
+)
+
+_AGENT2_OUTPUT_SHAPE_THREE = (
     "Return as JSON with this structure:\n"
     "{\"variants\": [{\"variant\": \"A\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
     "{\"variant\": \"B\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
@@ -261,6 +270,15 @@ _AGENT2_OUTPUT_SHAPE = (
     "\"follow_up_sequence\": [{\"day\": 3, \"subject\": \"...\", \"body\": \"...\"}, "
     "{\"day\": 7, \"subject\": \"...\", \"body\": \"...\"}, "
     "{\"day\": 14, \"subject\": \"...\", \"body\": \"...\"}]}\n\n"
+    "Return ONLY valid JSON. No markdown, no backticks, no explanation."
+)
+
+_AGENT2_OUTPUT_SHAPE_ONE = (
+    "Return as JSON with this structure:\n"
+    "{\"variants\": [{\"variant\": \"A\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
+    "{\"variant\": \"B\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
+    "{\"variant\": \"C\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}], "
+    "\"follow_up_sequence\": [{\"day\": 7, \"subject\": \"...\", \"body\": \"...\"}]}\n\n"
     "Return ONLY valid JSON. No markdown, no backticks, no explanation."
 )
 
@@ -361,8 +379,8 @@ def _agent2_b2b_sales(tone_preference: str) -> str:
         "TONE: Warm but business-like by default.\n"
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'Hope this finds you well', 'I wanted to reach out'.\n\n"
-        + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_FOLLOW_UPS_THREE + "\n"
+        + _AGENT2_OUTPUT_SHAPE_THREE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
     )
 
@@ -398,10 +416,14 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         "extracted research. Generic 'your work is amazing' is forbidden.\n\n"
         "FORBIDDEN ADDITIONS: 'Your work is amazing', generic name-dropping, 'I am very "
         "interested in your research'.\n\n"
+        + "CONCRETE ASK (masters):\n"
+        "The ask must be exactly one of: a brief 15-minute call, whether they are taking students "
+        "for the target term, or an offer to send a 1-page research summary. Never ask them to "
+        "redirect you to someone else.\n\n"
         + _AGENT2_RESUME_RULES + "\n"
         + _AGENT2_RESUME_PUBS_GRAD + "\n"
-        + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_FOLLOW_UPS_ONE + "\n"
+        + _AGENT2_OUTPUT_SHAPE_ONE + "\n\n"
         + _AGENT2_ANTI_FABRICATION + "\n\n"
         + _AGENT2_NO_INVENT_MASTERS
     )
@@ -430,15 +452,14 @@ def _agent2_job_hunt(tone_preference: str) -> str:
         "- Line 2: A short relevant proof point\n"
         "- Line 3: Bridge to your interest\n"
         "- Line 4: Low-friction ask\n\n"
-        "CTA PATTERN: 'Would it make sense to share my CV?' or 'Could you point me to the "
-        "right person?'\n\n"
+        "CTA PATTERN: 'Would it make sense to share my CV?' or 'Open to a quick call about the role?'\n\n"
         "TONE: Confident, not desperate, not over-eager. Treat the reader as a peer.\n"
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'I am passionate about', 'I would love the opportunity', "
         "'It would be a dream to work at', 'I am writing to express my interest'.\n\n"
         + _AGENT2_RESUME_RULES + "\n"
-        + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_FOLLOW_UPS_THREE + "\n"
+        + _AGENT2_OUTPUT_SHAPE_THREE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
     )
 
@@ -468,9 +489,13 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'I have been following your work', 'I admire what you do', "
         "'I am a huge fan', 'It would be an honor'.\n\n"
+        + "CONCRETE ASK (executive):\n"
+        "The ask must be low-friction and specific, tied to something real in their recent news or "
+        "stated priorities. A benchmark, a one-pager, or a 15-minute call are all fine. Never a "
+        "generic 'grab a coffee' or redirect to someone else.\n\n"
         + _AGENT2_RESUME_RULES + "\n"
-        + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_FOLLOW_UPS_ONE + "\n"
+        + _AGENT2_OUTPUT_SHAPE_ONE + "\n\n"
         + _AGENT2_ANTI_FABRICATION + "\n\n"
         + _AGENT2_NO_INVENT_EXECUTIVE
     )
@@ -502,8 +527,8 @@ def _agent2_networking(tone_preference: str) -> str:
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'Pick your brain', 'Quick question', 'Can I get on your "
         "calendar', 'I would love to connect'.\n\n"
-        + _AGENT2_FOLLOW_UPS + "\n"
-        + _AGENT2_OUTPUT_SHAPE + "\n\n"
+        + _AGENT2_FOLLOW_UPS_ONE + "\n"
+        + _AGENT2_OUTPUT_SHAPE_ONE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
     )
 
