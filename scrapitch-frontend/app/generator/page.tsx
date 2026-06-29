@@ -6,7 +6,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://web-production-f17a7.up.railway.app";
+if (!process.env.NEXT_PUBLIC_API_URL) {
+  console.error(
+    "[Scrapitch] NEXT_PUBLIC_API_URL is not set. All API calls will fail. " +
+      "Add this variable to .env.local or your Vercel project settings."
+  );
+}
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 type UseCase =
   | "b2b_sales"
@@ -14,8 +20,6 @@ type UseCase =
   | "job_hunt"
   | "executive_outreach"
   | "networking";
-
-type TonePreference = "auto" | "formal" | "warm" | "direct";
 
 type FollowUp = {
   day: number;
@@ -292,8 +296,6 @@ export default function GeneratorPage() {
   const [aboutUser, setAboutUser] = useState("");
   const [userAsk, setUserAsk] = useState("");
   const [highlights, setHighlights] = useState("");
-  const [tonePreference, setTonePreference] = useState<TonePreference>("auto");
-
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState("");
   const [result, setResult] = useState<GenerateResponse | null>(null);
@@ -384,6 +386,9 @@ export default function GeneratorPage() {
         : `https://${trimmedUrl}`;
 
     const stageTimer = setTimeout(() => setLoadingStage("Generating emails..."), 4000);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 60_000);
+    const endpoint = `${API_BASE}/generate`;
 
     try {
       const body: Record<string, unknown> = {
@@ -391,24 +396,36 @@ export default function GeneratorPage() {
         use_case: useCase,
         about_user: aboutUser,
         user_ask: userAsk,
-        // Highlights is hidden for networking, so never send stale text for it.
         highlights: highlightsField ? highlights : "",
-        tone_preference: tonePreference,
       };
 
-      const res = await fetch(`${API_BASE}/generate`, {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
+        signal: controller.signal,
+      }).catch((fetchErr: unknown) => {
+        if (fetchErr instanceof DOMException && fetchErr.name === "AbortError") {
+          console.error("[Scrapitch] Request timed out:", endpoint);
+          setError("The request timed out. The server may be under load. Please try again.");
+        } else {
+          console.error("[Scrapitch] Network error calling:", endpoint, fetchErr);
+          setError("Could not reach the server. Please check your connection and try again.");
+        }
+        return null;
       });
+
+      if (!res) return;
+
+      if (!res.ok) {
+        const bodyText = await res.text().catch(() => "");
+        console.error("[Scrapitch] API error", res.status, endpoint, bodyText);
+        setError(`Generation failed (status ${res.status}). Please try again.`);
+        return;
+      }
 
       const data = await res.json().catch(() => null);
 
-      // Never surface a raw backend message. Map known cases; generic otherwise.
-      if (!res.ok) {
-        setError("Something went wrong generating your drafts. Please try again.");
-        return;
-      }
       if (data && data.status === "unreadable") {
         setUnreadable(
           typeof data.message === "string"
@@ -418,14 +435,17 @@ export default function GeneratorPage() {
         return;
       }
       if (!data || !Array.isArray(data.variants)) {
+        console.error("[Scrapitch] Unexpected response shape from:", endpoint, data);
         setError("Something went wrong generating your drafts. Please try again.");
         return;
       }
       setResult(data as GenerateResponse);
-    } catch {
-      setError("Couldn't reach the server. Please check your connection and try again.");
+    } catch (unexpectedErr) {
+      console.error("[Scrapitch] Unexpected error calling:", endpoint, unexpectedErr);
+      setError("Something went wrong. Please try again.");
     } finally {
       clearTimeout(stageTimer);
+      clearTimeout(timeoutId);
       setLoading(false);
       setLoadingStage("");
     }
@@ -731,23 +751,6 @@ export default function GeneratorPage() {
                 </div>
               )}
 
-              {/* Tone */}
-              <div>
-                <p className="font-mono" style={labelStyle}>
-                  tone
-                </p>
-                <select
-                  value={tonePreference}
-                  onChange={(e) => setTonePreference(e.target.value as TonePreference)}
-                  className="w-full bg-[#0a0a0a] border border-[#2c241c] rounded-[4px] px-4 py-3.5 text-base text-[#f5f5f0] focus:border-[#c9b896] focus:outline-none transition-colors"
-                >
-                  <option value="auto">Auto · match the outreach type</option>
-                  <option value="formal">Formal · polished, no contractions</option>
-                  <option value="warm">Warm · friendly, peer-to-peer</option>
-                  <option value="direct">Direct · short sentences, no fluff</option>
-                </select>
-                <p style={helperStyle}>Override the default tone for your selected outreach type.</p>
-              </div>
             </div>
 
             {/* Generate button */}
