@@ -661,6 +661,7 @@ def generate_emails(scraped_data: dict) -> dict:
         "target_role", "portfolio_link", "accomplishment",
         "current_school_year", "paper_or_topic", "program_term",
         "company_stage", "traction_metric",
+        "person_name", "person_disambiguator",
     ):
         v = scraped_data.get(f)
         if v:
