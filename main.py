@@ -82,17 +82,10 @@ class EmailVariant(BaseModel):
     score_reasoning: str
 
 
-class FollowUp(BaseModel):
-    day: int
-    subject: str
-    body: str
-
-
 class GenerateResponse(BaseModel):
     url: str
     company_name: str
     variants: list[EmailVariant]
-    follow_up_sequence: list[FollowUp]
     limited_personalization: bool = False
 
 
@@ -186,7 +179,6 @@ async def generate(request: GenerateRequest):
         url=source_url,
         company_name=scraped["company_name"],
         variants=result["variants"],
-        follow_up_sequence=result.get("follow_up_sequence", []),
         limited_personalization=limited_personalization,
     )
 

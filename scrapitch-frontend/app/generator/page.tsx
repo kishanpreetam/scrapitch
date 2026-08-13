@@ -21,12 +21,6 @@ type UseCase =
   | "executive_outreach"
   | "networking";
 
-type FollowUp = {
-  day: number;
-  subject: string;
-  body: string;
-};
-
 type Variant = {
   variant: string;
   name: string;
@@ -40,7 +34,6 @@ type GenerateResponse = {
   url: string;
   company_name: string;
   variants: Variant[];
-  follow_up_sequence: FollowUp[];
   limited_personalization?: boolean;
 };
 
@@ -56,74 +49,121 @@ const SERIF_STACK = "'New York', 'Times New Roman', Charter, Georgia, serif";
 // without ever asking the user to describe the prospect.
 const ABOUT_YOU: Record<UseCase, { label: string; placeholder: string }> = {
   b2b_sales: {
-    label: "what you deliver",
-    placeholder: "The result you deliver, e.g. 'cut onboarding time 40%'. Not your title.",
+    label: "what you're great at",
+    placeholder: "The result you get people, in plain terms — like 'we cut onboarding time by 40%'. Skip the job title.",
   },
   masters_outreach: {
-    label: "your relevant background",
+    label: "your background",
     placeholder:
-      "Your degree plus the specific skills or one project that line up with this lab. e.g. 'MS in computer vision, built a 3D reconstruction pipeline.'",
+      "Your degree plus the one skill or project that lines up with their work. e.g. 'MS in computer vision — I built a 3D reconstruction pipeline.'",
   },
   job_hunt: {
     label: "your relevant experience",
     placeholder:
-      "Your relevant experience for this role or team. One recognizable employer or one metric helps.",
+      "The experience that actually fits this role. One recognizable employer or one real number goes a long way.",
   },
   executive_outreach: {
-    label: "your credibility",
-    placeholder: "One named customer, one metric, or a shared connection. One is enough.",
+    label: "why they should listen",
+    placeholder: "One named customer, one number, or a shared connection. One is plenty.",
   },
   networking: {
-    label: "about you",
+    label: "a little about you",
     placeholder:
-      "One line on who you are, plus why this person specifically: a shared school, a talk you saw, something they made.",
+      "One line on who you are — and why them specifically: a shared school, a talk you caught, something they made.",
   },
 };
 
 const ASK_PLACEHOLDER: Record<UseCase, string> = {
-  b2b_sales: "A specific low-friction ask. e.g. 'Worth a quick call next week?'",
+  b2b_sales: "One small, easy ask. e.g. 'Worth a quick call next week?'",
   masters_outreach:
-    "Be specific and small: a 15-minute call, or whether they are taking students for Fall 2026.",
-  job_hunt: "Ask for a short conversation, not a job. e.g. 'Open to a 15-minute call about the X role?'",
-  executive_outreach: "Offer value, not a meeting. e.g. 'Open to a benchmark of how peers handled X?'",
+    "Keep it small and specific — a 15-minute call, or whether they're taking students for the term below.",
+  job_hunt: "Ask for a short chat, not a job. e.g. 'Open to 15 minutes about the role?'",
+  executive_outreach: "Offer something, don't just ask for time. e.g. 'Want a quick benchmark of how peers handled X?'",
   networking:
-    "Keep it small and advice-shaped. e.g. '15 minutes to hear how you moved into X?' Not a job ask.",
+    "Keep it small and advice-shaped. e.g. '15 minutes to hear how you got into X?' — not a job ask.",
 };
 
 const URL_LABEL: Record<UseCase, string> = {
-  b2b_sales: "prospect url",
-  masters_outreach: "prospect url",
-  job_hunt: "prospect url",
-  executive_outreach: "prospect url",
+  b2b_sales: "their website",
+  masters_outreach: "their lab or a paper",
+  job_hunt: "the job or company link",
+  executive_outreach: "their firm or a recent post",
   networking: "their site (optional)",
 };
 
 const URL_HELPER: Record<UseCase, string> = {
-  b2b_sales: "The prospect's company site, product page, or about page works best.",
-  masters_outreach: "The professor's lab or group page, or a recent paper. The university homepage is usually too thin.",
-  job_hunt: "The job posting itself, or the company site.",
-  executive_outreach: "The firm's thesis or portfolio page, or a partner's recent post. A generic homepage is usually thin.",
-  networking: "Optional. Their personal site, company bio page, or a talk URL.",
+  b2b_sales: "Their homepage, product page, or about page — wherever they describe what they do best.",
+  masters_outreach: "Link the professor's lab or group page, or a recent paper. A university homepage is usually too thin to work from.",
+  job_hunt: "Drop the job posting itself, or the company's site if there isn't a posting yet.",
+  executive_outreach: "Their firm's thesis or portfolio page, or a partner's recent post. A generic homepage won't give us much.",
+  networking: "Optional — their personal site, a company bio page, or a talk they gave.",
 };
 
 const PASTE_HELPER: Record<UseCase, string> = {
-  b2b_sales: "Or paste their about page, product description, or company overview.",
-  masters_outreach: "Or paste their lab overview, research summary, or paper abstract.",
-  job_hunt: "Or paste their public bio, about section, or a recent post.",
-  executive_outreach: "Or paste their public bio, about section, or a recent post.",
-  networking: "Or paste their public bio, about section, or a recent post.",
+  b2b_sales: "Or paste their about page, a product blurb, or a recent announcement.",
+  masters_outreach: "Or paste their lab overview, a research summary, or a paper abstract.",
+  job_hunt: "Or paste the job description, their bio, or a recent post.",
+  executive_outreach: "Or paste their bio, a recent post, or something they've said publicly.",
+  networking: "Or paste their bio, an about section, or a recent post.",
 };
 
 // Networking is intentionally absent: achievements read as bragging in a
 // networking ask, so the highlights field is hidden for it.
 const HIGHLIGHTS: Partial<Record<UseCase, { label: string; placeholder: string }>> = {
-  b2b_sales: { label: "proof", placeholder: "Numbers, named customers, recent wins." },
-  executive_outreach: { label: "proof", placeholder: "Numbers, named customers, recent wins." },
-  job_hunt: { label: "proof", placeholder: "Numbers, named customers, recent wins." },
+  b2b_sales: { label: "proof (optional)", placeholder: "A number, a named customer, or a recent win. Anything concrete helps." },
+  executive_outreach: { label: "proof (optional)", placeholder: "A number, a named customer, or a recent win." },
+  job_hunt: { label: "proof (optional)", placeholder: "A number, a shipped project, or a recognizable name." },
   masters_outreach: {
-    label: "relevant result (optional)",
-    placeholder: "One result or project that aligns with their work.",
+    label: "a relevant result (optional)",
+    placeholder: "One result or project that connects to their work.",
   },
+};
+
+// Use-case-specific inputs the backend already accepts and feeds to the Email
+// Writer (see email_generator.py). Surfacing them lets the pipeline personalize
+// with structured detail instead of guessing from the generic fields above.
+// Only added where it sharpens the draft without piling on friction.
+type ExtraField = {
+  key: "target_role" | "portfolio_link" | "paper_or_topic" | "program_term";
+  label: string;
+  placeholder: string;
+  helper?: string;
+  type?: "text" | "url";
+};
+
+const EXTRA_FIELDS: Record<UseCase, ExtraField[]> = {
+  b2b_sales: [],
+  executive_outreach: [],
+  networking: [],
+  job_hunt: [
+    {
+      key: "target_role",
+      label: "the role you're after",
+      placeholder: "e.g. Data Analyst — or the exact title from the posting.",
+      helper: "So the draft names the role instead of a vague 'any opportunity'.",
+    },
+    {
+      key: "portfolio_link",
+      label: "portfolio or github (optional)",
+      placeholder: "https://…",
+      type: "url",
+      helper: "We'll work it into the sign-off if it fits.",
+    },
+  ],
+  masters_outreach: [
+    {
+      key: "paper_or_topic",
+      label: "a paper or topic of theirs (optional)",
+      placeholder: "The title, or the specific line of work you actually read.",
+      helper: "Only what you've genuinely read — we never invent a paper you didn't mention.",
+    },
+    {
+      key: "program_term",
+      label: "when you'd start (optional)",
+      placeholder: "e.g. Fall 2026",
+      helper: "Grounds the ask in a concrete term.",
+    },
+  ],
 };
 
 function StrongestTag() {
@@ -410,136 +450,6 @@ function EmailCard({
   );
 }
 
-function FollowUpRow({ fu, index }: { fu: FollowUp; index: number }) {
-  const [copiedSubject, setCopiedSubject] = useState(false);
-  const [copiedBody, setCopiedBody] = useState(false);
-
-  return (
-    <div>
-      {index > 0 && (
-        <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "20px 0" }} />
-      )}
-      <div style={{ display: "flex", gap: 20 }}>
-        <div style={{ flexShrink: 0, width: 52 }}>
-          <span
-            className="font-mono"
-            style={{ fontSize: 11, color: "#60a5fa", letterSpacing: "0.04em" }}
-          >
-            day {fu.day}
-          </span>
-        </div>
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 10 }}>
-          {/* Subject */}
-          <div>
-            <p
-              className="font-mono"
-              style={{ fontSize: 10, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 4 }}
-            >
-              subject
-            </p>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-              <span
-                style={{ flex: 1, fontSize: 13, fontWeight: 500, color: "#c9c9c4", lineHeight: 1.4 }}
-              >
-                {fu.subject}
-              </span>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(fu.subject).then(() => {
-                    setCopiedSubject(true);
-                    setTimeout(() => setCopiedSubject(false), 2000);
-                  });
-                }}
-                title="Copy subject"
-                style={{
-                  flexShrink: 0,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: copiedSubject ? "#4ade80" : "#6e6e6e",
-                  padding: "2px 4px",
-                  display: "flex",
-                  alignItems: "center",
-                  marginTop: 1,
-                  transition: "color 0.15s",
-                }}
-              >
-                {copiedSubject ? <CheckIcon /> : <CopyIcon />}
-              </button>
-            </div>
-          </div>
-          {/* Body */}
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-            <p
-              style={{
-                flex: 1,
-                fontSize: 14,
-                color: "#8a8a85",
-                lineHeight: 1.6,
-                whiteSpace: "pre-wrap",
-                margin: 0,
-              }}
-            >
-              {fu.body}
-            </p>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(fu.body).then(() => {
-                  setCopiedBody(true);
-                  setTimeout(() => setCopiedBody(false), 2000);
-                });
-              }}
-              title="Copy body"
-              style={{
-                flexShrink: 0,
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: copiedBody ? "#4ade80" : "#6e6e6e",
-                padding: "2px 4px",
-                display: "flex",
-                alignItems: "center",
-                marginTop: 2,
-                transition: "color 0.15s",
-              }}
-            >
-              {copiedBody ? <CheckIcon /> : <CopyIcon />}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function FollowUpSection({ sequence }: { sequence: FollowUp[] }) {
-  if (!sequence || sequence.length === 0) return null;
-
-  return (
-    <div
-      id="follow-up"
-      style={{
-        background: "#141414",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 12,
-        padding: 20,
-      }}
-    >
-      <p
-        className="font-mono"
-        style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em", marginBottom: 20 }}
-      >
-        follow up sequence
-      </p>
-      <div>
-        {sequence.map((fu, i) => (
-          <FollowUpRow key={i} fu={fu} index={i} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 const labelStyle = {
   fontSize: 11,
   color: "#c9b896",
@@ -569,6 +479,9 @@ export default function GeneratorPage() {
   const [aboutUser, setAboutUser] = useState("");
   const [userAsk, setUserAsk] = useState("");
   const [highlights, setHighlights] = useState("");
+  // Values for the use-case-specific fields (target_role, program_term, …),
+  // keyed by backend field name. Only the current use case's keys are sent.
+  const [extras, setExtras] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [loadingStage, setLoadingStage] = useState("");
   const [result, setResult] = useState<GenerateResponse | null>(null);
@@ -684,6 +597,12 @@ export default function GeneratorPage() {
       if (isNetworking && personName.trim()) {
         body.person_name = personName.trim();
         body.person_disambiguator = personDisambiguator.trim();
+      }
+      // Only send the fields relevant to the current use case, so a value
+      // typed under a previous use case never leaks into this request.
+      for (const f of EXTRA_FIELDS[useCase]) {
+        const val = extras[f.key]?.trim();
+        if (val) body[f.key] = val;
       }
 
       const res = await fetch(endpoint, {
@@ -1048,7 +967,7 @@ export default function GeneratorPage() {
                   className={`${fieldClass} resize-y`}
                 />
                 <p style={helperStyle}>
-                  Your side only. We read the recipient&apos;s details from the page you submitted.
+                  Just your side — we pull the recipient&apos;s details from the link or text above.
                 </p>
               </div>
 
@@ -1068,6 +987,26 @@ export default function GeneratorPage() {
                 />
                 <p style={helperStyle}>One clear, specific ask.</p>
               </div>
+
+              {/* Use-case-specific fields (job hunt, master's). Each maps to a
+                  backend field the Email Writer already knows how to use. */}
+              {EXTRA_FIELDS[useCase].map((f) => (
+                <div key={f.key}>
+                  <p className="font-mono" style={labelStyle}>
+                    {f.label}
+                  </p>
+                  <input
+                    type={f.type ?? "text"}
+                    value={extras[f.key] ?? ""}
+                    onChange={(e) =>
+                      setExtras((prev) => ({ ...prev, [f.key]: e.target.value }))
+                    }
+                    placeholder={f.placeholder}
+                    className={fieldClass}
+                  />
+                  {f.helper && <p style={helperStyle}>{f.helper}</p>}
+                </div>
+              ))}
 
               {/* Highlights (use-case-aware; hidden for networking) */}
               {highlightsField && (
@@ -1389,41 +1328,6 @@ export default function GeneratorPage() {
                     {i === 0 && <StrongestTag />}
                   </a>
                 ))}
-                {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
-                  <a
-                    href="#follow-up"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      padding: "7px 0 7px 12px",
-                      borderLeft: "2px solid transparent",
-                      textDecoration: "none",
-                      marginTop: 8,
-                    }}
-                  >
-                    <svg
-                      width="11"
-                      height="11"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#6e6e6e"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 6 12 12 16 14" />
-                    </svg>
-                    <span
-                      className="font-mono"
-                      style={{ fontSize: 11, color: "#6e6e6e", letterSpacing: "0.04em" }}
-                    >
-                      follow up sequence
-                    </span>
-                  </a>
-                )}
               </div>
 
               {/* Main column */}
@@ -1450,13 +1354,6 @@ export default function GeneratorPage() {
                     <EmailCard key={v.variant} variant={v} rank={i + 1} isStrongest={i === 0} />
                   ))}
                 </div>
-
-                {/* Follow-up timeline */}
-                {result.follow_up_sequence && result.follow_up_sequence.length > 0 && (
-                  <div style={{ marginTop: 20 }}>
-                    <FollowUpSection sequence={result.follow_up_sequence} />
-                  </div>
-                )}
 
                 <p
                   className="font-mono"

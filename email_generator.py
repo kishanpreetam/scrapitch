@@ -250,35 +250,11 @@ _AGENT2_ABSOLUTE_RULES = (
     "or any redirect when you are writing to the intended contact.\n"
 )
 
-_AGENT2_FOLLOW_UPS_THREE = (
-    "FOLLOW-UPS (three, in this order):\n"
-    "- Day 3: New angle. Not 'just following up'. Max 50 words.\n"
-    "- Day 7: Different angle. A stat, insight, or reframe. Max 60 words.\n"
-    "- Day 14: Soft close. Low pressure, leave door open. Max 50 words.\n"
-)
-
-_AGENT2_FOLLOW_UPS_ONE = (
-    "FOLLOW-UP (one only):\n"
-    "- Day 7: One fresh angle. Not a re-pitch. Not 'just following up'. Max 55 words.\n"
-)
-
-_AGENT2_OUTPUT_SHAPE_THREE = (
+_AGENT2_OUTPUT_SHAPE = (
     "Return as JSON with this structure:\n"
     "{\"variants\": [{\"variant\": \"A\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
     "{\"variant\": \"B\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
-    "{\"variant\": \"C\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}], "
-    "\"follow_up_sequence\": [{\"day\": 3, \"subject\": \"...\", \"body\": \"...\"}, "
-    "{\"day\": 7, \"subject\": \"...\", \"body\": \"...\"}, "
-    "{\"day\": 14, \"subject\": \"...\", \"body\": \"...\"}]}\n\n"
-    "Return ONLY valid JSON. No markdown, no backticks, no explanation."
-)
-
-_AGENT2_OUTPUT_SHAPE_ONE = (
-    "Return as JSON with this structure:\n"
-    "{\"variants\": [{\"variant\": \"A\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
-    "{\"variant\": \"B\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}, "
-    "{\"variant\": \"C\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}], "
-    "\"follow_up_sequence\": [{\"day\": 7, \"subject\": \"...\", \"body\": \"...\"}]}\n\n"
+    "{\"variant\": \"C\", \"name\": \"...\", \"subject_lines\": [\"...\", \"...\", \"...\"], \"body\": \"...\"}]}\n\n"
     "Return ONLY valid JSON. No markdown, no backticks, no explanation."
 )
 
@@ -379,8 +355,7 @@ def _agent2_b2b_sales(tone_preference: str) -> str:
         "TONE: Warm but business-like by default.\n"
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'Hope this finds you well', 'I wanted to reach out'.\n\n"
-        + _AGENT2_FOLLOW_UPS_THREE + "\n"
-        + _AGENT2_OUTPUT_SHAPE_THREE + "\n\n"
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
     )
 
@@ -422,8 +397,7 @@ def _agent2_masters_outreach(tone_preference: str) -> str:
         "redirect you to someone else.\n\n"
         + _AGENT2_RESUME_RULES + "\n"
         + _AGENT2_RESUME_PUBS_GRAD + "\n"
-        + _AGENT2_FOLLOW_UPS_ONE + "\n"
-        + _AGENT2_OUTPUT_SHAPE_ONE + "\n\n"
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION + "\n\n"
         + _AGENT2_NO_INVENT_MASTERS
     )
@@ -458,8 +432,7 @@ def _agent2_job_hunt(tone_preference: str) -> str:
         + "FORBIDDEN ADDITIONS: 'I am passionate about', 'I would love the opportunity', "
         "'It would be a dream to work at', 'I am writing to express my interest'.\n\n"
         + _AGENT2_RESUME_RULES + "\n"
-        + _AGENT2_FOLLOW_UPS_THREE + "\n"
-        + _AGENT2_OUTPUT_SHAPE_THREE + "\n\n"
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
     )
 
@@ -494,8 +467,7 @@ def _agent2_executive_outreach(tone_preference: str) -> str:
         "stated priorities. A benchmark, a one-pager, or a 15-minute call are all fine. Never a "
         "generic 'grab a coffee' or redirect to someone else.\n\n"
         + _AGENT2_RESUME_RULES + "\n"
-        + _AGENT2_FOLLOW_UPS_ONE + "\n"
-        + _AGENT2_OUTPUT_SHAPE_ONE + "\n\n"
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION + "\n\n"
         + _AGENT2_NO_INVENT_EXECUTIVE
     )
@@ -527,8 +499,7 @@ def _agent2_networking(tone_preference: str) -> str:
         + (tone_override + "\n\n" if tone_override else "\n")
         + "FORBIDDEN ADDITIONS: 'Pick your brain', 'Quick question', 'Can I get on your "
         "calendar', 'I would love to connect'.\n\n"
-        + _AGENT2_FOLLOW_UPS_ONE + "\n"
-        + _AGENT2_OUTPUT_SHAPE_ONE + "\n\n"
+        + _AGENT2_OUTPUT_SHAPE + "\n\n"
         + _AGENT2_ANTI_FABRICATION
     )
 
@@ -606,9 +577,9 @@ def build_agent3_system(use_case: str) -> str:
 
 def generate_emails(scraped_data: dict) -> dict:
     """
-    Generate 3 cold email variants + 3-email follow-up sequence using a 3-agent pipeline.
+    Generate 3 cold email variants using a 3-agent pipeline.
     Agent 1 researches, Agent 2 writes, Agent 3 scores.
-    Returns a dict with 'variants' and 'follow_up_sequence'.
+    Returns a dict with 'variants'.
     """
     client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
@@ -694,10 +665,6 @@ def generate_emails(scraped_data: dict) -> dict:
         limit = limits.get(variant.get("variant", ""), 100)
         variant["body"] = enforce_word_limit(body, limit)
         variant["subject_lines"] = [cleanup_text(s) for s in variant.get("subject_lines", [])]
-
-    for follow_up in emails.get("follow_up_sequence", []):
-        follow_up["subject"] = cleanup_text(follow_up.get("subject", ""))
-        follow_up["body"] = cleanup_text(follow_up.get("body", ""))
 
     # ── AGENT 3: Scoring Judge ────────────────────────────────────────────
     agent3_user = json.dumps({
