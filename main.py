@@ -6,10 +6,14 @@ import logging
 import os
 from typing import Literal, Optional
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field, HttpUrl, model_validator
+from slowapi import Limiter
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
 
 from scraper import scrape_website, extract_from_text, search_person
 from email_generator import generate_emails
@@ -19,11 +23,127 @@ MAX_FILE_SIZE = 10 * 1024 * 1024  # 10 MB
 
 log = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Partner API-key auth + per-key rate limiting
+#
+# /generate and /parse-resume burn Anthropic/ScrapeGraph credits per call, so
+# they're gated behind a partner API key. Registry comes from the
+# PARTNER_API_KEYS env var: comma-separated "key:name" pairs, e.g.
+#   PARTNER_API_KEYS=sk_propel_abc:propel,sk_scrapitch_xyz:scrapitch_web
+#
+# Fail-open safety valve: if PARTNER_API_KEYS is unset/empty, auth and rate
+# limiting both fall back to permissive "unconfigured" behavior instead of
+# blocking everyone. This is intentional so we can't lock ourselves out mid
+# rollout -- enforcement turns on automatically the moment the env var is set.
+# ---------------------------------------------------------------------------
+
+API_KEY_HEADER = "X-API-Key"
+
+
+def _load_partner_keys() -> dict[str, str]:
+    """Parse PARTNER_API_KEYS ("key:name,key2:name2") into {key: partner_name}."""
+    raw = os.getenv("PARTNER_API_KEYS", "").strip()
+    parsed: dict[str, str] = {}
+    if not raw:
+        return parsed
+    for pair in raw.split(","):
+        pair = pair.strip()
+        if not pair or ":" not in pair:
+            continue
+        key, _, name = pair.partition(":")
+        key = key.strip()
+        name = name.strip()
+        if key and name:
+            parsed[key] = name
+    return parsed
+
+
+PARTNER_KEYS: dict[str, str] = _load_partner_keys()
+
+if not PARTNER_KEYS:
+    log.warning(
+        "PARTNER_API_KEYS not set -- API is UNPROTECTED. Anyone with the base "
+        "URL can call /generate and /parse-resume."
+    )
+
+
+async def require_partner(
+    x_api_key: Optional[str] = Header(default=None, alias=API_KEY_HEADER),
+) -> str:
+    """Gate /generate and /parse-resume behind a partner API key.
+
+    Fails open (returns "unconfigured") when PARTNER_API_KEYS isn't set, so
+    the API stays reachable during rollout. Once the env var is populated,
+    a missing or unrecognized key is rejected with 401.
+    """
+    if not PARTNER_KEYS:
+        return "unconfigured"
+    if x_api_key is None or x_api_key not in PARTNER_KEYS:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key.")
+    return PARTNER_KEYS[x_api_key]
+
+
+def _rate_limit_key(request: Request) -> str:
+    """Rate-limit bucket: the caller's API key if present, else their IP.
+
+    IP is only ever the effective bucket when no key is sent, which in
+    practice means PARTNER_API_KEYS is unconfigured (fail-open) or the
+    caller omitted the header -- the latter is already rejected with 401
+    by require_partner before this bucket matters for /generate and
+    /parse-resume.
+    """
+    api_key = request.headers.get(API_KEY_HEADER)
+    if api_key:
+        return api_key
+    return get_remote_address(request)
+
+
+# In-memory storage (slowapi's default) is fine here: Railway runs a single
+# instance of this service, so there's no need for a shared Redis backend.
+limiter = Limiter(key_func=_rate_limit_key)
+
+_PARTNER_LIMITS = {
+    "propel": "10/minute;200/day",
+    "scrapitch_web": "60/minute;2000/day",
+}
+_DEFAULT_PARTNER_LIMIT = "10/minute;200/day"  # any other valid, registered key
+_UNCONFIGURED_LIMIT = "20/minute;100/day"  # PARTNER_API_KEYS unset / fail-open
+
+
+def _partner_rate_limit(key: str) -> str:
+    """Callable rate-limit string: differs per partner, resolved per request.
+
+    `key` is whatever _rate_limit_key returned (the X-API-Key header value,
+    or the caller's IP if no header/registry). If PARTNER_API_KEYS isn't
+    configured, or the key isn't a registered partner key (defensive only --
+    require_partner already 401s unknown keys before this is evaluated),
+    fall back to the conservative unconfigured/IP bucket.
+    """
+    if not PARTNER_KEYS:
+        return _UNCONFIGURED_LIMIT
+    partner = PARTNER_KEYS.get(key)
+    if partner is None:
+        return _UNCONFIGURED_LIMIT
+    return _PARTNER_LIMITS.get(partner, _DEFAULT_PARTNER_LIMIT)
+
+
+async def _rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    log.warning("rate limit exceeded for %s on %s", _rate_limit_key(request), request.url.path)
+    return JSONResponse(
+        status_code=429,
+        content={"detail": "Rate limit exceeded. Try again shortly."},
+    )
+
+
 app = FastAPI(
     title="Scrapitch API",
     description="AI-powered cold email generator for B2B agency owners",
     version="1.0.0",
 )
+
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
@@ -99,7 +219,12 @@ UNREADABLE_MESSAGE = (
 
 
 @app.post("/generate", response_model=GenerateResponse)
-async def generate(request: GenerateRequest):
+@limiter.limit(_partner_rate_limit)
+async def generate(
+    request: Request,
+    body: GenerateRequest,
+    partner: str = Depends(require_partner),
+):
     if not os.getenv("ANTHROPIC_API_KEY"):
         log.error("ANTHROPIC_API_KEY is not configured")
         raise HTTPException(
@@ -107,16 +232,16 @@ async def generate(request: GenerateRequest):
             detail="The service is temporarily unavailable. Please try again later.",
         )
 
-    url = str(request.url) if request.url else ""
-    pasted_text = (request.pasted_text or "").strip()
-    person_name = (request.person_name or "").strip()
-    person_disambiguator = (request.person_disambiguator or "").strip()
+    url = str(body.url) if body.url else ""
+    pasted_text = (body.pasted_text or "").strip()
+    person_name = (body.person_name or "").strip()
+    person_disambiguator = (body.person_disambiguator or "").strip()
 
     try:
         if pasted_text:
             scraped = extract_from_text(pasted_text)
             source_url = "from pasted text"
-        elif request.use_case == "networking" and person_name and not url:
+        elif body.use_case == "networking" and person_name and not url:
             scraped = search_person(person_name, person_disambiguator)
             if scraped.get("status") == "unresolvable":
                 return JSONResponse(
@@ -125,7 +250,7 @@ async def generate(request: GenerateRequest):
                 )
             source_url = scraped.get("url") or f"web search: {person_name}"
         else:
-            scraped = scrape_website(url, use_case=request.use_case)
+            scraped = scrape_website(url, use_case=body.use_case)
             source_url = url
     except RuntimeError as exc:
         log.error("scrape/search failure: %s", exc)
@@ -147,22 +272,22 @@ async def generate(request: GenerateRequest):
 
     payload = {
         **scraped,
-        "use_case": request.use_case,
-        "about_user": request.about_user,
-        "user_ask": request.user_ask,
-        "highlights": request.highlights,
-        "tone_preference": request.tone_preference,
-        "resume_data": request.resume_data,
-        "target_role": request.target_role,
-        "portfolio_link": request.portfolio_link,
-        "accomplishment": request.accomplishment,
-        "current_school_year": request.current_school_year,
-        "paper_or_topic": request.paper_or_topic,
-        "program_term": request.program_term,
-        "company_stage": request.company_stage,
-        "traction_metric": request.traction_metric,
-        "person_name": request.person_name,
-        "person_disambiguator": request.person_disambiguator,
+        "use_case": body.use_case,
+        "about_user": body.about_user,
+        "user_ask": body.user_ask,
+        "highlights": body.highlights,
+        "tone_preference": body.tone_preference,
+        "resume_data": body.resume_data,
+        "target_role": body.target_role,
+        "portfolio_link": body.portfolio_link,
+        "accomplishment": body.accomplishment,
+        "current_school_year": body.current_school_year,
+        "paper_or_topic": body.paper_or_topic,
+        "program_term": body.program_term,
+        "company_stage": body.company_stage,
+        "traction_metric": body.traction_metric,
+        "person_name": body.person_name,
+        "person_disambiguator": body.person_disambiguator,
         "limited_personalization": limited_personalization,
     }
 
@@ -184,7 +309,12 @@ async def generate(request: GenerateRequest):
 
 
 @app.post("/parse-resume")
-async def parse_resume_endpoint(file: UploadFile = File(...)):
+@limiter.limit(_partner_rate_limit)
+async def parse_resume_endpoint(
+    request: Request,
+    file: UploadFile = File(...),
+    partner: str = Depends(require_partner),
+):
     if file.content_type not in (ALLOWED_PDF, ALLOWED_DOCX):
         raise HTTPException(
             status_code=400,
