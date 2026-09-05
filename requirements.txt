@@ -11,3 +11,4 @@ requests>=2.32.0
 lxml>=5.0.0
 scrapegraph-py>=2.0.0
 python-docx>=1.0.0
+slowapi>=0.1.9

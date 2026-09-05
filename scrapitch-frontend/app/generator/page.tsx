@@ -508,7 +508,7 @@ export default function GeneratorPage() {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      const res = await fetch(`${API_BASE}/parse-resume`, { method: "POST", body: formData });
+      const res = await fetch("/api/parse-resume", { method: "POST", body: formData });
       if (!res.ok) {
         const data = await res.json().catch(() => ({ detail: res.statusText }));
         throw new Error(data.detail || `Error ${res.status}`);
@@ -577,7 +577,7 @@ export default function GeneratorPage() {
     const stageTimer = setTimeout(() => setLoadingStage("Generating emails..."), 4000);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 60_000);
-    const endpoint = `${API_BASE}/generate`;
+    const endpoint = "/api/generate";
 
     try {
       const body: Record<string, unknown> = {
