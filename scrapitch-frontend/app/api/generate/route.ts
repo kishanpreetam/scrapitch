@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getSignedInUser } from "@/lib/supabase-server";
+
 // This route only supports POST, and POST handlers are never cached by
 // Next.js regardless of this setting. It's kept explicit so the intent
 // (always hit the live backend, never serve a cached response) is clear.
@@ -7,8 +9,18 @@ export const dynamic = "force-dynamic";
 
 // Same-origin proxy for the Railway backend's /generate endpoint. The
 // browser calls this route instead of the backend directly so the partner
-// API key stays server-side and is never exposed to client JS.
+// API key stays server-side and is never exposed to client JS. Each call
+// costs model credits, so only signed-in users get through, and the backend
+// rate-limits each user separately (X-Scrapitch-User).
 export async function POST(request: NextRequest) {
+  const user = await getSignedInUser();
+  if (!user) {
+    return NextResponse.json(
+      { error: "Please log in to generate drafts." },
+      { status: 401 },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -36,6 +48,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "application/json",
         "X-API-Key": process.env.SCRAPITCH_API_KEY ?? "",
+        "X-Scrapitch-User": user.id,
       },
       body: JSON.stringify(body),
     });
