@@ -623,6 +623,16 @@ export default function GeneratorPage() {
 
       if (!res) return;
 
+      if (res.status === 401) {
+        router.replace("/login");
+        return;
+      }
+
+      if (res.status === 429) {
+        setError("You've hit the generation limit for now. Please try again in a few minutes.");
+        return;
+      }
+
       if (!res.ok) {
         const bodyText = await res.text().catch(() => "");
         console.error("[Scrapitch] API error", res.status, endpoint, bodyText);
