@@ -31,13 +31,20 @@ log = logging.getLogger(__name__)
 # PARTNER_API_KEYS env var: comma-separated "key:name" pairs, e.g.
 #   PARTNER_API_KEYS=sk_propel_abc:propel,sk_scrapitch_xyz:scrapitch_web
 #
-# Fail-open safety valve: if PARTNER_API_KEYS is unset/empty, auth and rate
-# limiting both fall back to permissive "unconfigured" behavior instead of
-# blocking everyone. This is intentional so we can't lock ourselves out mid
-# rollout -- enforcement turns on automatically the moment the env var is set.
+# Fails closed: if PARTNER_API_KEYS is unset/empty, /generate and
+# /parse-resume refuse every request (503) instead of serving anyone who
+# finds the URL. For local development without keys, set ALLOW_OPEN_API=1
+# to get the old permissive behavior.
+#
+# The web app's key also carries a per-user header (X-Scrapitch-User), so
+# each signed-in user gets their own bucket and one account can't use up
+# the shared web limit.
 # ---------------------------------------------------------------------------
 
 API_KEY_HEADER = "X-API-Key"
+USER_HEADER = "X-Scrapitch-User"
+WEB_PARTNER = "scrapitch_web"
+ALLOW_OPEN_API = os.getenv("ALLOW_OPEN_API") == "1"
 
 
 def _load_partner_keys() -> dict[str, str]:
@@ -60,11 +67,13 @@ def _load_partner_keys() -> dict[str, str]:
 
 PARTNER_KEYS: dict[str, str] = _load_partner_keys()
 
-if not PARTNER_KEYS:
+if not PARTNER_KEYS and ALLOW_OPEN_API:
     log.warning(
-        "PARTNER_API_KEYS not set -- API is UNPROTECTED. Anyone with the base "
-        "URL can call /generate and /parse-resume."
+        "PARTNER_API_KEYS not set and ALLOW_OPEN_API=1 -- API is UNPROTECTED. "
+        "Anyone with the base URL can call /generate and /parse-resume."
     )
+elif not PARTNER_KEYS:
+    log.error("PARTNER_API_KEYS not set -- /generate and /parse-resume will refuse all requests.")
 
 
 async def require_partner(
@@ -72,12 +81,14 @@ async def require_partner(
 ) -> str:
     """Gate /generate and /parse-resume behind a partner API key.
 
-    Fails open (returns "unconfigured") when PARTNER_API_KEYS isn't set, so
-    the API stays reachable during rollout. Once the env var is populated,
-    a missing or unrecognized key is rejected with 401.
+    Fails closed: with no PARTNER_API_KEYS configured, every request gets a
+    503 unless ALLOW_OPEN_API=1 (local development only). A missing or
+    unrecognized key is rejected with 401.
     """
     if not PARTNER_KEYS:
-        return "unconfigured"
+        if ALLOW_OPEN_API:
+            return "unconfigured"
+        raise HTTPException(status_code=503, detail="The service is temporarily unavailable. Please try again later.")
     if x_api_key is None or x_api_key not in PARTNER_KEYS:
         raise HTTPException(status_code=401, detail="Invalid or missing API key.")
     return PARTNER_KEYS[x_api_key]
@@ -107,7 +118,8 @@ _PARTNER_LIMITS = {
     "scrapitch_web": "60/minute;2000/day",
 }
 _DEFAULT_PARTNER_LIMIT = "10/minute;200/day"  # any other valid, registered key
-_UNCONFIGURED_LIMIT = "20/minute;100/day"  # PARTNER_API_KEYS unset / fail-open
+_UNCONFIGURED_LIMIT = "20/minute;100/day"  # PARTNER_API_KEYS unset with ALLOW_OPEN_API=1
+_PER_USER_LIMIT = "10/minute;100/day"  # each signed-in web user, inside the web app's shared limit
 
 
 def _partner_rate_limit(key: str) -> str:
@@ -125,6 +137,26 @@ def _partner_rate_limit(key: str) -> str:
     if partner is None:
         return _UNCONFIGURED_LIMIT
     return _PARTNER_LIMITS.get(partner, _DEFAULT_PARTNER_LIMIT)
+
+
+def _user_rate_limit_key(request: Request) -> str:
+    """Second bucket: one per signed-in web user.
+
+    The user header is trusted only alongside the web app's own key, which
+    never leaves the web app's server, so outside callers can't spoof it.
+    Every other caller lands in a bucket that mirrors its partner limit.
+    """
+    api_key = request.headers.get(API_KEY_HEADER)
+    user = request.headers.get(USER_HEADER)
+    if api_key and user and PARTNER_KEYS.get(api_key) == WEB_PARTNER:
+        return f"user:{user}"
+    return f"caller:{_rate_limit_key(request)}"
+
+
+def _user_rate_limit(key: str) -> str:
+    if key.startswith("user:"):
+        return _PER_USER_LIMIT
+    return _partner_rate_limit(key.removeprefix("caller:"))
 
 
 async def _rate_limit_exceeded_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
@@ -224,6 +256,7 @@ UNREADABLE_MESSAGE = (
 
 @app.post("/generate", response_model=GenerateResponse)
 @limiter.limit(_partner_rate_limit)
+@limiter.limit(_user_rate_limit, key_func=_user_rate_limit_key)
 async def generate(
     request: Request,
     body: GenerateRequest,
@@ -314,6 +347,7 @@ async def generate(
 
 @app.post("/parse-resume")
 @limiter.limit(_partner_rate_limit)
+@limiter.limit(_user_rate_limit, key_func=_user_rate_limit_key)
 async def parse_resume_endpoint(
     request: Request,
     file: UploadFile = File(...),
@@ -328,7 +362,8 @@ async def parse_resume_endpoint(
             ),
         )
 
-    contents = await file.read()
+    # Read at most one byte past the limit, so an oversized upload is never held in memory whole.
+    contents = await file.read(MAX_FILE_SIZE + 1)
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(
             status_code=413,
@@ -337,9 +372,15 @@ async def parse_resume_endpoint(
 
     try:
         result = parse_resume(contents, file.content_type)
-    except (ValueError, RuntimeError) as exc:
+    except ValueError as exc:  # problems with the file itself; the message is written for users
         log.error("resume parse failure for %s: %s", file.filename, exc)
         raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:  # service-side failures; keep internals out of the response
+        log.error("resume parse service failure for %s: %s", file.filename, exc)
+        raise HTTPException(
+            status_code=503,
+            detail="We couldn't read your resume right now. Please try again shortly.",
+        ) from exc
 
     return result
 
