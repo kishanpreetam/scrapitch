@@ -64,7 +64,7 @@ const QUESTIONS: Question[] = [
   {
     n: "08",
     q: { before: "", italic: "Who", after: " built this?" },
-    a: "One founder, in Boston. Kishan Kommana. Reach out at kommana.k@northeastern.edu if you have something to say.",
+    a: "One founder, in Boston. Kishan Preetam Kommana. Reach out at kommana.k@northeastern.edu if you have something to say.",
   },
 ];
 

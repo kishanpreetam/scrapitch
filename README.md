@@ -73,4 +73,4 @@ cd scrapitch-frontend && npm install && npm run dev
 
 ---
 
-Built by [Kishan Kommana](https://linkedin.com/in/kishan-preetam-kommana) · AI Engineer · open to roles in the US and remote.
+Built by [Kishan Preetam Kommana](https://linkedin.com/in/kishan-preetam-kommana) · AI Engineer · open to roles in the US and remote.
