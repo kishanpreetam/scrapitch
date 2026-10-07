@@ -37,7 +37,7 @@ flowchart LR
 | **Scraper** | Extracts what the company does, who it serves, recent launches, and specific details. Bare domains resolve to a page that fits the use case first (for example `/careers` for job search). Thin or blocked pages degrade gracefully instead of erroring. A paste-text fallback covers gated sites. Scrapitch never scrapes LinkedIn or X. |
 | **Research agent** | Turns the raw scrape into structured signal for the chosen use case. Returns strict JSON, with a retry on malformed output. |
 | **Writer agent** | Writes three variants in three frameworks: problem-agitate-solution, value-first, and curiosity icebreaker. Each has a hard word ceiling per use case and per variant. Hard rule against fabrication: a draft may only claim things that come from your input or the scraped page. |
-| **Judge agent** | Scores each draft against a six-factor weighted rubric: personalization, length, single CTA, context-first framing, subject line, and spam signals. Weights differ by use case, and the reasoning is shown to the user. |
+| **Judge agent** | Scores personalization, single CTA, context-first framing, subject line, and spam signals 1-10. Length is measured in code, and the weighted total (weights differ by use case) is computed in code. The judge also lists any claim that the page or the sender's details don't support, and that draft is capped at 4/10 with a "check before sending" note. [`evals/`](evals/) holds a regression set: grounded drafts must score well, and invented facts, templates and prompt-injection attempts must not. |
 
 ## Engineering decisions worth noting
 
@@ -68,8 +68,8 @@ cd scrapitch-frontend && npm install && npm run dev
 
 ## Known limitations / next
 
-- The judge's rubric is fixed and isn't yet calibrated against human ratings.
-- Fabrication is prevented by instructions only; no automated check verifies each claim against the scraped page yet.
+- The judge isn't yet calibrated against human ratings. `evals/` checks its behavior on fixed cases, not how often it agrees with people. Next: label ~100 real drafts and measure that agreement.
+- The grounding check is itself a model call, so it can miss a claim. It catches the obvious cases in `evals/`, but it doesn't guarantee a draft is accurate.
 
 ---
 

@@ -230,8 +230,12 @@ class EmailVariant(BaseModel):
     name: str
     subject_lines: list[str]
     body: str
-    score: int
+    score: int  # 1-10, or 0 when the review step failed
     score_reasoning: str
+    # Claims in the draft that the scraped page and the sender's details don't support.
+    unsupported_claims: list[str] = []
+    # Per-factor scores behind `score` (1-10 each; length is measured, the rest judged).
+    score_factors: dict[str, int] = {}
 
 
 class GenerateResponse(BaseModel):
